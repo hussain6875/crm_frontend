@@ -1,119 +1,166 @@
-
-import { useState } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
-{
-  /* recharts: For rendering the bar chart
-   */
-}
-const data = [
-  { name: "Jan", revenue: 4000 },
-  { name: "Feb", revenue: 3000 },
-  { name: "Mar", revenue: 5000 },
-  { name: "Apr", revenue: 4500 },
-  { name: "May", revenue: 3500 },
-  { name: "Jun", revenue: 4000 },
-  { name: "Jul", revenue: 3000 },
-  { name: "Aug", revenue: 4500 },
-  { name: "Sep", revenue: 6000 },
-  { name: "Oct", revenue: 5000 },
-  { name: "Nov", revenue: 5500 },
-  { name: "Dec", revenue: 5200 },
-];
+import React, { useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const SalesReport = () => {
-  const [selectedMonth, setSelectedMonth] = useState("Monthly");
+  const data = [
+    { month: "Jan", primary: 3000, secondary: 4000, total: 3500 },
+    { month: "Feb", primary: 1500, secondary: 5000, total: 4200 },
+    { month: "Mar", primary: 2200, secondary: 3000, total: 1500 },
+    { month: "Apr", primary: 3000, secondary: 3000, total: 6000 },
+    { month: "May", primary: 1000, secondary: 4500, total: 4000 },
+    { month: "Jun", primary: 1000, secondary: 2500, total: 1800 },
+    { month: "Jul", primary: 1500, secondary: 2500, total: 6000 },
+    { month: "Aug", primary: 2000, secondary: 4500, total: 4000 },
+    { month: "Sep", primary: 4000, secondary: 4000, total: 4800 },
+    { month: "Oct", primary: 3000, secondary: 3000, total: 3500 },
+    { month: "Nov", primary: 3500, secondary: 4000, total: 3900 },
+    { month: "Dec", primary: 3000, secondary: 4000, total: 5000 },
+  ];
 
-  const handleMonthChange = (e) => {
-    setSelectedMonth(e.target.value);
-  };
+  const maxValue = 10000;
+  const chartHeight = 350;
+  const yAxisValues = [10000, 5000, 1000, 500, 200, 0];
+
+  const formatCurrency = (value) => `$${value.toLocaleString()}`;
+
+  useEffect(() => {
+    if (!document.head.querySelector("[data-saleschart-tooltip]")) {
+      const style = document.createElement("style");
+      style.innerHTML = `
+        .bar-with-tooltip {
+          position: relative;
+        }
+        .bar-with-tooltip .custom-tooltip {
+          visibility: hidden;
+          opacity: 0;
+          min-width: 60px;
+          background: #333;
+          color: #fff;
+          text-align: center;
+          border-radius: 4px;
+          padding: 4px 8px;
+          position: absolute;
+          left: 50%;
+          top: -35px;
+          transform: translateX(-50%);
+          z-index: 10;
+          font-size: 12px;
+          transition: opacity 0.2s;
+          pointer-events: none;
+          white-space: nowrap;
+        }
+        .bar-with-tooltip:hover .custom-tooltip {
+          visibility: visible;
+          opacity: 1;
+        }
+      `;
+      style.setAttribute("data-saleschart-tooltip", "true");
+      document.head.appendChild(style);
+    }
+  }, []);
 
   return (
-    <div className="card border-0 shadow-sm h-100">
-      <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-        <h5 className="card-title mb-0 fw-bold">Sales Reports</h5>
-        {/* Dropdown for selecting month */}
+    <div
+      className="card shadow-sm h-100"
+      style={{ width: "1000px", marginLeft: "-340px" }}
+    >
+      {/* Header */}
+      <div
+        className="card-header bg-white border-0 d-flex justify-content-between align-items-center"
+        style={{ marginTop: "20px" }}
+      >
+        <h5 className="mb-0 fw-bold text-dark">Sales Reports</h5>
         <select
-          className="form-select form-select-sm w-auto"
-          value={selectedMonth}
-          onChange={handleMonthChange}
+          className="form-select form-select-sm"
+          style={{ width: "120px" }}
         >
-          <option value="Monthly">Monthly</option>
-          <option value="Jan">January</option>
-          <option value="Feb">February</option>
-          <option value="Mar">March</option>
-          <option value="Apr">April</option>
-          <option value="May">May</option>
-          <option value="Jun">June</option>
-          <option value="Jul">July</option>
-          <option value="Aug">August</option>
-          <option value="Sep">September</option>
-          <option value="Oct">October</option>
-          <option value="Nov">November</option>
-          <option value="Dec">December</option>
+          <option>Monthly</option>
+          <option>Quarterly</option>
+          <option>Yearly</option>
         </select>
       </div>
 
-      <div className="card-body">
-        <div style={{ height: "300px" }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={data}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-              barCategoryGap="20%"
-            >
-              <CartesianGrid stroke="#f0f0f0" vertical={false} />
-              <XAxis
-                dataKey="name"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: "#6B7280", fontSize: 12 }}
-              />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: "#6B7280", fontSize: 12 }}
-                tickFormatter={(val) => `$${val}`}
-              />
-              <Tooltip
-                cursor={{ fill: "rgba(0, 0, 0, 0.05)" }}
-                contentStyle={{
-                  borderRadius: "10px",
-                  backgroundColor: "rgba(255,255,255,0.9)",
-                  border: "1px solid rgba(99,102,241,1)",
-                  boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-                  fontSize: "0.85rem",
+      {/* Chart */}
+      <div className="card-body pt-3">
+        <div
+          className="d-flex"
+          style={{ height: chartHeight, marginTop: "30px" }}
+        >
+          {/* Y-axis */}
+          <div
+            className="d-flex flex-column align-items-end pe-8 justify-content-between"
+            style={{ width: "60px" }}
+          >
+            {yAxisValues.map((val) => (
+              <div
+                key={val}
+                style={{
+                  height: `${chartHeight / (yAxisValues.length - 1)}px`,
+                  display: "flex",
+                  alignItems: "center",
                 }}
-                itemStyle={{ color: "#333" }}
-                labelStyle={{ color: "#6B7280", fontSize: "0.75rem" }}
-              />
-              <defs>
-                <linearGradient
-                  id="revenueGradient"
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
+              >
+                <small className="text-muted text-end w-100 d-block">
+                  ${val}
+                </small>
+              </div>
+            ))}
+          </div>
+
+          {/* Bars */}
+          <div className="flex-grow-1 d-flex align-items-end justify-content-between ps-2">
+            {data.map((item) => {
+              const primaryHeight = (item.primary / maxValue) * chartHeight;
+              const secondaryHeight = (item.secondary / maxValue) * chartHeight;
+
+              return (
+                <div
+                  key={item.month}
+                  className="d-flex flex-column align-items-center"
+                  style={{ flex: 1, minWidth: 0 }}
                 >
-                  <stop offset="0%" stopColor="#645CFF" stopOpacity={0.8} />
-                  <stop offset="100%" stopColor="#6360FF" stopOpacity={0.4} />
-                </linearGradient>
-              </defs>
-              <Bar
-                dataKey="revenue"
-                fill="url(#revenueGradient)"
-                radius={[8, 8, 0, 0]}
-                barSize={24}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+                  <div
+                    className="position-relative bar-with-tooltip d-flex justify-content-center"
+                    style={{ height: chartHeight, width: "100%" }}
+                  >
+                    {/* Secondary bar */}
+                    <div
+                      style={{
+                        height: `${secondaryHeight}px`,
+                        width: "24px",
+                        borderRadius: "6px",
+                        background: "linear-gradient(to top, #EDE9FE, #DDD6FE)",
+                        position: "absolute",
+                        bottom: 0,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        zIndex: 1,
+                      }}
+                    />
+                    {/* Primary bar */}
+                    <div
+                      style={{
+                        height: `${primaryHeight}px`,
+                        width: "24px",
+                        borderRadius: "6px",
+                        background: "linear-gradient(to top, #7b61ff, #e0d7ff)",
+                        position: "absolute",
+                        bottom: 0,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        zIndex: 2,
+                      }}
+                    />
+                    <div className="custom-tooltip">
+                      {formatCurrency(item.total)}
+                    </div>
+                  </div>
+                  <small className="text-muted mt-2">{item.month}</small>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

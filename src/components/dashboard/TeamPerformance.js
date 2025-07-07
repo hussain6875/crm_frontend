@@ -1,5 +1,4 @@
-
-import { Download } from "lucide-react"; //Download icon: Used in the "Export CSV" button.
+import React from "react";
 
 const TeamPerformance = () => {
   const teamData = [
@@ -38,62 +37,96 @@ const TeamPerformance = () => {
   ];
 
   return (
-    <div className="card border-0 shadow-sm">
-      <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-        <h5 className="card-title mb-0 fw-bold">Team Performance Tracking</h5>
-        <button className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
-          <Download size={16} />
-          Export CSV
-        </button>
-      </div>
-      <div className="card-body p-0">
+    <div className="my-5">
+      <div
+        className="p-4 bg-white rounded-4 shadow-sm"
+        style={{
+          width: "100%",
+          marginLeft: "1px",
+          marginTop: "-20px",
+        }}
+      >
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h5 className="fw-bold mb-0">Team Performance Tracking</h5>
+          <button
+            className="btn btn-outline-primary btn-sm"
+            style={{ color: "#4332c8", borderColor: "#4332c8" }}
+          >
+            Export CSV
+          </button>
+        </div>
+
         <div className="table-responsive">
-          <table className="table table-hover mb-0">
+          <table
+            className="table mb-0"
+            style={{
+              borderCollapse: "separate",
+              borderSpacing: "0 12px",
+            }}
+          >
             <thead className="table-light">
               <tr>
-                <th className="border-0 fw-semibold text-muted ps-4">
+                <th className="ps-4 text-dark fw-semibold border-0 bg-transparent">
                   Employee
                 </th>
-                <th className="border-0 fw-semibold text-muted text-center">
+                <th className="text-center text-dark fw-semibold border-0 bg-transparent">
                   Active Deals
                 </th>
-                <th className="border-0 fw-semibold text-muted text-center">
+                <th className="text-center text-dark fw-semibold border-0 bg-transparent">
                   Closed Deals
                 </th>
-                <th className="border-0 fw-semibold text-muted text-end pe-4">
+                <th className="text-end pe-4 text-dark fw-semibold border-0 bg-transparent">
                   Revenue
                 </th>
               </tr>
             </thead>
             <tbody>
-              {/* Loops through teamData to render each row*/}
               {teamData.map((member, index) => (
                 <tr key={index}>
-                  <td className="ps-4 py-3">
-                    <div className="fw-medium text-dark">{member.name}</div>
-                  </td>
-                  <td className="text-center py-3">
-                    <span className="fw-medium">{member.activeDeals}</span>
-                  </td>
-                  <td className="text-center py-3">
-                    <span className="fw-medium">{member.closedDeals}</span>
-                  </td>
-                  <td className="text-end pe-4 py-3">
-                    <div className="d-flex align-items-center justify-content-end gap-2">
-                      <span className="fw-medium">{member.revenue}</span>
-                      <span
-                        className={`badge ${
-                          member.changeType === "positive"
-                            ? "bg-success"
-                            : "bg-danger"
-                        } bg-opacity-10 ${
-                          member.changeType === "positive"
-                            ? "text-success"
-                            : "text-danger"
-                        }`}
+                  <td colSpan="4" className="border-0 p-0">
+                    <div
+                      className="d-flex justify-content-between align-items-center"
+                      style={{
+                        border: "1px solid #e2e2e2",
+                        borderRadius: "12px",
+                        padding: "16px 24px",
+                        backgroundColor: "#fff",
+                      }}
+                    >
+                      <div
+                        className="fw-semibold text-dark"
+                        style={{ width: "25%" }}
                       >
-                        {member.change}
-                      </span>
+                        {member.name}
+                      </div>
+                      <div
+                        className="text-center fw-medium"
+                        style={{ width: "25%" }}
+                      >
+                        {member.activeDeals}
+                      </div>
+                      <div
+                        className="text-center fw-medium"
+                        style={{ width: "25%" }}
+                      >
+                        {member.closedDeals}
+                      </div>
+                      <div
+                        className="text-end fw-medium d-flex align-items-center justify-content-end gap-2"
+                        style={{ width: "25%" }}
+                      >
+                        <span>{member.revenue}</span>
+                        <span
+                          className={`badge bg-opacity-10 ${
+                            member.changeType === "positive"
+                              ? "bg-success text-success"
+                              : "bg-danger text-danger"
+                          }`}
+                          style={{ fontSize: "0.75rem" }}
+                        >
+                          {member.change}
+                        </span>
+                      </div>
                     </div>
                   </td>
                 </tr>

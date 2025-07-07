@@ -1,25 +1,20 @@
-
 import { NavLink } from "react-router-dom";
-import {
-  FiGrid,
-  FiUsers,
-  FiBriefcase,
-  FiCheckSquare,
-  FiClock,
-} from "react-icons/fi";
+import { BriefcaseBusiness, TicketMinus } from "lucide-react";
+import { LuUsersRound } from "react-icons/lu";
+import { FiGrid, FiCheckSquare } from "react-icons/fi";
 
 const navItems = [
   { label: "Dashboard", icon: <FiGrid />, path: "/" },
-  { label: "Leads", icon: <FiUsers />, path: "/leads" },
-  { label: "Companies", icon: <FiBriefcase />, path: "/companies" },
+  { label: "Leads", icon: <LuUsersRound />, path: "/leads" },
+  { label: "Companies", icon: <BriefcaseBusiness />, path: "/companies" },
   { label: "Deals", icon: <FiCheckSquare />, path: "/deals" },
-  { label: "Tickets", icon: <FiClock />, path: "/tickets" },
+  { label: "Tickets", icon: <TicketMinus />, path: "/tickets" },
 ];
 
 const Sidebar = () => {
   return (
     <div
-      className="d-flex flex-column align-items-center bg-white shadow-sm pt-5 position-fixed top-0 start-0"
+      className="d-flex flex-column align-items-center bg-white shadow-sm pt-6 position-fixed top-0 start-0"
       style={{
         width: "90px",
         height: "100vh",
@@ -59,6 +54,8 @@ const Sidebar = () => {
           <small>{item.label}</small>
         </NavLink>
       ))}
+
+      <div style={{ height: "600px" }}></div>
     </div>
   );
 };

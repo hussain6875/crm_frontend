@@ -1,4 +1,3 @@
-
 import { FiSearch, FiBell } from "react-icons/fi";
 
 const TopBar = () => {
@@ -12,30 +11,58 @@ const TopBar = () => {
 
       {/* Right Side */}
       <div className="d-flex align-items-center gap-3">
-        {/* Search box */}
-        <div className="input-group" style={{ maxWidth: 250 }}>
-          <span className="input-group-text bg-transparent border-end-0">
-            <FiSearch style={{ color: "#999" }} />
-          </span>
+        {/* Search box with icon and divider */}
+        <div style={{ maxWidth: 250, position: "relative" }}>
+          {/* Search Icon */}
+          <FiSearch
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "15px",
+              transform: "translateY(-50%)",
+              color: "#000",
+              fontSize: "1.2rem",
+              zIndex: 2,
+            }}
+          />
+
+          {/* Vertical Divider */}
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "40px",
+              transform: "translateY(-50%)",
+              width: "1px",
+              height: "20px",
+              backgroundColor: "#d4d4d8", // light grey line
+              zIndex: 1,
+            }}
+          ></div>
+
+          {/* Input */}
           <input
             type="text"
-            className="form-control border-start-0"
+            className="form-control"
             placeholder="Search"
             style={{
+              paddingLeft: "2.8rem",
               fontSize: "0.9rem",
               backgroundColor: "#f8f8fb",
-              borderRadius: "0.5rem",
+              border: "1px solid #e4e7ec",
+              borderRadius: "6px",
+              color: "#7f8399",
             }}
           />
         </div>
 
-        {/* Bell icon */}
+        {/* Bell Icon */}
         <button
           className="btn d-flex align-items-center justify-content-center"
           style={{
             border: "1px solid #eee",
-            backgroundColor: "#f8f8fb",
-            width: "60px",
+            backgroundColor: "white",
+            width: "50px",
             height: "40px",
             borderRadius: "10px",
           }}
