@@ -8,7 +8,7 @@ const Deals = () => {
     <>
       <PageWrapper>
         <PageHeader title="Deals" />
-       
+       <SearchAndPagination />
       </PageWrapper>
     </>
   );
