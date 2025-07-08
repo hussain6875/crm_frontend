@@ -15,21 +15,27 @@ const Dashboard = () => {
         className="bg-light min-vh-100"
         style={{
           marginLeft: "110px",
-          paddingTop: "90px",
+          paddingTop: "100px",
         }}
       >
         <div className="container-fluid px-4">
+          {/* Summary Cards */}
           <SummaryCards />
 
+          {/* Charts Section */}
           <div className="row g-4 mb-4">
-            <div className="col-lg-6">
+            {/* Conversion Chart: 1/3 on xl screens, full width below */}
+            <div className="col-12 col-xl-4 mb-4">
               <ConversionChart />
             </div>
-            <div className="col-lg-6">
+
+            {/* Sales Report: 2/3 on xl screens, full width below */}
+            <div className="col-12 col-xl-8 mb-4">
               <SalesReport />
             </div>
           </div>
 
+          {/* Team Performance Table */}
           <div className="mb-4">
             <TeamPerformance />
           </div>
