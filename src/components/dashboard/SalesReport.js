@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
@@ -19,7 +19,7 @@ const SalesReport = () => {
   ];
 
   const maxValue = 10000;
-  const chartHeight = 350;
+  const chartHeight = 500;
   const yAxisValues = [10000, 5000, 1000, 500, 200, 0];
 
   const formatCurrency = (value) => `$${value.toLocaleString()}`;
@@ -54,6 +54,23 @@ const SalesReport = () => {
           visibility: visible;
           opacity: 1;
         }
+
+        .sales-card {
+          width: 100%;
+          margin: 0;
+        }
+
+        @media (max-width: 768px) {
+          .bar-inner {
+            width: 14px !important;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .bar-inner {
+            width: 10px !important;
+          }
+        }
       `;
       style.setAttribute("data-saleschart-tooltip", "true");
       document.head.appendChild(style);
@@ -61,20 +78,11 @@ const SalesReport = () => {
   }, []);
 
   return (
-    <div
-      className="card shadow-sm h-100"
-      style={{ width: "1000px", marginLeft: "-340px" }}
-    >
+    <div className="card shadow-sm h-100 sales-card">
       {/* Header */}
-      <div
-        className="card-header bg-white border-0 d-flex justify-content-between align-items-center"
-        style={{ marginTop: "20px" }}
-      >
+      <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-3">
         <h5 className="mb-0 fw-bold text-dark">Sales Reports</h5>
-        <select
-          className="form-select form-select-sm"
-          style={{ width: "120px" }}
-        >
+        <select className="form-select form-select-sm w-auto">
           <option>Monthly</option>
           <option>Quarterly</option>
           <option>Yearly</option>
@@ -83,10 +91,7 @@ const SalesReport = () => {
 
       {/* Chart */}
       <div className="card-body pt-3">
-        <div
-          className="d-flex"
-          style={{ height: chartHeight, marginTop: "30px" }}
-        >
+        <div className="d-flex" style={{ height: chartHeight }}>
           {/* Y-axis */}
           <div
             className="d-flex flex-column align-items-end pe-8 justify-content-between"
@@ -126,9 +131,10 @@ const SalesReport = () => {
                   >
                     {/* Secondary bar */}
                     <div
+                      className="bar-inner"
                       style={{
                         height: `${secondaryHeight}px`,
-                        width: "24px",
+                        width: "18px",
                         borderRadius: "6px",
                         background: "linear-gradient(to top, #EDE9FE, #DDD6FE)",
                         position: "absolute",
@@ -140,9 +146,10 @@ const SalesReport = () => {
                     />
                     {/* Primary bar */}
                     <div
+                      className="bar-inner"
                       style={{
                         height: `${primaryHeight}px`,
-                        width: "24px",
+                        width: "18px",
                         borderRadius: "6px",
                         background: "linear-gradient(to top, #7b61ff, #e0d7ff)",
                         position: "absolute",

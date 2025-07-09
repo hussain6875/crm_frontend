@@ -1,5 +1,3 @@
-import React from "react";
-
 const TeamPerformance = () => {
   const teamData = [
     {
@@ -43,7 +41,7 @@ const TeamPerformance = () => {
         style={{
           width: "100%",
           marginLeft: "1px",
-          marginTop: "-20px",
+          marginTop: "-50px",
         }}
       >
         <div className="d-flex justify-content-between align-items-center mb-4">
