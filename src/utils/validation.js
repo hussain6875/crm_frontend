@@ -40,18 +40,19 @@ export function validateRegisterForm(values) {
 export function validateLoginForm(values) {
   const errors = {};
 
-  // Email validation
-  if (!values.email.trim()) {
-    errors.email = "Email is required";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-    errors.email = "Please enter a valid email address";
+  const email = values.email.trim();
+  const password = values.password.trim();
+
+  if (!email) {
+    errors.email = 'Email is required';
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errors.email = 'Please enter a valid email address';
   }
 
-  // Password validation
-  if (!values.password.trim()) {
-    errors.password = "Password is required";
-  } else if (values.password.length < 8) {
-    errors.password = "Password must be at least 8 characters long";
+  if (!password) {
+    errors.password = 'Password is required';
+  } else if (password.length < 8) {
+    errors.password = 'Password must be at least 8 characters long';
   }
 
   return errors;

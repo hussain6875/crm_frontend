@@ -228,7 +228,7 @@ const RegisterForm = () => {
               className="text-primary"
               role="button"
               style={{ cursor: "pointer" }}
-              onClick={() => navigate("")}
+              onClick={() => navigate("/")}
             >
               Login
             </span>

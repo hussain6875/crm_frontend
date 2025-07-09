@@ -5,13 +5,14 @@ import Companies from "./pages/Companies";
 import Deals from "./pages/Deals";
 import Tickets from "./pages/Tickets";
 import Register from "./pages/Register";
+import Login from "./pages/Login";
 
 function App() {
   return (
     <Router>
       <Routes>
-
-          <Route path="/" element={<Register />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/leads" element={<Leads />} />
         <Route path="/companies" element={<Companies />} />
