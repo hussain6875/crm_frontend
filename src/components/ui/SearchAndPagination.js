@@ -1,5 +1,6 @@
 import React from 'react'
 import { FaSearch } from 'react-icons/fa'
+import { useState } from 'react';
 
 export default function SearchAndPagination() {
   const [activePage, setActivePage] = React.useState(1);
@@ -8,17 +9,18 @@ export default function SearchAndPagination() {
   };
 
   return (
-     <div
-          className="bg-white rounded-top d-flex flex-nowrap align-items-center"
+  
+     <div className="bg-white rounded-top d-flex flex-nowrap align-items-center"
           style={{
             width: "95%",
             margin: "20px",
             height: "10%",
-            justifyContent: "space-between",          }}
+            justifyContent: "space-between"
+          }}
         >
  <div className="d-flex align-items-center bg-white p-3 rounded mb-3 shadow-sm w-100 margin-2px">
   {/* Search Input */}
-  <div className="position-relative" style={{ width: '280px', margin:"10px" }}>
+  <div  style={{ width: '280px', margin:"10px" }}>
     <FaSearch className="position-absolute top-50 start-0 translate-middle-y ms-2 text-gray-300" />
     <input
       type="text"
