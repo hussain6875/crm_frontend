@@ -1,0 +1,22 @@
+.pencil {
+  color: #4338ca;
+  border-color: #4338ca;
+}
+.tableHead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.tableHead th {
+  background-color: #4338ca;
+}
+.tableBody td,
+.tableHead th {
+  outline: none;
+  font-size: 0.85rem;
+}
+.dropdown {
+  max-height: 35vh;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}

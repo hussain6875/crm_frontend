@@ -1,0 +1,21 @@
+label {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+.title {
+  font-size: 1rem;
+}
+.close {
+  color: #4338ca;
+  border-color: #4338ca;
+}
+.close:hover {
+  background-color: #4338ca;
+  color: white;
+}
+.save {
+  background-color: #4338ca;
+}
+.save:hover {
+  background-color: rgb(38, 33, 95);
+}
