@@ -8,6 +8,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import TicketsRow from "../components/tickets/TicketsRow";
 import TicketTable from "../components/tickets/TicketTable";
 import CreateTicket from "../components/tickets/CreateTicket";
+import { Offcanvas } from "bootstrap";
 
 const Tickets = () => {
   const dateRef = useRef(null);
@@ -58,6 +59,12 @@ const Tickets = () => {
     );
   });
 
+  const handleCreateClick = () => {
+    const offcanvasEl = document.getElementById("createTicket");
+    const bsOffcanvas = new Offcanvas(offcanvasEl);
+    bsOffcanvas.show();
+  };
+
   const handleCreateDateButton = () => {
     if (dateRef.current) {
       dateRef.current.showPicker();
@@ -67,7 +74,7 @@ const Tickets = () => {
   return (
     <>
       <PageWrapper>
-        <PageHeader title="Tickets" offCanvasId={"createTicket"} />
+        <PageHeader title="Tickets" onCreateClick={handleCreateClick} />
         <CreateTicket />
         <SearchAndPagination />
         <div
