@@ -1,0 +1,135 @@
+.dealPageWrapper {
+  padding:15px;
+  font-family: Arial, sans-serif;
+  background-color:white;
+}
+
+.dealHeader .breadCrumb {
+  font-size: 15px;
+  color:black;
+}
+
+.dealTitle {
+  margin: 5px 0;
+  font-size:15px;
+
+}
+
+
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.tab {
+  margin-right: 20px;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+}
+
+.tab:hover,
+.tab:first-child {
+  border-color: #5a4fcf;
+  color: #5a4fcf;
+}
+
+.deal-content {
+  display: flex;
+  gap: 20px;
+}
+
+.dealpagewrapper,
+.right-panel {
+  flex: 1;
+  }
+  .right-panel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.centerpanel {
+  flex: 2;
+}
+
+.quick-actions button {
+  margin: 5px;
+  padding: 8px 10px;
+  background-color: #f0f0ff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.aboutDeal {
+  background: white; 
+  margin-top: 15px; 
+ }
+
+.activity-card {
+  background: #fff;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.05);
+  margin-bottom: 10px;
+}
+
+.meta-note {
+  font-size: 12px;
+  color: gray;
+  margin-top: 10px;
+}
+
+.summarybox,
+.attachments {
+  background: white;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #5a4fcf;
+  border-radius: 6px;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.add-attachment {
+  margin-top: 5px;
+  background: transparent;
+  border: none;
+  color: #5a4fcf;
+  cursor: pointer;
+}
+
+.searchbox {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9fc;
+  border: 1px solid #e1e3ea;
+  padding: 8px 12px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.search-icon {
+  color: #6c757d;
+  margin-right: 8px;
+}
+
+.searchInput {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+ul li{
+  list-style: none;
+}
+ul li a {
+  text-decoration:none;
+  color: #5a4fcf;
+}

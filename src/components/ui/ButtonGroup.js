@@ -1,6 +1,7 @@
 import React from "react";
 
-export default function ButtonGroup() {
+
+export default function ButtonGroup({ onCreateClick }) {
   return (
     <div
       className="d-flex"
@@ -15,7 +16,7 @@ export default function ButtonGroup() {
       </button>
       <button
         className={`btn btn-primary me-2`}
-        onclick={onclick}
+        onClick={onCreateClick}
         style={{
           width: "120px",
           backgroundColor: "#6c63ff",

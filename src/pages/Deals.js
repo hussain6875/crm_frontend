@@ -3,17 +3,21 @@ import PageHeader from "../components/ui/PageHeader";
 import SearchAndPagination from "../components/ui/SearchAndPagination";
 import Filters from "../components/deals/Filters"
 import DealsTable from "../components/deals/DealsTable"
+import CreateDeal from '../components/deals/CreateDeal'
 import { useState } from "react";
 const Deals = () => {
    const [selectedOwner,setSelectedOwner]=useState("");
   const [selectedStage,setSelectedStage]=useState("");
   const [createdDate,setCreatedDate]=useState("");
   const [closedDate,setClosedDate]=useState("");
+  const [showModal,setShowModal]=useState(false);
+  const openModal=()=>setShowModal(true);
+  const closeModal = ()=>setShowModal(false);
   return (
     <>
       <PageWrapper>
-        <PageHeader title="Deals" />
-       <SearchAndPagination />
+        <PageHeader title="Deals" onCreateClick={openModal} />
+        <SearchAndPagination />
         <div
              className="bg-white d-flex flex-column"
              style={{
@@ -38,7 +42,8 @@ const Deals = () => {
        setClosedDate={setClosedDate}
        />
             <DealsTable />
-           </div>
+            </div>
+             <CreateDeal isOpen={showModal} onClose={closeModal} />
 
 
       </PageWrapper>

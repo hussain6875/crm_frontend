@@ -2,7 +2,8 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
-
+import styles from "./deals.module.css";
+import { Link } from "react-router-dom";
 export default function DealsTable() {
   const deals = [
     {
@@ -11,7 +12,7 @@ export default function DealsTable() {
       closeDate: "Apr 8,2025",
       owner: "Jane Cooper",
       amount: "$12,500",
-    },
+          },
     {
       name: "Website Revamp-Atlas corp",
       stage: "Presentation Scheduled",
@@ -42,13 +43,10 @@ export default function DealsTable() {
     },
   ];
   return (
-    <table className="table table-hover align-middle" style={{
-    border: "1px solid #dee2e6",
-    borderCollapse: "separate",
-    borderRadius: "6px",
-  }}>
-      <thead style={{ backgroundColor: "6c63ff" }}>
-        <tr style={{ backgroundColor: "6c63ff" }}>
+    <table className={`table  table-hover`}>
+      {" "}
+      <thead>
+        <tr>
           <th scope="col">
             <input type="checkbox" />
           </th>
@@ -72,11 +70,13 @@ export default function DealsTable() {
             <td>{deal.owner}</td>
             <td>{deal.amount}</td>
             <td style={{ textAlign: "center" }}>
-              <FaEye
-                role="button"
-                className="text-info me-2"
-                title="View Details"
-              />
+              <Link to="/dealdetails" state={{deal}}>            
+                <FaEye
+                  role="button"
+                  className="text-info me-2"
+                  title="View Details"
+                />
+              </Link>
             </td>
           </tr>
         ))}
