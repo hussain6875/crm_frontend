@@ -3,7 +3,6 @@ import { useState } from "react";
 import styles from "./createModal.module.css";
 import { MdOutlineSave } from "react-icons/md";
 
-
 export default function CreateNote({ isOpen, onClose, onSave }) {
   const [notes, setNotes] = useState("");
   const handleSubmit = (e) => {
@@ -31,31 +30,59 @@ export default function CreateNote({ isOpen, onClose, onSave }) {
         </div>
 
         <div className="drawer-body p-4">
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label className="form-label">
-                Note <span style={{ color: "red" }}> *</span>
+          <form
+            onSubmit={handleSubmit}
+            className="d-flex flex-column justify-content-between"
+            style={{ height: "80vh" }}
+          >
+            <div className={styles.formgroup}>
+              <label>
+                Note <span>*</span>
               </label>
-             
-              <textarea
-                id="note"
-                name="note"
-                rows="6"
-                placeholder="Enter"
-                 onChange={(e) => setNotes(e.target.value)} //  update state
-                class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              ></textarea>
-             
+              <div className="form-control px-0">
+                <span className="mx-2">
+                  Normal Text <i className="bi bi-chevron-down ms-1"></i>
+                </span>
+                <span className="mx-2">
+                  <i className="bi bi-type-bold"></i>
+                </span>
+                <span className="mx-2">
+                  <i className="bi bi-type-italic"></i>
+                </span>
+                <span className="mx-2">
+                  <i className="bi bi-type-underline"></i>
+                </span>
+                <span className="mx-2">
+                  <i className="bi bi-list-ul"></i>
+                </span>
+                <span className="mx-2">
+                  <i className="bi bi-list-ol"></i>
+                </span>
+                <span className="mx-2">
+                  <i className="bi bi-image"></i>
+                </span>
+                <hr className="my-1" />
+                <div className="mx-2">
+                  <textarea
+                    id="note"
+                    name="note"
+                    onChange={(e) => setNotes(e.target.value)} //  update state
+                    rows={6}
+                    placeholder="Enter"
+                    className={`${styles.emailInput} d-block border-0 w-100`}
+                  ></textarea>
+                </div>
+              </div>
             </div>
-            <div className="d-flex justify-content-end gap-2">
+            <div className="w-100 d-flex justify-content-between gap-3">
               <button
                 type="button"
-                className="btn btn-outline-secondary"
+                className="btn btn-outline-secondary w-100"
                 onClick={onClose}
               >
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary">
+              <button type="submit" className="btn btn-primary w-100">
                 Save
               </button>
             </div>

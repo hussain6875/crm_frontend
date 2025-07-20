@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import PageWrapper from "../components/layout/PageWrapper";
 import styles from "./dealdetails.module.css";
 import { FaSearch } from "react-icons/fa";
-import queryString from "query-string";
+// import queryString from "query-string";
 import Activity from "../components/tabs/Activity";
 import Calls from "../components/tabs/Calls";
 import Emails from "../components/tabs/Emails";
@@ -22,11 +22,10 @@ export default function DealDetails() {
   const location = useLocation();
   const navigate = useNavigate();
   const [showNoteModal, setShowNoteModal] = useState(false);
-  const [showEmailModal,setShowEmailModal] = useState(false);
-  const [showCallModal,setShowCallModal] = useState(false);
-  const [showTaskModal,setShowTaskModal] = useState(false);
-  const [showMeetingModal,setShowMeetingModal] = useState(false);
-
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showCallModal, setShowCallModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [showMeetingModal, setShowMeetingModal] = useState(false);
 
   //Saving note content
   const handleSave = (noteContent) => {
@@ -53,7 +52,9 @@ export default function DealDetails() {
   const openMeetingModal = () => setShowMeetingModal(true);
   const closeMeetingModal = () => setShowMeetingModal(false);
 
-  const { tab = "activity" } = queryString.parse(location.search);
+  // const { tab = "activity" } = queryString.parse(location.search);
+  const params = new URLSearchParams(location.search);
+  const tab = params.get("tab") || "activity";
 
   const handleTabChange = (tabName) => {
     navigate(`?tab=${tabName}`);
@@ -68,13 +69,13 @@ export default function DealDetails() {
       case "notes":
         return <Notes onCreateClick={openNoteModal} />;
       case "emails":
-        return <Emails onCreateClick={openEmailModal}/>;
+        return <Emails onCreateClick={openEmailModal} />;
       case "calls":
-        return <Calls onCreateClick={openCallModal}/>;
+        return <Calls onCreateClick={openCallModal} />;
       case "tasks":
-        return <Tasks onCreateClick={openTaskModal}/>;
+        return <Tasks onCreateClick={openTaskModal} />;
       case "meetings":
-        return <Meetings onCreateClick={openMeetingModal}/>;
+        return <Meetings onCreateClick={openMeetingModal} />;
       default:
         return null;
     }
@@ -228,18 +229,29 @@ export default function DealDetails() {
             </div>
           </div>
         </div>
-        {setShowNoteModal &&  (<CreateNote
-          isOpen={showNoteModal}
-          onClose={closeNoteModal}
-          onSave={handleSave}
-        />)}
-       {setShowEmailModal &&(<CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} />)}
-       {setShowCallModal &&(<CreateCall isOpen={showCallModal} onClose={closeCallModal} />)}
-       {setShowTaskModal &&(<CreateTask isOpen={showTaskModal} onClose={closeTaskModal} />)}
-       {setShowMeetingModal && (<CreateMeeting isOpen={showMeetingModal} onClose={closeMeetingModal} />)}
-
+        {setShowNoteModal && (
+          <CreateNote
+            isOpen={showNoteModal}
+            onClose={closeNoteModal}
+            onSave={handleSave}
+          />
+        )}
+        {setShowEmailModal && (
+          <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} />
+        )}
+        {setShowCallModal && (
+          <CreateCall isOpen={showCallModal} onClose={closeCallModal} />
+        )}
+        {setShowTaskModal && (
+          <CreateTask isOpen={showTaskModal} onClose={closeTaskModal} />
+        )}
+        {setShowMeetingModal && (
+          <CreateMeeting
+            isOpen={showMeetingModal}
+            onClose={closeMeetingModal}
+          />
+        )}
       </PageWrapper>
-        
     </>
   );
 }
