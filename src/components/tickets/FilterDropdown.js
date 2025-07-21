@@ -2,21 +2,6 @@ import styles from "./ticket.module.css";
 
 const FilterDropdown = ({ label, value, options, onChange }) => {
   return (
-<<<<<<< HEAD
-    <div>
-      <select
-        className={`form-select form-select-sm ${styles.dropdown}`}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        <option value="">{label}</option>
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-=======
     <div className="position-relative">
       <div className="dropdown-center position-relative">
         <button
@@ -54,7 +39,6 @@ const FilterDropdown = ({ label, value, options, onChange }) => {
           ))}
         </ul>
       </div>
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
     </div>
   );
 };

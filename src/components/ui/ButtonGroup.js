@@ -10,11 +10,6 @@ export default function ButtonGroup({ createTarget }) {
     }
   };
 
-<<<<<<< HEAD
-
-export default function ButtonGroup({ onCreateClick }) {
-=======
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
   return (
     <div
       className="d-flex"
@@ -29,11 +24,7 @@ export default function ButtonGroup({ onCreateClick }) {
       </button>
       <button
         className={`btn btn-primary me-2`}
-<<<<<<< HEAD
-        onClick={onCreateClick}
-=======
         onClick={handleCreateClick}
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
         style={{
           width: "120px",
           backgroundColor: "#6c63ff",
