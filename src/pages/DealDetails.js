@@ -3,7 +3,18 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import PageWrapper from "../components/layout/PageWrapper";
 import styles from "./dealdetails.module.css";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch,  FaArrowLeft,
+  FaPen,
+  FaEnvelope,
+  FaPhone,
+  FaCheckSquare,
+  FaCalendarAlt,
+  FaStickyNote,
+  FaPlus,
+  FaChevronDown,
+  FaChevronRight,
+  FaStar,
+  FaClock } from "react-icons/fa";
 import queryString from "query-string";
 import Activity from "../components/tabs/Activity";
 import Calls from "../components/tabs/Calls";
@@ -26,6 +37,7 @@ export default function DealDetails() {
   const [showCallModal,setShowCallModal] = useState(false);
   const [showTaskModal,setShowTaskModal] = useState(false);
   const [showMeetingModal,setShowMeetingModal] = useState(false);
+  const [isAttachmentOpen,setIsAttachmentOpen]=useState(false);
 
 
   //Saving note content
@@ -97,7 +109,14 @@ export default function DealDetails() {
           <div className={`${styles.dealPageWrapper}`}>
             {/* Breadcrumb + Title */}
             <div className={`${styles.dealHeader}`}>
-              <span className={`${styles.breadCrumb}`}>&lt; Deals</span>
+              <button
+            className="btn btn-link text-decoration-none text-secondary fw-semibold mb-3 p-0"
+            onClick={() => navigate("/Deals")}
+          >
+            <FaArrowLeft className="me-2" />
+            Deals
+          </button>
+
               <h2 className={`${styles.dealTitle}`}>
                 <strong>Website Revamp-Atlas corp</strong>
               </h2>
@@ -118,12 +137,35 @@ export default function DealDetails() {
                 <span style={{ color: "#5A32EA", fontSize: "14px" }}>▼</span>
               </div>
             </div>
-
+            {/* //panel */}
+             <div className="d-flex flex-nowrap gap-3 mb-4 bg-light rounded-2" style={{padding:"10px"}}>
+            {[
+              { icon: FaStickyNote, label: "Note" },
+              { icon: FaEnvelope, label: "Email" },
+              { icon: FaPhone, label: "Call" },
+              { icon: FaCheckSquare, label: "Task" },
+              { icon: FaCalendarAlt, label: "Meeting" }
+            ].map(({ icon: Icon, label }, idx) => (
+              <div
+                key={idx}
+                className="text-center"
+                style={{ cursor: "pointer" }}
+              >
+                <div className="border p-2 rounded text-primary">
+                  <Icon />
+                </div>
+                <p className="small mt-2 mb-0">{label}</p>
+              </div>
+            ))}
+          </div>
             <div
               style={{ borderTop: "1px solid #dee2e6", paddingTop: "10px" }}
               className={`${styles.aboutDeal} d-flex flex-column justify-content-around`}
             >
+              <div className="d-flex justify-content-between">
               <h4>About this Deal</h4>
+               <FaPen className="text-primary" />
+               </div>
               <span>Deal Owner</span>
               <p>
                 <strong>Jane Cooper</strong>
@@ -153,7 +195,7 @@ export default function DealDetails() {
               <ul class="nav nav-underline">
                 <li class="nav-item">
                   <a
-                    className={`nav-link ${tab === "activity" ? "active" : ""}`}
+                    className={`nav-link ${tab === "activity" ? "active" : ""} ${styles.customlink}`}
                     onClick={() => handleTabChange("activity")}
                   >
                     Activity
@@ -161,7 +203,7 @@ export default function DealDetails() {
                 </li>
                 <li class="nav-item">
                   <a
-                    className={`nav-link ${tab === "notes" ? "active" : ""}`}
+                    className={`nav-link ${tab === "notes" ? "active" : ""}${styles.customlink}`}
                     onClick={() => handleTabChange("notes")}
                   >
                     Notes
@@ -169,7 +211,7 @@ export default function DealDetails() {
                 </li>
                 <li class="nav-item">
                   <a
-                    className={`nav-link ${tab === "emails" ? "active" : ""}`}
+                    className={`nav-link ${tab === "emails" ? "active" : ""} ${styles.customlink}`}
                     onClick={() => handleTabChange("emails")}
                   >
                     Emails
@@ -177,7 +219,7 @@ export default function DealDetails() {
                 </li>
                 <li class="nav-item">
                   <a
-                    className={`nav-link ${tab === "calls" ? "active" : ""}`}
+                    className={`nav-link ${tab === "calls" ? "active" : ""} ${styles.customlink}`}
                     onClick={() => handleTabChange("calls")}
                   >
                     Calls
@@ -185,7 +227,7 @@ export default function DealDetails() {
                 </li>
                 <li class="nav-item">
                   <a
-                    className={`nav-link ${tab === "tasks" ? "active" : ""}`}
+                    className={`nav-link ${tab === "tasks" ? "active" : ""} ${styles.customlink}`}
                     onClick={() => handleTabChange("tasks")}
                   >
                     Tasks
@@ -193,7 +235,7 @@ export default function DealDetails() {
                 </li>
                 <li class="nav-item">
                   <a
-                    className={`nav-link ${tab === "meetings" ? "active" : ""}`}
+                    className={`nav-link ${tab === "meetings" ? "active" : ""} ${styles.customlink}`}
                     onClick={() => handleTabChange("meetings")}
                   >
                     Meetings
@@ -205,28 +247,41 @@ export default function DealDetails() {
           </div>
 
           {/* Right Panel */}
-          <div className="right-panel">
-            <div
-              style={{ backgroundColor: "" }}
-              className={`${styles.summarybox} border rounded p-3`}
-            >
-              <h5>🧠 AI Deal Summary</h5>
-              <p
-                style={{ wordBreak: "break-word", overflowWrap: "break-word" }}
-              >
-                There are no activities .
-              </p>
-            </div>
-            <div className="attachments d-flex">
-              <div>
-                <strong>📎 Attachments</strong>
-                <p>See the files attached</p>
-              </div>
-              <button style={{ float: "right" }} className="add-attachment">
-                + Add
-              </button>
-            </div>
+          <div className={styles.rightpanel}>
+         
+          <div className="bg-light p-3 rounded mb-3">
+            <strong>
+              <FaStar className="text-primary me-2" />
+              AI Company Summary
+            </strong>
+            <p className="text-muted small mt-2">
+              There are no activities associated with this company. Further details are needed to provide a comprehensive summary.
+            </p>
           </div>
+           <div>
+            <div className="d-flex align-items-center">
+              <div
+                onClick={() => setIsAttachmentOpen(!isAttachmentOpen)}
+                style={{ cursor: "pointer" }}
+              >
+                {isAttachmentOpen ? (
+                  <FaChevronDown className="me-2 small" />
+                ) : (
+                  <FaChevronRight className="me-2 small" />
+                )}
+                <strong>Attachments</strong>
+              </div>
+              <span className="ms-auto text-primary" style={{ cursor: "pointer" }}>
+                <FaPlus className="me-1" /> Add
+              </span>
+            </div>
+            {isAttachmentOpen && (
+              <p className="text-muted small mt-2">
+                See the files attached to your activities or uploaded to this record.
+              </p>
+            )}
+          </div>
+         
         </div>
         {setShowNoteModal &&  (<CreateNote
           isOpen={showNoteModal}
@@ -237,7 +292,7 @@ export default function DealDetails() {
        {setShowCallModal &&(<CreateCall isOpen={showCallModal} onClose={closeCallModal} />)}
        {setShowTaskModal &&(<CreateTask isOpen={showTaskModal} onClose={closeTaskModal} />)}
        {setShowMeetingModal && (<CreateMeeting isOpen={showMeetingModal} onClose={closeMeetingModal} />)}
-
+</div>
       </PageWrapper>
         
     </>

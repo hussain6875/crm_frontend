@@ -22,11 +22,7 @@ export default function CreateMeeting({isOpen,onClose}) {
             <label>
               Start Date <span>*</span>
               <input type="date" />
-            </label>
-            <label>
-              End Time <span>*</span>
-              <input type="time" />
-            </label>
+            </label>            
           </div>
 
           <div className={styles.row}>

@@ -41,11 +41,11 @@
   gap: 20px;
 }
 
-.dealpagewrapper,
-.right-panel {
+.dealPageWrapper,
+.rightpanel {
   flex: 1;
   }
-  .right-panel {
+  .rightpanel {
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -126,10 +126,31 @@
   font-size: 14px;
   color: #333;
 }
-ul li{
+/* ul li{
   list-style: none;
+  color: black;
 }
 ul li a {
-  text-decoration:none;
-  color: #5a4fcf;
+  
+  color: black;
+  text-decoration: underline;
+  text-decoration-color: #5a4fcf;
+} */
+
+.customlink{
+  color: black !important; /* Override Bootstrap's blue */
+
+
+}
+/* Optional: Keep it the same on hover */
+.customlink:hover {
+  color: black !important;
+
+}
+
+/* Optional: active state */
+.customlink.active {
+  color: black !important;
+
+  font-weight: 600;
 }

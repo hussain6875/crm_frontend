@@ -4,7 +4,7 @@ import Leads from "./pages/Leads";
 import Companies from "./pages/Companies";
 import Deals from "./pages/Deals";
 import Tickets from "./pages/Tickets";
-import TicketDetails from "./pages/TicketDetails";
+//import TicketDetails from "./pages/TicketDetails";
 import DealDetails from "./pages/DealDetails";
 
 function App() {
