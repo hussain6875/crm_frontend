@@ -28,12 +28,12 @@ const TicketTable = ({ tickets, selectedTickets, setSelectedTickets }) => {
             <td>{ticket.owner}</td>
             <td>{ticket.createdDate}</td>
             <td>
-              <button
+              {/* <button
                 className="btn btn-sm me-2"
                 // onClick={handleEditButton}
               >
                 <i className={`bi bi-pencil-fill ${styles.pencil}`}></i>
-              </button>
+              </button> */}
               <Link className="btn btn-sm" to={`/tickets/${ticket.id}/details`}>
                 <i className="bi bi-eye-fill text-danger"></i>
               </Link>

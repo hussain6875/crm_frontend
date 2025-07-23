@@ -1,24 +1,95 @@
 import React, { useEffect, useState } from "react";
 import PageWrapper from "../components/layout/PageWrapper";
 import styles from "../components/tickets/details.module.css";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import mockTickets from "../components/tickets/Tickets";
+import EditTicket from "../components/tickets/EditTicket";
+import { Offcanvas } from "bootstrap";
+import Activity from "../components/tabs/Activity";
+import Notes from "../components/tabs/Notes";
+import Emails from "../components/tabs/Emails";
+import Calls from "../components/tabs/Calls";
+import Tasks from "../components/tabs/Tasks";
+import Meetings from "../components/tabs/Meetings";
 
 const TicketDetails = () => {
   const [ticket, setTicket] = useState({});
-  const [ticketStatus, setTicketStatus] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isAttachmentOpen, setIsAttachmentOpen] = useState(true);
   const [hasOption, setHasOption] = useState("Activity");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showNoteModal, setShowNoteModal] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showCallModal, setShowCallModal] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [showMeetingModal, setShowMeetingModal] = useState(false);
 
   const navigate = useNavigate();
-  const params = useParams();
-  const { ticketId } = params;
+  const paramsId = useParams();
+  const location = useLocation();
+  const { ticketId } = paramsId;
   const tickets = mockTickets;
+
+  //Saving note content
+  const handleSave = (noteContent) => {
+    console.log("Note saved:", noteContent);
+    setShowNoteModal(false);
+  };
+  //methods to update notes modal
+  const openNoteModal = () => setShowNoteModal(true);
+  const closeNoteModal = () => setShowNoteModal(false);
+
+  //methods to update email modal
+  const openEmailModal = () => setShowEmailModal(true);
+  const closeEmailModal = () => setShowEmailModal(false);
+
+  //methods to update call modal
+  const openCallModal = () => setShowCallModal(true);
+  const closeCallModal = () => setShowCallModal(false);
+
+  //methods to update Task modal
+  const openTaskModal = () => setShowTaskModal(true);
+  const closeTaskModal = () => setShowTaskModal(false);
+
+  //methods to update Meeting modal
+  const openMeetingModal = () => setShowMeetingModal(true);
+  const closeMeetingModal = () => setShowMeetingModal(false);
+
+  // const { tab = "activity" } = queryString.parse(location.search);
+  const params = new URLSearchParams(location.search);
+  const tab = params.get("tab") || "activity";
+
+  const handleTabChange = (tabName) => {
+    navigate(`?tab=${tabName}`);
+  };
+
+  const renderTabContent = () => {
+    switch (tab) {
+      case "activity":
+        return <Activity />;
+      case "notes":
+        return <Notes onCreateClick={openNoteModal} />;
+      case "emails":
+        return <Emails onCreateClick={openEmailModal} />;
+      case "calls":
+        return <Calls onCreateClick={openCallModal} />;
+      case "tasks":
+        return <Tasks onCreateClick={openTaskModal} />;
+      case "meetings":
+        return <Meetings onCreateClick={openMeetingModal} />;
+      default:
+        return null;
+    }
+  };
 
   const handleBackToTickets = () => {
     navigate("/tickets");
+  };
+
+  const handleEdit = () => {
+    const offcanvasEl = document.getElementById("editTicket");
+    const bsOffcanvas = new Offcanvas(offcanvasEl);
+    bsOffcanvas.show();
   };
 
   const handleAboutTicket = () => {
@@ -41,7 +112,6 @@ const TicketDetails = () => {
     const ticketDetails = tickets.find((t) => t.id === ticketId);
     if (ticketDetails) {
       setTicket(ticketDetails);
-      setTicketStatus(ticketDetails.status);
     }
   }, [ticketId, tickets]);
 
@@ -81,7 +151,7 @@ const TicketDetails = () => {
                         className={`btn btn-sm ${styles.status}`}
                         onClick={() => setShowDropdown(!showDropdown)}
                       >
-                        {ticketStatus}{" "}
+                        {ticket.status}{" "}
                         <i className="bi bi-caret-down-fill ms-1"></i>
                       </button>
                       {showDropdown && (
@@ -99,7 +169,6 @@ const TicketDetails = () => {
                               <button
                                 className="dropdown-item"
                                 onClick={() => {
-                                  setTicketStatus(status);
                                   setShowDropdown(false);
                                 }}
                               >
@@ -153,7 +222,10 @@ const TicketDetails = () => {
                       ></i>
                       <span className="fw-medium">About this Ticket</span>
                     </div>
-                    <i className="bi bi-pencil-square ms-auto"></i>
+                    <i
+                      className="bi bi-pencil-square ms-auto"
+                      onClick={handleEdit}
+                    ></i>
                   </div>
                   <div className={`${isOpen ? "d-block" : "d-none"}`}>
                     <div className="mb-3">
@@ -189,30 +261,71 @@ const TicketDetails = () => {
                     placeholder="Search activities"
                   />
                 </div>
-                <ul className="nav nav-underline gap-0">
-                  {[
-                    "Activity",
-                    "Notes",
-                    "Emails",
-                    "Calls",
-                    "Tasks",
-                    "Meetings",
-                  ].map((tab, index) => (
-                    <li className={`nav-item`} key={index}>
-                      <button
-                        className={`nav-link link-dark px-2 ${
-                          styles.navHover
-                        } ${
-                          hasOption === tab ? `${styles.middleNav} active` : ""
+                <div style={{ borderBottom: "1px solid #dee2e6" }}>
+                  <ul class="nav nav-underline">
+                    <li class="nav-item">
+                      <a
+                        className={`nav-link ${
+                          tab === "activity" ? "active" : ""
                         }`}
-                        type="button"
-                        onClick={() => setHasOption(tab)}
+                        onClick={() => handleTabChange("activity")}
                       >
-                        {tab}
-                      </button>
+                        Activity
+                      </a>
                     </li>
-                  ))}
-                </ul>
+                    <li class="nav-item">
+                      <a
+                        className={`nav-link ${
+                          tab === "notes" ? "active" : ""
+                        }`}
+                        onClick={() => handleTabChange("notes")}
+                      >
+                        Notes
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        className={`nav-link ${
+                          tab === "emails" ? "active" : ""
+                        }`}
+                        onClick={() => handleTabChange("emails")}
+                      >
+                        Emails
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        className={`nav-link ${
+                          tab === "calls" ? "active" : ""
+                        }`}
+                        onClick={() => handleTabChange("calls")}
+                      >
+                        Calls
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        className={`nav-link ${
+                          tab === "tasks" ? "active" : ""
+                        }`}
+                        onClick={() => handleTabChange("tasks")}
+                      >
+                        Tasks
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        className={`nav-link ${
+                          tab === "meetings" ? "active" : ""
+                        }`}
+                        onClick={() => handleTabChange("meetings")}
+                      >
+                        Meetings
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+
                 <hr className="border mt-0 border-secondary border-opacity-50" />
 
                 {hasOption === "Activity" && (
@@ -312,6 +425,7 @@ const TicketDetails = () => {
           </div>
         </div>
       </PageWrapper>
+      <EditTicket ticket={ticket} onUpdateTicket={setTicket} />
     </>
   );
 };
