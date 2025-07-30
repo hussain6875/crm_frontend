@@ -28,6 +28,7 @@ import { useState } from "react";
 import CreateCall from "../components/tabs/CreateCall";
 import CreateTask from "../components/tabs/CreateTask";
 import CreateMeeting from "../components/tabs/CreateMeeting";
+import CreateEdit from "../components/tabs/CreateEdit";
 
 export default function DealDetails() {
   const location = useLocation();
@@ -80,13 +81,13 @@ export default function DealDetails() {
       case "notes":
         return <Notes onCreateClick={openNoteModal} />;
       case "emails":
-        return <Emails onCreateClick={openEmailModal}/>;
+        return <Emails onCreateClick={openEmailModal} />;
       case "calls":
-        return <Calls onCreateClick={openCallModal}/>;
+        return <Calls onCreateClick={openCallModal} />;
       case "tasks":
-        return <Tasks onCreateClick={openTaskModal}/>;
+        return <Tasks onCreateClick={openTaskModal} />;
       case "meetings":
-        return <Meetings onCreateClick={openMeetingModal}/>;
+        return <Meetings onCreateClick={openMeetingModal} />;
       default:
         return null;
     }
@@ -294,7 +295,6 @@ export default function DealDetails() {
        {setShowMeetingModal && (<CreateMeeting isOpen={showMeetingModal} onClose={closeMeetingModal} />)}
 </div>
       </PageWrapper>
-        
     </>
   );
 }
