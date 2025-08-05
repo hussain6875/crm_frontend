@@ -1,23 +1,35 @@
-import mockData from "../components/leads/mockData";
 import PageWrapper from "../components/layout/PageWrapper";
 import PageHeader from "../components/ui/PageHeader";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import SearchAndPagination from "../components/ui/SearchAndPagination";
 import { Offcanvas } from "bootstrap";
-import CreateLeadDrawer from "../components/leads/CreateLeadDrawer";
+import CreateLead from "../components/leads/CreateLead";
+import { useDispatch, useSelector } from "react-redux";
+import { createLead, fetchLeads } from "../redux/feature/leads/leadsThunks"; // ✅ Correct path here
 
 const Leads = ({ onCreateLead, onViewLead }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
-    const [leads, setLeads] = useState(mockData);
+
+    const dispatch = useDispatch();
+    const leads = useSelector((state) => state.leads.list);
+    const loading = useSelector((state) => state.leads.loading);
+    const error = useSelector((state) => state.leads.error);
+
+    useEffect(() => {
+        dispatch(fetchLeads());
+    }, [dispatch]);
+
+    const handleSaveLead = (newLead) => {
+        dispatch(createLead(newLead)); // ✅ This will go to backend and update Redux state
+    };
 
     const filteredLeads = leads.filter((lead) => {
         const matchesSearch =
             lead.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             lead.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lead.company.toLowerCase().includes(searchTerm.toLowerCase());
+            lead.email.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
 
@@ -25,24 +37,10 @@ const Leads = ({ onCreateLead, onViewLead }) => {
     });
 
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    // const handleCreateClick = () => {
-    //     setIsDrawerOpen(true);
-    // };
 
     const handleCloseDrawer = () => {
         setIsDrawerOpen(false);
     };
-    const handleSaveLead = (newLead) => {
-        const leadWithId = {
-            ...newLead,
-            id: leads.length + 1,
-            createdAt: new Date().toISOString().split("T")[0],
-        };
-        setLeads([...leads, leadWithId]);
-    };
-
-    // const handleOpenDrawer = () => setIsDrawerOpen(true);
-    // const handleCloseDrawer = () => setIsDrawerOpen(false);
 
     const getStatusBadge = (status) => {
         switch (status) {
@@ -70,12 +68,10 @@ const Leads = ({ onCreateLead, onViewLead }) => {
     };
 
     const handleCreateClick = () => {
-  const offcanvasEl = document.getElementById("createLead");
-  const bsOffcanvas = new Offcanvas(offcanvasEl);
-  bsOffcanvas.show();
-};
-
-
+        const offcanvasEl = document.getElementById("createLead");
+        const bsOffcanvas = new Offcanvas(offcanvasEl);
+        bsOffcanvas.show();
+    };
     const handleCreateDateButton = () => {
         if (dateRef.current) {
             dateRef.current.showPicker();
@@ -85,13 +81,11 @@ const Leads = ({ onCreateLead, onViewLead }) => {
     return (
         <>
             <PageWrapper>
-                <PageHeader title="Leads"  offCanvasId="createLead"  onCreateClick={handleCreateClick} />
-                <CreateLeadDrawer onSave={handleSaveLead} />
-
-                 {/* {isDrawerOpen && (
-                    <CreateLeadDrawer isOpen={isDrawerOpen} onClose={handleCloseDrawer} onSave={handleSaveLead} />
-                )}  */}
+                <PageHeader title="Leads" offCanvasId="createLead" onCreateClick={handleCreateClick} />
+                <CreateLead onSave={handleSaveLead} />
                 <SearchAndPagination />
+                {loading && <div className="p-4">Loading leads...</div>}
+                {error && <div className="p-4 text-danger">Error: {error}</div>}
                 <div className="container-fluid p-4">
                     <div className=" gap-3 d-flex ">
                         <div className="col-md-3">
@@ -167,12 +161,9 @@ const Leads = ({ onCreateLead, onViewLead }) => {
                                             <td>{lead.phone}</td>
                                             <td>{lead.createdAt}</td>
                                             <td>
-                                                <span className={getStatusBadge(lead.leadStatus)}>{lead.leadStatus}</span>
+                                                <span className={getStatusBadge(lead.status)}>{lead.leadStatus}</span>
                                             </td>
                                             <td>
-                                                <button className="btn btn-sm me-2">
-                                                    <i className="bi bi-pencil text-primary"></i>
-                                                </button>
                                                 <button className="btn btn-sm ">
                                                     <Link
                                                         to={`/leads/${lead.id}/details`}
