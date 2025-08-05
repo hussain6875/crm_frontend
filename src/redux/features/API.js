@@ -1,0 +1,7 @@
+const basic_api = "http://localhost:5002";
+export const getAllTickets = `${basic_api}/tickets`;
+export const getTicketById = (id) => {
+  return `${basic_api}/tickets/${id}`;
+};
+export const createTicket = `${getAllTickets}/create`;
+export const editTicket = `${getAllTickets}/edit/`;

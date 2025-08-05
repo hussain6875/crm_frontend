@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import mockTickets from "./Tickets";
 import styles from "./createTicket.module.css";
 import { Offcanvas } from "bootstrap";
+import { useDispatch } from "react-redux";
+import { updateTicket } from "../../redux/features/ticketSlice";
 
-const EditTicket = ({ ticket, onUpdateTicket }) => {
+const EditTicket = ({ ticket }) => {
+  const dispatch = useDispatch();
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [ticketStatus, setTicketStatus] = useState("");
@@ -15,20 +18,13 @@ const EditTicket = ({ ticket, onUpdateTicket }) => {
     e.preventDefault();
 
     const updatedTicket = {
-      ...ticket,
       description,
-      status: ticketStatus,
+      ticket_status: ticketStatus,
+      source,
       priority,
     };
 
-    const index = mockTickets.findIndex((t) => t.id === ticket.id);
-    if (index !== -1) {
-      mockTickets[index] = updatedTicket;
-    }
-
-    if (onUpdateTicket) {
-      onUpdateTicket(updatedTicket);
-    }
+    dispatch(updateTicket({ updatedData: updatedTicket, id: ticket.id }));
 
     const offcanvasElement = document.getElementById("editTicket");
     const bsOffcanvas = Offcanvas.getInstance(offcanvasElement);
@@ -118,11 +114,9 @@ const EditTicket = ({ ticket, onUpdateTicket }) => {
                 value={ticketStatus}
                 onChange={(e) => setTicketStatus(e.target.value)}
               >
-                <option value="">Choose</option>
-                <option value="New">New</option>
-                <option value="Waiting on us">Waiting on us</option>
-                <option value="Waiting on contact">Waiting on contact</option>
-                <option value="Closed">Closed</option>
+                <option value="waiting on us">Waiting on us</option>
+                <option value="waiting on contact">Waiting on contact</option>
+                <option value="closed">Closed</option>
               </select>
             </div>
             <div className="col">
@@ -136,12 +130,11 @@ const EditTicket = ({ ticket, onUpdateTicket }) => {
                 id="source"
                 className="form-select form-select-sm"
                 value={source}
-                disabled
+                onChange={(e) => setSource(e.target.value)}
               >
-                <option value="">Choose</option>
-                <option value="Chat">Chat</option>
-                <option value="Email">Email</option>
-                <option value="Phone">Phone</option>
+                <option value="chat">Chat</option>
+                <option value="email">Email</option>
+                <option value="phone">Phone</option>
               </select>
             </div>
           </div>
@@ -159,11 +152,10 @@ const EditTicket = ({ ticket, onUpdateTicket }) => {
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
             >
-              <option value="">Choose</option>
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
-              <option value="Critical">Critical</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
             </select>
           </div>
           <div className="my-3">

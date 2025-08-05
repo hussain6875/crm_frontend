@@ -1,18 +1,20 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PageWrapper from "../components/layout/PageWrapper";
 import FilterDropdown from "../components/tickets/FilterDropdown";
 import PageHeader from "../components/ui/PageHeader";
 import SearchAndPagination from "../components/ui/SearchAndPagination";
-import mockTickets from "../components/tickets/Tickets";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import TicketsRow from "../components/tickets/TicketsRow";
 import TicketTable from "../components/tickets/TicketTable";
 import CreateTicket from "../components/tickets/CreateTicket";
 import { Offcanvas } from "bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTickets } from "../redux/features/ticketSlice";
 
 const Tickets = () => {
   const dateRef = useRef(null);
-  const tickets = mockTickets;
+  const dispatch = useDispatch();
+  const { tickets } = useSelector((state) => state.tickets);
   const [selectedTickets, setSelectedTickets] = useState([]);
   const [selectedDate, setSelectedDate] = useState("");
   const [filters, setFilters] = useState({
@@ -31,6 +33,15 @@ const Tickets = () => {
     return `${dd}-${mm}-${yyyy}`;
   };
 
+  const extractDate = (fullDateStr) => {
+    if (!fullDateStr) return "";
+    const date = new Date(fullDateStr);
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
   const toTitleCase = (str) => {
     return str
       .toLowerCase()
@@ -42,14 +53,15 @@ const Tickets = () => {
   const filteredTickets = tickets.filter((ticket) => {
     let statusMatch = true;
     if (filters.status === "Open") {
-      statusMatch = ticket.status === "New";
-    } else if (filters.status === "in Progress") {
-      statusMatch = ticket.status.startsWith("Waiting");
+      statusMatch = ticket.status === "new";
+    } else if (filters.status === "In Progress") {
+      statusMatch = ticket.status.startsWith("waiting");
     } else if (filters.status === "Resolved") {
-      statusMatch = ticket.status === "Closed";
+      statusMatch = ticket.status === "closed";
     }
-    const formattedDate = formatDate(selectedDate);
-    const dateMatch = !selectedDate || ticket.createdDate === formattedDate;
+    const dateMatch =
+      !selectedDate || extractDate(ticket.createdDate) === selectedDate;
+
     return (
       statusMatch &&
       (!filters.owner || toTitleCase(ticket.owner) === filters.owner) &&
@@ -71,11 +83,15 @@ const Tickets = () => {
     }
   };
 
+  useEffect(() => {
+    dispatch(fetchTickets());
+  }, [dispatch]);
+
   return (
     <>
       <PageWrapper>
         <PageHeader title="Tickets" onCreateClick={handleCreateClick} />
-        <CreateTicket />
+        <CreateTicket onTicketCreated={() => dispatch(fetchTickets())} />
         <SearchAndPagination />
         <div
           className="bg-white rounded-bottom pb-3"
@@ -106,7 +122,7 @@ const Tickets = () => {
                 <FilterDropdown
                   label="Ticket Status"
                   value={filters.status}
-                  options={["Open", "in Progress", "Resolved"]}
+                  options={["Open", "In Progress", "Resolved"]}
                   onChange={(value) =>
                     setFilters({ ...filters, status: value })
                   }
@@ -116,7 +132,7 @@ const Tickets = () => {
                 <FilterDropdown
                   label="Source"
                   value={filters.source}
-                  options={["Chat", "Email", "Phone"]}
+                  options={["chat", "email", "phone"]}
                   onChange={(value) =>
                     setFilters({ ...filters, source: value })
                   }
@@ -126,7 +142,7 @@ const Tickets = () => {
                 <FilterDropdown
                   label="Priority"
                   value={filters.priority}
-                  options={["Low", "Medium", "High", "Critical"]}
+                  options={["low", "medium", "high", "critical"]}
                   onChange={(value) =>
                     setFilters({ ...filters, priority: value })
                   }
@@ -153,7 +169,7 @@ const Tickets = () => {
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
                   className="position-absolute top-0 start-0 opacity-0 w-100 h-100"
-                  style={{ pointerEvents: "none" }}
+                  style={{ opacity: 0, position: "absolute", zIndex: -1 }}
                 />
               </div>
             </div>

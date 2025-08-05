@@ -1,62 +1,75 @@
 import React, { useEffect, useState } from "react";
-import mockTickets from "./Tickets";
 import styles from "./createTicket.module.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { useDispatch, useSelector } from "react-redux";
+import { Offcanvas } from "bootstrap";
+import { createTicketAPI } from "../../redux/features/ticketSlice";
 
-const CreateTicket = () => {
+const CreateTicket = ({ onTicketCreated }) => {
+  const dispatch = useDispatch();
+  const { loading, createMessage, createError } = useSelector(
+    (state) => state.tickets
+  );
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [ticketStatus, setTicketStatus] = useState("");
   const [source, setSource] = useState("");
   const [priority, setPriority] = useState("");
   const [owner, setOwner] = useState("");
-
-  const createNewTicket = (newTicket) => {
-    mockTickets.push(newTicket);
-  };
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const formatDate = () => {
-      const date = new Date();
-      const dd = String(date.getDate()).padStart(2, "0");
-      const mm = String(date.getMonth() + 1).padStart(2, "0");
-      const yyyy = date.getFullYear();
-      return `${dd}-${mm}-${yyyy}`;
-    };
-
     const newTicket = {
-      id: Date.now().toString(),
       name,
       description,
-      status: ticketStatus,
+      ticket_status: ticketStatus,
       priority,
       source,
       owner,
-      createdDate: formatDate(),
     };
+    console.log(newTicket);
+    dispatch(createTicketAPI(newTicket));
+    setSubmitted(true);
+  };
 
-    createNewTicket(newTicket);
-    e.target.reset();
-
-    const offcanvasElement = document.getElementById("createTicket");
-    const bsOffcanvas =
-      window.bootstrap.Offcanvas.getInstance(offcanvasElement);
-    bsOffcanvas?.hide();
+  const resetForm = () => {
+    setName("");
+    setDescription("");
+    setTicketStatus("");
+    setSource("");
+    setPriority("");
+    setOwner("");
   };
 
   useEffect(() => {
-    // optional: reset state when modal opens
+  if (createMessage && submitted) {
+    resetForm();
+
     const offcanvasElement = document.getElementById("createTicket");
-    offcanvasElement?.addEventListener("shown.bs.offcanvas", () => {
-      setName("");
-      setDescription("");
-      setTicketStatus("");
-      setSource("");
-      setPriority("");
-      setOwner("");
-    });
+    let bsOffcanvas = Offcanvas.getInstance(offcanvasElement);
+    if (!bsOffcanvas) {
+      bsOffcanvas = new Offcanvas(offcanvasElement);
+    }
+
+    bsOffcanvas?.hide();
+    onTicketCreated?.();
+    setSubmitted(false);
+  }
+}, [createMessage, submitted]);
+
+  useEffect(() => {
+    const offcanvasElement = document.getElementById("createTicket");
+    const handler = () => {
+      resetForm();
+    };
+    offcanvasElement?.addEventListener("shown.bs.offcanvas", handler);
+
+    return () => {
+      offcanvasElement?.removeEventListener("shown.bs.offcanvas", handler);
+    };
   }, []);
 
   return (
@@ -97,6 +110,7 @@ const CreateTicket = () => {
               id="ticketNameInput"
               placeholder="Enter"
               required
+              value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
@@ -112,6 +126,7 @@ const CreateTicket = () => {
               className="form-control form-control-sm"
               id="descriptionInput"
               placeholder="Enter"
+              value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
@@ -127,11 +142,13 @@ const CreateTicket = () => {
                 id="ticketStatus"
                 className="form-select form-select-sm"
                 required
+                value={ticketStatus}
                 onChange={(e) => setTicketStatus(e.target.value)}
               >
                 <option value="">Choose</option>
-                <option value="New">New</option>
-                <option value="Waiting on us">Waiting on us</option>
+                <option value="new">New</option>
+                <option value="waiting on us">Waiting on us</option>
+                <option value="waiting on contact">Waiting on contact</option>
               </select>
             </div>
             <div className="col">
@@ -145,12 +162,13 @@ const CreateTicket = () => {
                 id="source"
                 className="form-select form-select-sm"
                 required
+                value={source}
                 onChange={(e) => setSource(e.target.value)}
               >
                 <option value="">Choose</option>
-                <option value="Chat">Chat</option>
-                <option value="Email">Email</option>
-                <option value="Phone">Phone</option>
+                <option value="chat">Chat</option>
+                <option value="email">Email</option>
+                <option value="phone">Phone</option>
               </select>
             </div>
           </div>
@@ -165,13 +183,14 @@ const CreateTicket = () => {
               id="priority"
               className="form-select form-select-sm"
               required
+              value={priority}
               onChange={(e) => setPriority(e.target.value)}
             >
               <option value="">Choose</option>
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
-              <option value="Critical">Critical</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
             </select>
           </div>
           <div className="my-3">
@@ -187,6 +206,7 @@ const CreateTicket = () => {
               id="ticketOwnerInput"
               placeholder="Enter"
               required
+              value={owner}
               onChange={(e) => setOwner(e.target.value)}
             />
           </div>
@@ -203,7 +223,7 @@ const CreateTicket = () => {
               className={`${styles.save} btn text-white w-100`}
               type="submit"
             >
-              Save
+              {loading ? "Saving..." : "Save"}
             </button>
           </div>
         </form>
