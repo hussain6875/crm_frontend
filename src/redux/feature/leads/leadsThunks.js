@@ -22,3 +22,15 @@ export const createLead = createAsyncThunk(
     }
   }
 );
+
+export const updateLead = createAsyncThunk(
+  "leads/updateLead",
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const res = await axios.put(`http://localhost:8080/api/leads/${id}`, data);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);

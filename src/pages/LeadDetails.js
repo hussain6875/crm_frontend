@@ -19,7 +19,7 @@ import CreateMeeting from "../components/tabs/CreateMeeting";
 import EditLead from "../components/leads/EditLead";
 import { Offcanvas } from "bootstrap";
 
-const LeadDetails = () => {
+const LeadDetails = (updatedLeadData) => {
     const [lead, setLead] = useState({});
     const [leadStatus, setLeadeStatus] = useState("");
     const [selectedLead, setSelectedLead] = useState(null);
@@ -100,6 +100,7 @@ const LeadDetails = () => {
     const { leadId } = params1;
 
     const handleEdit = () => {
+        setShowEditModal(true); // triggers rendering of EditLead with pre-filled data
         const offcanvasEl = document.getElementById("editLead");
         const bsOffcanvas = new Offcanvas(offcanvasEl);
         bsOffcanvas.show();
@@ -303,6 +304,17 @@ const LeadDetails = () => {
                                     placeholder="Search activities"
                                 />
                             </div>
+                            <button
+        className={`btn btn-primary me-2`}
+        // onClick={}
+        style={{
+          width: "120px",
+          backgroundColor: "#6c63ff",
+          borderColor: "#6c63ff",
+        }}
+      >
+        Convert
+      </button>
                             {/* <ul className="nav nav-underline gap-0">
                 {[
                   "Activity",
@@ -327,13 +339,13 @@ const LeadDetails = () => {
               </ul> */}
 
                             <div style={{ borderBottom: "1px solid #dee2e6" }}>
-                                <ul class="nav nav-underline">
-                                    <li class="nav-item">
+                                <ul className="nav nav-underline">
+                                    <li className="nav-item">
                                         <a
-                                            className={`nav-link ${tab === "activity" ? "active" : ""}`}
+                                            className={`nav-link ${tab === "activity" ? `${styles.middleNav} active`  : ""}`}
                                             onClick={() => handleTabChange("activity")}
                                         >
-                                            {/* <Activity/> */}
+                                            Activity
                                         </a>
                                     </li>
                                     <li class="nav-item">
@@ -344,7 +356,7 @@ const LeadDetails = () => {
                                             Notes
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li className="nav-item">
                                         <a
                                             className={`nav-link ${tab === "emails" ? "active" : ""}`}
                                             onClick={() => handleTabChange("emails")}
@@ -368,7 +380,7 @@ const LeadDetails = () => {
                                             Tasks
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <li className="nav-item">
                                         <a
                                             className={`nav-link ${tab === "meetings" ? "active" : ""}`}
                                             onClick={() => handleTabChange("meetings")}
@@ -478,7 +490,10 @@ const LeadDetails = () => {
                 {setShowTaskModal && <CreateTask isOpen={showTaskModal} onClose={closeTaskModal} />}
                 {setShowMeetingModal && <CreateMeeting isOpen={showMeetingModal} onClose={closeMeetingModal} />} */}
             </PageWrapper>
-            <EditLead lead={lead} onUpdate={setLead} />
+            <EditLead  isOpen={showEditModal}
+  onClose={closeEditModal}
+  onSave={handleUpdateLead}
+  initialData={lead} />
         </>
     );
 };
