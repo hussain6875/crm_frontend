@@ -1,5 +1,8 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import {createDeal} from '../../redux/dealSlice';
+import UserService from '../../services/UserService';
 import styles from './createDeal.module.css'
 
 export default function CreateDeal({isOpen,onClose}) {
@@ -9,19 +12,36 @@ export default function CreateDeal({isOpen,onClose}) {
   const [dealOwner, setDealOwner] = useState('');
   const [closeDate, setCloseDate] = useState('');
   const [priority, setPriority] = useState('');
-   const handleSubmit = (e) => {
+  const[users,setUsers] = useState([]);//stores users data from usersAPI
+  const dispatch = useDispatch();
+   useEffect(() => {
+    if (isOpen) {
+      UserService.getUsers()
+        .then((data) => setUsers(data))
+        .catch((err) => console.error('Error fetching users:', err));
+    }
+  }, [isOpen]);
+   const handleSubmit = async(e) => {
     e.preventDefault();
 
     const newDeal = {
-      dealName,
-      dealStage,
-      amount,
-      dealOwner,
+      name: dealName,
+      stage: dealStage,
+      amount: parseFloat(amount),
+      dealOwner: parseInt(dealOwner),
       closeDate,
       priority,
     };
 
       // TODO: dispatch to Redux, send to backend, etc.
+       try {
+    await dispatch(createDeal(newDeal)).unwrap();
+    alert('Deal created successfully!');
+    onClose(); // Close the drawer
+  } catch (error) {
+    console.error('Failed to create deal:', error);
+    alert('Error creating deal');
+  }
 
     onClose(); // close after submission
   };
@@ -90,9 +110,11 @@ export default function CreateDeal({isOpen,onClose}) {
                 required
               >
                 <option value="">Choose</option>
-                <option value="Jane Cooper">Jane Cooper</option>
-                <option value="Wade Warren">Wade Warren</option>
-                <option value="Guy Hawkins">Guy Hawkins</option>
+               {users.map((user) => (
+                  <option key={user.userId} value={user.userId}>
+                    {user.userName}
+                  </option>
+                ))}
               </select>
             </div>
 

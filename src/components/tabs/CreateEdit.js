@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import styles from "./createModal.module.css";
 
-export default function CreateCall({ isOpen, onClose }) {
+export default function CreateEdit({ isOpen, onClose }) {
      const [dealName, setDealName] = useState('');
       const [dealStage, setDealStage] = useState('');
       const [amount, setAmount] = useState('');

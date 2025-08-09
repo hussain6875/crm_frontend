@@ -1,47 +1,21 @@
-import React from "react";
+import React, {useEffect} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import styles from "./deals.module.css";
 import { Link } from "react-router-dom";
+import { useSelector,useDispatch } from "react-redux";
+import {fetchDeals} from "../../redux/dealSlice";
 export default function DealsTable() {
-  const deals = [
-    {
-      name: "Website Revamp-Atlas corp",
-      stage: "Presentation Scheduled",
-      closeDate: "Apr 8,2025",
-      owner: "Jane Cooper",
-      amount: "$12,500",
-          },
-    {
-      name: "Website Revamp-Atlas corp",
-      stage: "Presentation Scheduled",
-      closeDate: "Apr 8,2025",
-      owner: "Jane Cooper",
-      amount: "$12,500",
-    },
-    {
-      name: "Website Revamp-Atlas corp",
-      stage: "Presentation Scheduled",
-      closeDate: "Apr 8,2025",
-      owner: "Jane Cooper",
-      amount: "$12,500",
-    },
-    {
-      name: "Website Revamp-Atlas corp",
-      stage: "Presentation Scheduled",
-      closeDate: "Apr 8,2025",
-      owner: "Jane Cooper",
-      amount: "$12,500",
-    },
-    {
-      name: "Website Revamp-Atlas corp",
-      stage: "Presentation Scheduled",
-      closeDate: "Apr 8,2025",
-      owner: "Jane Cooper",
-      amount: "$12,500",
-    },
-  ];
+ 
+  const dispatch = useDispatch();
+  const {deals,loading,error} = useSelector((state)=>state.deals);
+
+  useEffect(()=>{
+    dispatch(fetchDeals());
+  },[dispatch]);
+    if (loading) return <p>Loading deals...</p>;
+    if (error) return <p>Error: {error}</p>;
   return (
     <table className={`table  table-hover`}>
       {" "}
@@ -67,10 +41,10 @@ export default function DealsTable() {
             <td>{deal.name}</td>
             <td>{deal.stage}</td>
             <td>{deal.closeDate}</td>
-            <td>{deal.owner}</td>
+            <td>{deal.owner?.userName}</td>
             <td>{deal.amount}</td>
             <td style={{ textAlign: "center" }}>
-              <Link to="/dealdetails" state={{deal}}>            
+              <Link to={`/dealdetails/${deal.dealId}`} state={{deal}}>            
                 <FaEye
                   role="button"
                   className="text-info me-2"
