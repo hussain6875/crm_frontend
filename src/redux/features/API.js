@@ -1,4 +1,4 @@
-const basic_api = "http://localhost:5002";
+const basic_api = "http://localhost:8080";
 export const getAllTickets = `${basic_api}/tickets`;
 export const getTicketById = (id) => {
   return `${basic_api}/tickets/${id}`;

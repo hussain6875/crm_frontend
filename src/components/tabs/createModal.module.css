@@ -1,0 +1,229 @@
+.modalbackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(30, 30, 30, 0.4);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 2000;
+}
+
+.modalcontent {
+  background: #fff;
+  border-radius: 8px;
+  width: 400px;
+  padding: 24px;
+  max-height: 100vh;
+  overflow-y: auto;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.modalheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+/* Overlay background with blur for email(centered modal) */
+.modaloverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modaltitle {
+  font-size: small;
+}
+.modalheaderEmail {
+  background-color: #6c63ff;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.emailInput:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+.sendbtn {
+  background-color: #6c63ff;
+  color: white;
+}
+.sendbtn:hover {
+  background-color: #5b3cc4;
+  color: white;
+}
+.sendbtn:focus {
+  outline: none;
+  border: none;
+}
+.icons div {
+  cursor: pointer;
+}
+.closebutton {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+/* /////////////////////////////////////////////////////////////////// Common above*/
+.modalbody {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.modalbody label {
+  font-size: 14px;
+}
+
+.modalbody span {
+  color: red;
+  margin-left: 4px;
+}
+
+.modalbody input,
+.modalbody select,
+.modalbody textarea {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-top: 5px;
+}
+
+/* ////////////////////////////////// common below*/
+.modalfooter {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.drawerfooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.cancelbtn,
+.savebtn {
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.cancelbtn {
+  background: #f1f1f1;
+  color: #333;
+}
+
+.savebtn {
+  background: #5b3cc4;
+  color: white;
+}
+.savebtn:hover {
+  background-color: #6c63ff;
+  color: white;
+}
+/* //////////////////////////////////// */
+/* Form */
+.drawerform {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formgroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.formgroup label {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.formgroup label span {
+  color: red;
+}
+
+.formgroup > div > span {
+  color: gray;
+}
+
+.formgroup input,
+.formgroup select,
+.formgroup textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* /////for Notes////////////////// */
+.drawerBackdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  z-index: 1040;
+}
+
+.drawerContainer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 100vh;
+  background-color: #fff;
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.2);
+  z-index: 1050;
+  animation: slideIn 0.3s ease-out;
+  overflow-y: auto;
+}
+
+.editorcontainer {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.required {
+  color: red;
+  margin-left: 2px;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0%);
+  }
+}
+

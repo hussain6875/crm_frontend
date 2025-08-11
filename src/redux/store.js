@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import ticketReducer from "../features/ticketSlice";
-
+import dealReducer from "./dealSlice";
+import ticketReducer from "./features/ticketSlice";
 const store = configureStore({
   reducer: {
+    deals: dealReducer,
     tickets: ticketReducer,
   },
 });
-
 export default store;

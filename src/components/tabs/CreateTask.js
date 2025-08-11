@@ -1,9 +1,126 @@
-import React from 'react'
+import React from "react";
+import styles from "../tabs/createModal.module.css";
 
-const CreateTask = () => {
+export default function CreateTask({ isOpen, onClose }) {
+  if (!isOpen) return null;
   return (
-    <div>CreateTask</div>
-  )
-}
+    <>
+      <div className={styles.modalbackdrop}>
+        <div className={`${styles.modalcontent} p-0 rounded-0`}>
+          <div className={`${styles.modalheader} mx-3 mb-0`}>
+            <h6 className="align-self-end">Create Task</h6>
+            <button
+              className={`${styles.closebutton} text-secondary fs-3`}
+              onClick={onClose}
+            >
+              &times;
+            </button>
+          </div>
+          <hr className="border-secondary-subtle mt-2" />
 
-export default CreateTask
+          <form className={`${styles.drawerform} mx-3`}>
+            <div className={styles.formgroup}>
+              <label>
+                Task Name <span>*</span>
+              </label>
+              <input type="text" placeholder="Enter" className="form-control" />
+            </div>
+
+            <div className="d-flex gap-3">
+              <div className={`w-100 ${styles.formgroup}`}>
+                <label>
+                  Due Date <span>*</span>
+                </label>
+                <input type="date" />
+              </div>
+              <div className={`w-100 ${styles.formgroup}`}>
+                <label>
+                  Time <span>*</span>
+                </label>
+                <input type="time" />
+              </div>
+            </div>
+
+            <div className="d-flex gap-3">
+              <div className={`w-100 ${styles.formgroup}`}>
+                <label>
+                  Task Type <span>*</span>
+                </label>
+                <select className="form-select">
+                  <option>Choose</option>
+                </select>
+              </div>
+              <div className={`w-100 ${styles.formgroup}`}>
+                <label>
+                  Priority <span>*</span>
+                </label>
+                <select className="form-select">
+                  <option>Choose</option>
+                </select>
+              </div>
+            </div>
+
+            <div className={styles.formgroup}>
+              <label>
+                Assigned to <span>*</span>
+              </label>
+              <select className="form-select">
+                <option>Maria Johnson</option>
+              </select>
+            </div>
+
+            <div className={styles.formgroup}>
+              <label>
+                Note <span>*</span>
+              </label>
+              <div className="form-control px-0">
+                <span className="mx-2">
+                  Normal Text <i className="bi bi-chevron-down ms-1"></i>
+                </span>
+                <span className="mx-2">
+                  <i className="bi bi-type-bold"></i>
+                </span>
+                <span className="mx-2">
+                  <i className="bi bi-type-italic"></i>
+                </span>
+                <span className="mx-2">
+                  <i className="bi bi-type-underline"></i>
+                </span>
+                <span className="mx-2">
+                  <i className="bi bi-list-ul"></i>
+                </span>
+                <span className="mx-2">
+                  <i className="bi bi-list-ol"></i>
+                </span>
+                <span className="mx-2">
+                  <i className="bi bi-image"></i>
+                </span>
+                <hr className="my-1" />
+                <div className="mx-2">
+                  <textarea
+                    rows={3}
+                    placeholder="Enter"
+                    className={`${styles.emailInput} d-block border-0 w-100`}
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 d-flex justify-content-between gap-3 mx-3 mb-4">
+              <button
+                className={`${styles.cancelbtn} btn btn-outline-secondary w-100`}
+                onClick={onClose}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button className={`${styles.savebtn} btn w-100`} type="submit">
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
+  );
+}

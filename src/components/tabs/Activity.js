@@ -1,32 +1,39 @@
 import React from "react";
 
-const Activity = () => {
+export default function Activity() {
   return (
-    <div>
-      <div className="mx-2">
-        <strong className="mb-2 d-block">Upcoming</strong>
-        <div className="border rounded p-3 mb-2">
-          <div className="d-flex justify-content-between">
-            <strong>Ticket activity</strong>
-            <div className="text-muted small fw-semibold">
-              June 24, 2025 at 5:30PM
-            </div>
-          </div>
-          <div className="text-muted small mb-1">
-            <strong>Maria Johnson</strong> moved ticket to new
-          </div>
-        </div>
-        <div className="border rounded p-3 d-flex justify-content-between">
-          <div className="text-muted small">
-            This ticket was created by <strong>Maria Johnson</strong>
-          </div>
-          <div className="text-muted small fw-semibold">
-            June 24, 2025 at 5:30PM
-          </div>
-        </div>
+    <>
+      <h6>Upcoming</h6>
+      <div
+        style={{
+          border: "1px solid #dee2e6",
+          borderRadius: "6px",
+          padding: "10px",
+        }}
+      >
+        <span>
+          <strong>Deal activity</strong>
+        </span>
+        <span style={{ float: "right", color: "#666666" }}>
+          June 24,2025 at 5.30pm
+        </span>
+        <p style={{ color: "#4B647A" }}>
+          <strong>Maria Jhonson</strong> moved to Appointment scheduled.
+        </p>
       </div>
-    </div>
+      <div
+        style={{
+          marginTop: "5px",
+          border: "1px solid #dee2e6",
+          borderRadius: "6px",
+          padding: "10px",
+        }}
+      >
+        <p style={{ color: "#4B647A" }}>
+          This deal was created by <strong>Maria Jhonson</strong> Jun 23,2025 at
+          11:22 AM.
+        </p>
+      </div>
+    </>
   );
-};
-
-export default Activity;
+}
