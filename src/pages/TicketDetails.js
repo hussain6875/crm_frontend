@@ -17,6 +17,7 @@ import CreateEmail from "../components/tabs/CreateEmail";
 import CreateCall from "../components/tabs/CreateCall";
 import CreateTask from "../components/tabs/CreateTask";
 import CreateMeeting from "../components/tabs/CreateMeeting";
+import { createNewActivity } from "../redux/features/activitySlice";
 
 const TicketDetails = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +38,14 @@ const TicketDetails = () => {
 
   //Saving note content
   const handleSave = (noteContent) => {
-    console.log("Note saved:", noteContent);
+    dispatch(
+      createNewActivity({
+        module: "ticket",
+        id: ticketId,
+        data: { content: noteContent },
+        type: "note",
+      })
+    );
     setShowNoteModal(false);
   };
   //methods to update notes modal
@@ -71,17 +79,47 @@ const TicketDetails = () => {
   const renderTabContent = () => {
     switch (tab) {
       case "activity":
-        return <Activity />;
+        return <Activity module={"ticket"} id={ticketId} />;
       case "notes":
-        return <Notes onCreateClick={openNoteModal} />;
+        return (
+          <Notes
+            onCreateClick={openNoteModal}
+            module={"ticket"}
+            id={ticketId}
+          />
+        );
       case "emails":
-        return <Emails onCreateClick={openEmailModal} />;
+        return (
+          <Emails
+            onCreateClick={openEmailModal}
+            module={"ticket"}
+            id={ticketId}
+          />
+        );
       case "calls":
-        return <Calls onCreateClick={openCallModal} />;
+        return (
+          <Calls
+            onCreateClick={openCallModal}
+            module={"ticket"}
+            id={ticketId}
+          />
+        );
       case "tasks":
-        return <Tasks onCreateClick={openTaskModal} />;
+        return (
+          <Tasks
+            onCreateClick={openTaskModal}
+            module={"ticket"}
+            id={ticketId}
+          />
+        );
       case "meetings":
-        return <Meetings onCreateClick={openMeetingModal} />;
+        return (
+          <Meetings
+            onCreateClick={openMeetingModal}
+            module={"ticket"}
+            id={ticketId}
+          />
+        );
       default:
         return null;
     }
@@ -401,18 +439,32 @@ const TicketDetails = () => {
                   <CreateEmail
                     isOpen={showEmailModal}
                     onClose={closeEmailModal}
+                    module={"ticket"}
+                    id={ticketId}
                   />
                 )}
                 {setShowCallModal && (
-                  <CreateCall isOpen={showCallModal} onClose={closeCallModal} />
+                  <CreateCall
+                    isOpen={showCallModal}
+                    onClose={closeCallModal}
+                    module={"ticket"}
+                    details={ticket}
+                  />
                 )}
                 {setShowTaskModal && (
-                  <CreateTask isOpen={showTaskModal} onClose={closeTaskModal} />
+                  <CreateTask
+                    isOpen={showTaskModal}
+                    onClose={closeTaskModal}
+                    module={"ticket"}
+                    details={ticket}
+                  />
                 )}
                 {setShowMeetingModal && (
                   <CreateMeeting
                     isOpen={showMeetingModal}
                     onClose={closeMeetingModal}
+                    module={"ticket"}
+                    details={ticket}
                   />
                 )}
               </>

@@ -5,3 +5,4 @@ export const getTicketById = (id) => {
 };
 export const createTicket = `${getAllTickets}/create`;
 export const editTicket = `${getAllTickets}/edit/`;
+export const allActivities = `${basic_api}/activities`;
