@@ -1,7 +1,53 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "../tabs/createModal.module.css";
+import { useDispatch } from "react-redux";
+import { createNewActivity } from "../../redux/features/activitySlice";
 
-export default function CreateTask({ isOpen, onClose }) {
+export default function CreateTask({ isOpen, onClose, module, details }) {
+  const dispatch = useDispatch();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    due_date: "",
+    time: "",
+    task_type: "",
+    priority: "",
+    assigned: "",
+    note: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = () => {
+    const data = {
+      name: formData.name,
+      due_date: `${formData.due_date} ${formData.time}`,
+      task_type: formData.task_type,
+      priority: formData.priority,
+      assigned: formData.assigned,
+      note: formData.note,
+    };
+
+    console.log(data);
+
+    dispatch(createNewActivity({ module, id: details.id, data, type: "task" }));
+
+    setFormData({
+      name: "",
+      due_date: "",
+      time: "",
+      task_type: "",
+      priority: "",
+      assigned: "",
+      note: "",
+    });
+
+    onClose();
+  };
+
   if (!isOpen) return null;
   return (
     <>
@@ -23,7 +69,15 @@ export default function CreateTask({ isOpen, onClose }) {
               <label>
                 Task Name <span>*</span>
               </label>
-              <input type="text" placeholder="Enter" className="form-control" />
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter"
+                className="form-control"
+                required
+              />
             </div>
 
             <div className="d-flex gap-3">
@@ -31,13 +85,25 @@ export default function CreateTask({ isOpen, onClose }) {
                 <label>
                   Due Date <span>*</span>
                 </label>
-                <input type="date" />
+                <input
+                  name="due_date"
+                  type="date"
+                  required
+                  value={formData.due_date}
+                  onChange={handleChange}
+                />
               </div>
               <div className={`w-100 ${styles.formgroup}`}>
                 <label>
                   Time <span>*</span>
                 </label>
-                <input type="time" />
+                <input
+                  name="time"
+                  required
+                  type="time"
+                  value={formData.time}
+                  onChange={handleChange}
+                />
               </div>
             </div>
 
@@ -46,16 +112,32 @@ export default function CreateTask({ isOpen, onClose }) {
                 <label>
                   Task Type <span>*</span>
                 </label>
-                <select className="form-select">
-                  <option>Choose</option>
-                </select>
+                <input
+                  type="text"
+                  name="task_type"
+                  required
+                  value={formData.task_type}
+                  onChange={handleChange}
+                  placeholder="Enter"
+                  className="form-control"
+                />
               </div>
               <div className={`w-100 ${styles.formgroup}`}>
                 <label>
                   Priority <span>*</span>
                 </label>
-                <select className="form-select">
-                  <option>Choose</option>
+                <select
+                  name="priority"
+                  className="form-select"
+                  value={formData.priority}
+                  required
+                  onChange={handleChange}
+                >
+                  <option value={""}>Choose</option>
+                  <option value={"low"}>Low</option>
+                  <option value={"medium"}>Medium</option>
+                  <option value={"high"}>High</option>
+                  <option value={"critical"}>Critical</option>
                 </select>
               </div>
             </div>
@@ -64,9 +146,15 @@ export default function CreateTask({ isOpen, onClose }) {
               <label>
                 Assigned to <span>*</span>
               </label>
-              <select className="form-select">
-                <option>Maria Johnson</option>
-              </select>
+              <input
+                required
+                name="assigned"
+                type="text"
+                value={formData.assigned}
+                onChange={handleChange}
+                placeholder="Enter"
+                className="form-control"
+              />
             </div>
 
             <div className={styles.formgroup}>
@@ -99,6 +187,10 @@ export default function CreateTask({ isOpen, onClose }) {
                 <div className="mx-2">
                   <textarea
                     rows={3}
+                    value={formData.note}
+                    onChange={handleChange}
+                    required
+                    name="note"
                     placeholder="Enter"
                     className={`${styles.emailInput} d-block border-0 w-100`}
                   ></textarea>
@@ -114,7 +206,11 @@ export default function CreateTask({ isOpen, onClose }) {
               >
                 Cancel
               </button>
-              <button className={`${styles.savebtn} btn w-100`} type="submit">
+              <button
+                className={`${styles.savebtn} btn w-100`}
+                type="button"
+                onClick={handleSubmit}
+              >
                 Save
               </button>
             </div>

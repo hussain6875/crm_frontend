@@ -2,8 +2,11 @@ import React from "react";
 import { useState } from "react";
 import { MdClose, MdArrowDropDown } from "react-icons/md";
 import styles from "../tabs/createModal.module.css";
+import { useDispatch } from "react-redux";
+import { createNewActivity } from "../../redux/features/activitySlice";
 
-export default function CreateEmail({ isOpen, onClose }) {
+export default function CreateEmail({ isOpen, onClose, module, id }) {
+  const dispatch = useDispatch();
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
@@ -14,8 +17,22 @@ export default function CreateEmail({ isOpen, onClose }) {
       return;
     }
 
+    const newData = {
+      recipients: to,
+      subject,
+      body_text: body,
+    };
+
     // TODO: Replace with API request to send email
-    alert("Email sent!");
+    dispatch(
+      createNewActivity({
+        module,
+        id,
+        data: newData,
+        type: "email",
+      })
+    );
+
     setTo("");
     setSubject("");
     setBody("");
@@ -29,7 +46,10 @@ export default function CreateEmail({ isOpen, onClose }) {
       <div className={`${styles.modalcontent} p-0`} style={{ width: "500px" }}>
         <div className={`${styles.modalheaderEmail} pe-2 ps-3`}>
           <span className={styles.modaltitle}>New Email</span>
-          <button className={`btn ${styles.closebutton} text-white`} onClick={onClose}>
+          <button
+            className={`btn ${styles.closebutton} text-white`}
+            onClick={onClose}
+          >
             ×
           </button>
         </div>
@@ -64,24 +84,40 @@ export default function CreateEmail({ isOpen, onClose }) {
             />
           </div>
           <div className={`${styles.modalfooter} justify-content-start`}>
-            <div className={`d-flex justify-content-between rounded ${styles.sendbtn}`}>
+            <div
+              className={`d-flex justify-content-between rounded ${styles.sendbtn}`}
+            >
               <button
                 className={`${styles.sendbtn} btn btn-sm rounded-0 rounded-start`}
                 onClick={handleSendEmail}
               >
                 Send
               </button>
-              <button className={`${styles.sendbtn} btn btn-sm rounded-0 rounded-end`}>
+              <button
+                className={`${styles.sendbtn} btn btn-sm rounded-0 rounded-end`}
+              >
                 <i className="bi bi-caret-down-fill"></i>
               </button>
             </div>
             <div className={`${styles.icons} d-flex w-100`}>
-              <div className="text-secondary text-decoration-underline mx-2">A</div>
-              <div className="mx-2"><i className="bi bi-paperclip"></i></div>
-              <div className="mx-2"><i className="bi bi-link"></i></div>
-              <div className="mx-2"><i className="bi bi-emoji-smile"></i></div>
-              <div className="mx-2"><i className="bi bi-image-fill"></i></div>
-              <div className="ms-auto"><i className="bi bi-trash-fill"></i></div>
+              <div className="text-secondary text-decoration-underline mx-2">
+                A
+              </div>
+              <div className="mx-2">
+                <i className="bi bi-paperclip"></i>
+              </div>
+              <div className="mx-2">
+                <i className="bi bi-link"></i>
+              </div>
+              <div className="mx-2">
+                <i className="bi bi-emoji-smile"></i>
+              </div>
+              <div className="mx-2">
+                <i className="bi bi-image-fill"></i>
+              </div>
+              <div className="ms-auto">
+                <i className="bi bi-trash-fill"></i>
+              </div>
             </div>
           </div>
         </div>

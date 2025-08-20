@@ -1,0 +1,41 @@
+.status {
+  outline: none;
+  border: none;
+}
+.buttons {
+  background-color: #f7f6fb;
+  padding: 0.7rem;
+}
+.buttons section {
+  font-size: 0.8rem;
+  padding: 0;
+}
+.buttons i,
+.about i {
+  color: #4338ca;
+  background-color: white;
+  font-size: small;
+}
+.about > div > div,
+.about small {
+  font-weight: 600;
+}
+.search input::placeholder {
+  opacity: 0.7;
+}
+.search input {
+  font-size: 0.9rem;
+}
+.middleNav,
+.navHover:hover {
+  border-bottom: 5px solid #4338ca !important;
+}
+.ai {
+  background-color: #f7f6fb;
+  border: 1.5px solid #4338ca;
+}
+.ai > strong,
+.rightPanel i,
+.rightPanel a {
+  color: #4338ca;
+}

@@ -9,7 +9,7 @@ export default function ButtonGroup({ onCreateClick }) {
     >
       <button
         className={`btn btn-outline-primary me-2`}
-        onclick={onclick}
+        // onclick={onclick}
         style={{ width: "120px", color: "#6c63ff", borderColor: "#6c63ff" }}
       >
         Import
