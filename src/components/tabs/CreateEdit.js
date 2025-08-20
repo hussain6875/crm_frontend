@@ -36,7 +36,7 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
         amount: deal.amount || "",
         closeDate: deal.closeDate ? deal.closeDate.split("T")[0] : "",
         priority: deal.priority || "",
-        dealOwner: deal.dealOwner || "",
+        dealOwner: deal.owner?.userId || deal.dealOwner || "",
         companyId: deal.companyId || "",
         leadId: deal.leadId || "",
       });
@@ -125,6 +125,7 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
               <label className="form-label">Deal Owner *</label>
               <select
                 className="form-select"
+                name="dealOwner"
                 value={formData.dealOwner}
                 onChange={handleChange}
                 required

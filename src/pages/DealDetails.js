@@ -350,7 +350,7 @@ export default function DealDetails() {
             <CreateEdit
               isOpen={showEditModal}
               onClose={() => setShowEditModal(false)}
-              deal={selectedDeal} // pass deal if CreateEdit expects it
+              deal={selectedDeal?.data} // pass selectedDeal.data
             />
           )}
         </div>

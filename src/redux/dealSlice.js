@@ -12,15 +12,13 @@ export const fetchDealsByID = createAsyncThunk(
   }
 );
 
-export const createDeal = createAsyncThunk("fetch/createDeal", async (deal) => {
-  return await DealService.createDeal(deal);
+export const createDeal = createAsyncThunk('fetch/createDeal',async (dealData)=>{
+    return await DealService.createDeal(dealData);
 });
-export const updateDeal = createAsyncThunk(
-  "deals/updateDeal",
-  async ({ id, updatedData }) => {
+
+export const updateDeal = createAsyncThunk('deals/updateDeal',async ({id, updatedData})=>{
     return await DealService.updateDeal(id, updatedData);
-  }
-);
+});
 
 const dealSlice = new createSlice({
   name: "deals",

@@ -31,20 +31,20 @@ class DealService{
             }
             return await response.json();
           }
-          // Update deal
-static async updateDeal(id, updatedData) {
-  const res = await fetch(`${this.BASE_URL}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(updatedData),
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to update deal");
-  }
-
-  return await res.json();
-};
+          //static function to update a Deal
+          static async updateDeal(id, data){
+            const response = await fetch(`${this.BASE_URL}/${id}`,{
+                method:'PUT',
+                headers:{
+                    'Content-type':'application/json',                    
+                },
+                body:JSON.stringify(data),                                
+            })
+            if(!response.ok){
+                throw new Error('failed to update the Deal');
+            }
+            return await response.json();
+          }
 }
 
 export default DealService;
