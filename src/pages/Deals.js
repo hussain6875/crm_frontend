@@ -6,18 +6,22 @@ import DealsTable from "../components/deals/DealsTable"
 import CreateDeal from '../components/deals/CreateDeal'
 import { useState } from "react";
 const Deals = () => {
-   const [selectedOwner,setSelectedOwner]=useState("");
-  const [selectedStage,setSelectedStage]=useState("");
-  const [createdDate,setCreatedDate]=useState("");
-  const [closedDate,setClosedDate]=useState("");
-  const [showModal,setShowModal]=useState(false);
+  const [selectedOwner, setSelectedOwner] = useState("");
+  const [selectedStage, setSelectedStage] = useState("");
+  const [createdDate, setCreatedDate] = useState("");
+  const [closedDate, setClosedDate] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [activePage, setActivePage] = useState(1);
+  const [filteredCount, setFilteredCount] = useState(0);
+  const pageSize = 10;
+  const totalPages = Math.max(1, Math.ceil(filteredCount / pageSize));
   const openModal=()=>setShowModal(true);
   const closeModal = ()=>setShowModal(false);
   return (
     <>
       <PageWrapper>
         <PageHeader title="Deals" onCreateClick={openModal} />
-        <SearchAndPagination />
+        <SearchAndPagination activePage={activePage} setActivePage={setActivePage} totalPages={totalPages} />
         <div
              className="bg-white d-flex flex-column"
              style={{
@@ -41,7 +45,15 @@ const Deals = () => {
        closedDate={closedDate}
        setClosedDate={setClosedDate}
        />
-            <DealsTable />
+            <DealsTable 
+  selectedOwner={selectedOwner}
+  selectedStage={selectedStage}
+  createdDate={createdDate}
+  closedDate={closedDate}
+  activePage={activePage}
+  pageSize={pageSize}
+  onFilteredCount={setFilteredCount}
+/>
             </div>
              <CreateDeal isOpen={showModal} onClose={closeModal} />
 

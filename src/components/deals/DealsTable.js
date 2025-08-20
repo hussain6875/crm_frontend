@@ -6,19 +6,51 @@ import styles from "./deals.module.css";
 import { Link } from "react-router-dom";
 import { useSelector,useDispatch } from "react-redux";
 import {fetchDeals} from "../../redux/dealSlice";
-export default function DealsTable() {
- 
-  const dispatch = useDispatch();
-  const {deals,loading,error} = useSelector((state)=>state.deals);
+import { forwardRef } from "react";
 
-  useEffect(()=>{
+const DealsTable = forwardRef(function DealsTable({ selectedOwner, selectedStage, createdDate, closedDate, activePage, pageSize, onFilteredCount }, ref) {
+  const dispatch = useDispatch();
+  const { deals, loading, error } = useSelector((state) => state.deals);
+  useEffect(() => {
     dispatch(fetchDeals());
-  },[dispatch]);
-    if (loading) return <p>Loading deals...</p>;
-    if (error) return <p>Error: {error}</p>;
+  }, [dispatch]);
+
+  // Filtering logic
+  const dealsArray = deals?.data || [];
+  const filteredDeals = dealsArray.filter((deal) => {
+    let match = true;
+    if (selectedOwner && selectedOwner !== "All") {
+      match = match && deal.owner?.userName === selectedOwner;
+    }
+    if (selectedStage && selectedStage !== "All") {
+      match = match && deal.stage === selectedStage;
+    }
+    if (createdDate) {
+      match = match && deal.createdDate && deal.createdDate.startsWith(createdDate);
+    }
+    if (closedDate) {
+      match = match && deal.closeDate && deal.closeDate.startsWith(closedDate);
+    }
+    return match;
+  });
+
+  // Notify parent of filtered count
+  useEffect(() => {
+    if (onFilteredCount) {
+      onFilteredCount(filteredDeals.length);
+    }
+  }, [filteredDeals.length, onFilteredCount]);
+
+  // Pagination logic
+  const startIndex = (activePage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedDeals = filteredDeals.slice(startIndex, endIndex);
+
+  if (loading) return <p>Loading deals...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
-    <table className={`table  table-hover`}>
-      {" "}
+    <table className={`table table-hover`}>
       <thead>
         <tr>
           <th scope="col">
@@ -33,8 +65,8 @@ export default function DealsTable() {
         </tr>
       </thead>
       <tbody>
-        {deals.map((deal, index) => (
-          <tr key={index}>
+        {paginatedDeals.map((deal, index) => (
+          <tr key={startIndex + index}>
             <td>
               <input type="checkbox" />
             </td>
@@ -44,7 +76,7 @@ export default function DealsTable() {
             <td>{deal.owner?.userName}</td>
             <td>{deal.amount}</td>
             <td style={{ textAlign: "center" }}>
-              <Link to={`/dealdetails/${deal.dealId}`} state={{deal}}>            
+              <Link to={`/dealdetails/${deal.dealId}`} state={{ deal }}>
                 <FaEye
                   role="button"
                   className="text-info me-2"
@@ -57,4 +89,6 @@ export default function DealsTable() {
       </tbody>
     </table>
   );
-}
+});
+
+export default DealsTable;
