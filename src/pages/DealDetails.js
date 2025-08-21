@@ -6,6 +6,7 @@ import PageWrapper from "../components/layout/PageWrapper";
 import styles from "./dealdetails.module.css";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchDealsByID } from "../redux/dealSlice";
+import { createNewActivity, getAllActivities } from "../redux/features/activitySlice";
 import {
   FaSearch,
   FaArrowLeft,
@@ -56,12 +57,31 @@ export default function DealDetails() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
-  if (!selectedDeal) return <p>No deal found.</p>;
+  if (!selectedDeal?.data) return <p>No deal found.</p>;
 
   //Saving note content
-  const handleSave = (noteContent) => {
-    console.log("Note saved:", noteContent);
-    setShowNoteModal(false);
+  const handleSave = async (noteContent) => {
+    try {
+      const noteData = {
+        content: noteContent,
+        createdAt: new Date().toISOString(),
+      };
+      
+      await dispatch(createNewActivity({
+        module: "deal",
+        id: id,
+        data: noteData,
+        type: "notes"
+      }));
+      
+      // Refresh activities to show the new note
+      dispatch(getAllActivities({ module: "deal", id: id }));
+      
+      console.log("Note saved:", noteContent);
+      setShowNoteModal(false);
+    } catch (error) {
+      console.error("Error saving note:", error);
+    }
   };
   //methods to update notes modal
   const openNoteModal = () => setShowNoteModal(true);
@@ -94,11 +114,11 @@ export default function DealDetails() {
   const renderTabContent = () => {
     switch (tab) {
       case "activity":
-        return <Activity />;
+        return <Activity module="deal" id={id}  />;
       case "notes":
-        return <Notes onCreateClick={openNoteModal} />;
+        return <Notes onCreateClick={openNoteModal} module="deal" id={id} />;
       case "emails":
-        return <Emails onCreateClick={openEmailModal} />;
+        return <Emails onCreateClick={openEmailModal} module="deal" id={id} />;
       case "calls":
         return <Calls onCreateClick={openCallModal} />;
       case "tasks":
@@ -136,10 +156,10 @@ export default function DealDetails() {
               </button>
 
               <h2 className={`${styles.dealTitle}`}>
-                <strong>{selectedDeal.name}</strong>
+                <strong>{selectedDeal.data.name}</strong>
               </h2>
               <p>
-                Amount: <strong>{selectedDeal.amount}</strong>
+                Amount: <strong>{selectedDeal.data.amount}</strong>
               </p>
               <div
                 className="stage-dropdown"
@@ -150,7 +170,7 @@ export default function DealDetails() {
                 }}
               >
                 <span style={{ marginRight: "5px" }}>
-                  <strong>Stage:</strong> {selectedDeal.stage}
+                  <strong>Stage:</strong> {selectedDeal.data.stage}
                 </span>
                 <span style={{ color: "#5A32EA", fontSize: "14px" }}>▼</span>
               </div>
@@ -194,11 +214,11 @@ export default function DealDetails() {
               </div>
               <span>Deal Owner</span>
               <p>
-                <strong>{selectedDeal.owner?.userName}</strong>
+                <strong>{selectedDeal.data.owner?.userName}</strong>
               </p>
               <span>Priority</span>
               <p>
-                <strong>{selectedDeal.priority}</strong>
+                <strong>{selectedDeal.data.priority}</strong>
               </p>
               <span>Created Date</span>
               <span>
@@ -335,7 +355,7 @@ export default function DealDetails() {
             <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} />
           )}
           {setShowCallModal && (
-            <CreateCall isOpen={showCallModal} onClose={closeCallModal} />
+            <CreateCall isOpen={showCallModal} onClose={closeCallModal} module="deal" details={selectedDeal?.data} />
           )}
           {setShowTaskModal && (
             <CreateTask isOpen={showTaskModal} onClose={closeTaskModal} />

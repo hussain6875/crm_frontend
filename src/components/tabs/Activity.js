@@ -7,7 +7,7 @@ export default function Activity({ module, id }) {
   const { activities, loading, error } = useSelector(
     (state) => state.activities
   );
-
+console.log(activities.notes);
   const [opentask, setOpenTask] = useState(false);
   const [opencall, setOpenCall] = useState({});
   const [openMeeting, setOpenMeeting] = useState({});
