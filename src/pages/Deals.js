@@ -31,8 +31,7 @@ const Deals = () => {
                marginRight: "10px",
                marginTop: "20px",
                paddingRight:"20px",
-               paddingBottom:"20px"
-              
+               paddingBottom:"20px"              
              }}
            >
             <Filters 

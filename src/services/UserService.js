@@ -1,12 +1,41 @@
 class UserService {
   static BASE_URL = "http://localhost:8080/api/users";
-  //static function to fetch the users data
+
+  // GET all users
   static async getUsers() {
     const response = await fetch(this.BASE_URL);
     if (!response.ok) {
-      throw new Error("failed to fetch the users");
+      throw new Error("Failed to fetch the users");
     }
     return response.json();
   }
+
+  // GET user by ID
+  static async getUserById(id) {
+    const response = await fetch(`${this.BASE_URL}/${id}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch the user");
+    }
+    return response.json();
+  }
+
+  // POST create new user
+  static async createUser(userData) {
+      const token = localStorage.getItem('token'); // getting token that is send to the localstorage at the time of login
+
+    const response = await fetch(this.BASE_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+       },      
+      body: JSON.stringify(userData),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to create user");
+    }
+    return response.json();
+  }
+
+ 
 }
 export default UserService;

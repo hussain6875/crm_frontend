@@ -37,7 +37,7 @@ import CreateMeeting from "../components/tabs/CreateMeeting";
 import CreateEdit from "../components/tabs/CreateEdit";
 
 export default function DealDetails() {
-  const { id } = useParams();
+  const { id: routeId } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -49,11 +49,14 @@ export default function DealDetails() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [isAttachmentOpen, setIsAttachmentOpen] = useState(false);
 
+
   const { selectedDeal, loading, error } = useSelector((state) => state.deals);
   useEffect(() => {
-    dispatch(fetchDealsByID(id));
-  }, [dispatch, id]);
+    dispatch(fetchDealsByID(routeId));
+  }, [dispatch, routeId]);
 
+  // Use dealId from selectedDeal if available, otherwise take route param
+  const id = selectedDeal?.data?.dealId || routeId;
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -66,19 +69,15 @@ export default function DealDetails() {
         content: noteContent,
         createdAt: new Date().toISOString(),
       };
-      
       await dispatch(createNewActivity({
         module: "deal",
         id: id,
         data: noteData,
         type: "notes"
       }));
-      
       // Refresh activities to show the new note
       dispatch(getAllActivities({ module: "deal", id: id }));
-      
-      console.log("Note saved:", noteContent);
-      setShowNoteModal(false);
+          setShowNoteModal(false);
     } catch (error) {
       console.error("Error saving note:", error);
     }
@@ -120,11 +119,11 @@ export default function DealDetails() {
       case "emails":
         return <Emails onCreateClick={openEmailModal} module="deal" id={id} />;
       case "calls":
-        return <Calls onCreateClick={openCallModal} />;
+        return <Calls onCreateClick={openCallModal} module="deal" id={id}  />;
       case "tasks":
-        return <Tasks onCreateClick={openTaskModal} />;
+        return <Tasks onCreateClick={openTaskModal} module="deal" id={id} />;
       case "meetings":
-        return <Meetings onCreateClick={openMeetingModal} />;
+        return <Meetings onCreateClick={openMeetingModal} module="deal" id={id}  />;
       default:
         return null;
     }
@@ -355,7 +354,13 @@ export default function DealDetails() {
             <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} />
           )}
           {setShowCallModal && (
-            <CreateCall isOpen={showCallModal} onClose={closeCallModal} module="deal" details={selectedDeal?.data} />
+            <CreateCall
+              isOpen={showCallModal}
+              onClose={closeCallModal}
+              module="deal"
+              details={selectedDeal?.data}
+              id={id}
+            />
           )}
           {setShowTaskModal && (
             <CreateTask isOpen={showTaskModal} onClose={closeTaskModal} />
