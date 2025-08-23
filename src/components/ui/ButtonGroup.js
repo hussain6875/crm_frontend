@@ -1,15 +1,8 @@
 import React from "react";
 import { Offcanvas } from "bootstrap";
 
-export default function ButtonGroup({ createTarget }) {
-  const handleCreateClick = () => {
-    if (createTarget) {
-      const offcanvasEl = document.getElementById(createTarget);
-      const bsOffcanvas = new Offcanvas(offcanvasEl);
-      bsOffcanvas.show();
-    }
-  };
 
+export default function ButtonGroup({ onCreateClick }) {
   return (
     <div
       className="d-flex"
@@ -24,7 +17,7 @@ export default function ButtonGroup({ createTarget }) {
       </button>
       <button
         className={`btn btn-primary me-2`}
-        onClick={handleCreateClick}
+        onClick={onCreateClick}
         style={{
           width: "120px",
           backgroundColor: "#6c63ff",

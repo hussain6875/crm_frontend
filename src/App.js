@@ -6,27 +6,29 @@ import Leads from "./pages/Leads";
 import Companies from "./pages/Companies";
 import Deals from "./pages/Deals";
 import Tickets from "./pages/Tickets";
-// import Register from "./pages/Register";
-// import Login from "./pages/Login";
+import DealDetails from "./pages/DealDetails";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 import TicketDetails from "./pages/TicketDetails";
 import LeadDetails from "./pages/LeadDetails";
 
 function App() {
-    return (
-        <Router>
-            <Routes>
-                {/* <Route path="/" element={<Login />} /> */}
-                {/* <Route path="/register" element={<Register />} /> */}
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/leads" element={<Leads />} />
-                <Route path="/companies" element={<Companies />} />
-                <Route path="/deals" element={<Deals />} />
-                <Route path="/tickets" element={<Tickets />} />
-                <Route path="/tickets/:ticketId/details" element={<TicketDetails />} />
-                <Route path="/leads/:leadId/details" element={<LeadDetails />} />
-            </Routes>
-        </Router>
-    );
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/leads" element={<Leads />} />
+        <Route path="/companies" element={<Companies />} />
+        <Route path="/deals" element={<Deals />} />
+        <Route path="/dealdetails/:id" element={<DealDetails />} />
+        <Route path="/tickets" element={<Tickets />} />
+        <Route path="/tickets/:ticketId/details" element={<TicketDetails />} />
+        <Route path="/leads/:leadId/details" element={<LeadDetails />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

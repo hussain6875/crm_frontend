@@ -26,15 +26,9 @@
 .search input {
   font-size: 0.9rem;
 }
-.middleNav {
-  border-bottom: 5px solid #4338ca !important;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-}
+.middleNav,
 .navHover:hover {
   border-bottom: 5px solid #4338ca !important;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
 }
 .ai {
   background-color: #f7f6fb;

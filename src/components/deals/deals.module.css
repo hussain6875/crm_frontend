@@ -1,0 +1,16 @@
+.customTable {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  border-collapse: separate;
+  overflow: hidden;
+  width: 100%;
+}
+
+.tableHeader {
+  background-color: #6c63ff;
+  color: white;
+}
+
+/* .tableHeader th {
+  border: none;
+} */

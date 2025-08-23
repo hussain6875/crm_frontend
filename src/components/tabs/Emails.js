@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllActivities } from "../../redux/features/activitySlice";
-export default function Notes({ onCreateClick, module, id }) {
+
+export default function Emails({ onCreateClick, module, id }) {
   const dispatch = useDispatch();
-  const { loading, error, activities } = useSelector(
+  const { activities, loading, error } = useSelector(
     (state) => state.activities
   );
 
-  const [openNote, setOpenNote] = useState({});
+  const [openEmail, setOpenEmail] = useState({});
 
-  const toggleNote = (noteId) => {
-    setOpenNote((prev) => ({
+  const toggleEmail = (emailId) => {
+    setOpenEmail((prev) => ({
       ...prev,
-      [noteId]: !prev[noteId],
+      [emailId]: !prev[emailId],
     }));
   };
 
@@ -23,7 +24,7 @@ export default function Notes({ onCreateClick, module, id }) {
     <>
       <div className="d-flex justify-content-between">
         <div>
-          <h6>Notes</h6>
+          <h6>Email</h6>
           <h6>June 2025</h6>
         </div>
         <button
@@ -31,14 +32,14 @@ export default function Notes({ onCreateClick, module, id }) {
           className="btn btn-primary"
           onClick={onCreateClick}
         >
-          Create Note
+          Create Email
         </button>
       </div>
       {loading && <p>Loading...</p>}
       {error && <p className="text-danger">{error}</p>}
-      {activities?.notes?.map((note) => (
+      {activities?.emails?.map((email) => (
         <div
-          key={note.id}
+          key={email.id}
           style={{
             marginTop: "5px",
             border: "1px solid #dee2e6",
@@ -48,18 +49,22 @@ export default function Notes({ onCreateClick, module, id }) {
         >
           <i
             className={`bi ${
-              openNote[note.id] ? "bi-chevron-down" : "bi-chevron-right"
+              openEmail[email.id] ? "bi-chevron-down" : "bi-chevron-right"
             } me-2`}
-            onClick={() => toggleNote(note.id)}
+            onClick={() => toggleEmail(email.id)}
+            style={{ cursor: "pointer" }}
           ></i>
-          <span style={{ color: "#666666" }}>
-            <strong>Note</strong>
-          </span>
           <span style={{ float: "right", color: "#666666" }}>
-            {note.createdAt}
+            {email.createdAt}
           </span>
-          {openNote[note.id] && (
-            <p style={{ color: "#4B647A" }}>{note.content}</p>
+          <span style={{ color: "#666666" }}>
+            <strong>Logged Email - </strong>
+            {email.subject}
+          </span>
+          {openEmail[email.id] && (
+            <p className="mx-3" style={{ color: "#4B647A" }}>
+              {email.body_text}
+            </p>
           )}
         </div>
       ))}

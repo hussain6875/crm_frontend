@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { getAllActivities } from "../../redux/features/activitySlice";
 import { useDispatch, useSelector } from "react-redux";
+import { getAllActivities } from "../../redux/features/activitySlice";
 
-export default function Calls({ onCreateClick, module, id }) {
+export default function Tasks({ onCreateClick, module, id }) {
   const dispatch = useDispatch();
   const { activities, loading, error } = useSelector(
     (state) => state.activities
   );
 
-  const [opencall, setOpenCall] = useState({});
+  const [opentask, setOpenTask] = useState(false);
 
-  const toggleCall = (callId) => {
-    setOpenCall((prev) => ({
+  const toggleTask = (taskId) => {
+    setOpenTask((prev) => ({
       ...prev,
-      [callId]: !prev[callId],
+      [taskId]: !prev[taskId],
     }));
   };
 
@@ -24,27 +24,26 @@ export default function Calls({ onCreateClick, module, id }) {
     <>
       <div className="d-flex justify-content-between">
         <div>
-          <h6>Calls</h6>
-          <h6>June 2025</h6>
+          <h6>Tasks</h6>
         </div>
         <button
           style={{
             height: "40px",
             width: "125px",
             backgroundColor: "#6c63ff",
-            fontSize: "12px",
+            fontSize: "15px",
           }}
           className="btn btn-primary"
           onClick={onCreateClick}
         >
-          Make a Phone Call
+          Create Task
         </button>
       </div>
       {loading && <p>Loading...</p>}
       {error && <p className="text-danger">{error}</p>}
-      {activities?.calls?.map((call) => (
+      {activities?.tasks?.map((task) => (
         <div
-          key={call.id}
+          key={task.id}
           style={{
             marginTop: "5px",
             border: "1px solid #dee2e6",
@@ -54,28 +53,30 @@ export default function Calls({ onCreateClick, module, id }) {
         >
           <i
             className={`bi ${
-              opencall[call.id] ? "bi-chevron-down" : "bi-chevron-right"
+              opentask[task.id] ? "bi-chevron-down" : "bi-chevron-right"
             } me-2`}
-            onClick={() => toggleCall(call.id)}
-            style={{ cursor: "pointer" }}
+            onClick={() => toggleTask(task.id)}
           ></i>
           <span style={{ color: "#666666" }}>
-            <strong>Call</strong> from {call.connected}
+            <strong>Task</strong> assigned to {task.assigned}
           </span>
           <span style={{ float: "right", color: "#666666" }}>
-            {call.createdAt}
+            {task.due_date}
           </span>
-          <p style={{ color: "#4B647A" }}>{call.note}</p>
-
-          {opencall[call.id] && (
-            <div className="border-0 w-100 h-25 rounded-3 bg-primary-subtle d-flex p-2">
-              <div className="col-6">
-                <p className="mb-0 text-secondary">Outcome</p>
-                <h3 className="fs-6">{call.outcome}</h3>
+          <p style={{ color: "#4B647A" }}>{task.note}</p>
+          {opentask[task.id] && (
+            <div className="border-0 w-100 h-25 rounded-3 bg-primary-subtle d-flex justify-content-between p-2">
+              <div>
+                <p className="mb-0 text-secondary">Due Date & Time</p>
+                <h3 className="fs-6">{task.due_date}</h3>
               </div>
               <div>
-                <p className="mb-0 text-secondary">Duration</p>
-                <h3 className="fs-6">{call.call_time}</h3>
+                <p className="mb-0 text-secondary">Priority</p>
+                <h3 className="fs-6">{task.priority}</h3>
+              </div>
+              <div className="col-3">
+                <p className="mb-0 text-secondary">Type</p>
+                <h3 className="fs-6">{task.task_type}</h3>
               </div>
             </div>
           )}

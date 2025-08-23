@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styles from "./createTicket.module.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { useDispatch, useSelector } from "react-redux";
 import { Offcanvas } from "bootstrap";
-import { createTicketAPI } from "../../redux/features/ticketSlice";
+import { useDispatch } from "react-redux";
+import { updateTicket } from "../../redux/features/ticketSlice";
 
-const CreateTicket = ({ onTicketCreated }) => {
+const EditTicket = ({ ticket }) => {
   const dispatch = useDispatch();
-  const { loading, createMessage, createError } = useSelector(
-    (state) => state.tickets
-  );
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -17,67 +13,41 @@ const CreateTicket = ({ onTicketCreated }) => {
   const [source, setSource] = useState("");
   const [priority, setPriority] = useState("");
   const [owner, setOwner] = useState("");
-  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const newTicket = {
-      name,
+    const updatedTicket = {
       description,
       ticket_status: ticketStatus,
-      priority,
       source,
-      owner,
+      priority,
     };
-    console.log(newTicket);
-    dispatch(createTicketAPI(newTicket));
-    setSubmitted(true);
-  };
 
-  const resetForm = () => {
-    setName("");
-    setDescription("");
-    setTicketStatus("");
-    setSource("");
-    setPriority("");
-    setOwner("");
-  };
+    dispatch(updateTicket({ updatedData: updatedTicket, id: ticket.id }));
 
-  useEffect(() => {
-  if (createMessage && submitted) {
-    resetForm();
-
-    const offcanvasElement = document.getElementById("createTicket");
-    let bsOffcanvas = Offcanvas.getInstance(offcanvasElement);
-    if (!bsOffcanvas) {
-      bsOffcanvas = new Offcanvas(offcanvasElement);
-    }
-
+    const offcanvasElement = document.getElementById("editTicket");
+    const bsOffcanvas = Offcanvas.getInstance(offcanvasElement);
     bsOffcanvas?.hide();
-    onTicketCreated?.();
-    setSubmitted(false);
-  }
-}, [createMessage, submitted]);
+  };
 
   useEffect(() => {
-    const offcanvasElement = document.getElementById("createTicket");
-    const handler = () => {
-      resetForm();
-    };
-    offcanvasElement?.addEventListener("shown.bs.offcanvas", handler);
-
-    return () => {
-      offcanvasElement?.removeEventListener("shown.bs.offcanvas", handler);
-    };
-  }, []);
+    if (ticket) {
+      setName(ticket.name || "");
+      setDescription(ticket.description || "");
+      setTicketStatus(ticket.status || "");
+      setSource(ticket.source || "");
+      setPriority(ticket.priority || "");
+      setOwner(ticket.owner || "");
+    }
+  }, [ticket]);
 
   return (
     <div
       className="offcanvas offcanvas-end"
       data-bs-backdrop="static"
       tabIndex="-1"
-      id="createTicket"
+      id="editTicket"
       aria-labelledby="staticBackdropLabel"
     >
       <div className="offcanvas-header">
@@ -85,7 +55,7 @@ const CreateTicket = ({ onTicketCreated }) => {
           className={`offcanvas-title ${styles.title}`}
           id="staticBackdropLabel"
         >
-          Create Ticket
+          Edit Ticket
         </h5>
         <button
           type="button"
@@ -109,9 +79,8 @@ const CreateTicket = ({ onTicketCreated }) => {
               className="form-control form-control-sm"
               id="ticketNameInput"
               placeholder="Enter"
-              required
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              disabled
             />
           </div>
           <div className="my-3">
@@ -145,10 +114,9 @@ const CreateTicket = ({ onTicketCreated }) => {
                 value={ticketStatus}
                 onChange={(e) => setTicketStatus(e.target.value)}
               >
-                <option value="">Choose</option>
-                <option value="new">New</option>
                 <option value="waiting on us">Waiting on us</option>
                 <option value="waiting on contact">Waiting on contact</option>
+                <option value="closed">Closed</option>
               </select>
             </div>
             <div className="col">
@@ -161,11 +129,9 @@ const CreateTicket = ({ onTicketCreated }) => {
               <select
                 id="source"
                 className="form-select form-select-sm"
-                required
                 value={source}
                 onChange={(e) => setSource(e.target.value)}
               >
-                <option value="">Choose</option>
                 <option value="chat">Chat</option>
                 <option value="email">Email</option>
                 <option value="phone">Phone</option>
@@ -186,7 +152,6 @@ const CreateTicket = ({ onTicketCreated }) => {
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
             >
-              <option value="">Choose</option>
               <option value="low">Low</option>
               <option value="medium">Medium</option>
               <option value="high">High</option>
@@ -205,9 +170,8 @@ const CreateTicket = ({ onTicketCreated }) => {
               className="form-control form-control-sm"
               id="ticketOwnerInput"
               placeholder="Enter"
-              required
               value={owner}
-              onChange={(e) => setOwner(e.target.value)}
+              disabled
             />
           </div>
           <div className="d-flex justify-content-between position-absolute bottom-0 start-0 end-0 px-4 pb-3 gap-3">
@@ -223,7 +187,7 @@ const CreateTicket = ({ onTicketCreated }) => {
               className={`${styles.save} btn text-white w-100`}
               type="submit"
             >
-              {loading ? "Saving..." : "Save"}
+              Update
             </button>
           </div>
         </form>
@@ -232,4 +196,4 @@ const CreateTicket = ({ onTicketCreated }) => {
   );
 };
 
-export default CreateTicket;
+export default EditTicket;
