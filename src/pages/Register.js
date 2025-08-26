@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../redux//AuthSlice"; //  redux action
 import { validateRegisterForm } from "../utils/validation";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // redux state
+  const { loading, error, success } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -14,15 +21,19 @@ const RegisterForm = () => {
     company: "",
     industry: "",
     country: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setSuccessMessage("");
+    const { name, value } = e.target;
+    const updatedForm = { ...formData, [name]: value };
+    setFormData(updatedForm);
+    setErrors(validateRegisterForm(updatedForm)); // validation
   };
 
   const handleSubmit = (e) => {
@@ -31,28 +42,13 @@ const RegisterForm = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      setIsSubmitting(true);
-      setSuccessMessage("Registration successful! 🎉");
-
-      // Navigate after 5 seconds
-      setTimeout(() => {
-        navigate("");
-      }, 5000);
-
-      // Clear form and message after 5 seconds
-      setTimeout(() => {
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          company: "",
-          industry: "",
-          country: "",
-        });
-        setSuccessMessage("");
-        setIsSubmitting(false);
-      }, 5000);
+      //  send to redux action (which calls backend)
+      dispatch(registerUser(formData)).then((res) => {
+        if (res.meta.requestStatus === "fulfilled") {
+          // navigate after success
+          setTimeout(() => navigate("/login"), 2000);
+        }
+      });
     }
   };
 
@@ -70,14 +66,21 @@ const RegisterForm = () => {
         >
           <h4 className="text-center fw-bold mb-4">Register</h4>
 
-          {successMessage && (
+          {/* Redux success/error messages */}
+          {success && (
             <div className="alert alert-success text-center" role="alert">
-              {successMessage}
+              {success}
+            </div>
+          )}
+          {error && (
+            <div className="alert alert-danger text-center" role="alert">
+              {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
             <div className="row g-4">
+              {/* First Name */}
               <div className="col-md-6">
                 <label className="form-label">First Name</label>
                 <input
@@ -94,6 +97,7 @@ const RegisterForm = () => {
                 )}
               </div>
 
+              {/* Last Name */}
               <div className="col-md-6">
                 <label className="form-label">Last Name</label>
                 <input
@@ -110,6 +114,7 @@ const RegisterForm = () => {
                 )}
               </div>
 
+              {/* Email */}
               <div className="col-md-6">
                 <label className="form-label">Email</label>
                 <input
@@ -126,6 +131,7 @@ const RegisterForm = () => {
                 )}
               </div>
 
+              {/* Phone */}
               <div className="col-md-6">
                 <label className="form-label">Phone Number</label>
                 <input
@@ -142,6 +148,7 @@ const RegisterForm = () => {
                 )}
               </div>
 
+              {/* Company */}
               <div className="col-md-6">
                 <label className="form-label">Company Name</label>
                 <input
@@ -158,6 +165,7 @@ const RegisterForm = () => {
                 )}
               </div>
 
+              {/* Industry */}
               <div className="col-md-6">
                 <label className="form-label">Industry Type</label>
                 <select
@@ -177,6 +185,67 @@ const RegisterForm = () => {
                 )}
               </div>
 
+              {/* Password */}
+              <div className="col-md-6">
+                <label className="form-label">Password</label>
+                <div className="input-group">
+                  <input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    className={`form-control ${
+                      errors.password && "is-invalid"
+                    }`}
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    style={placeholderStyle}
+                  />
+                  <span
+                    className="input-group-text"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <BsEyeSlash /> : <BsEye />}
+                  </span>
+                </div>
+                {errors.password && (
+                  <div className="invalid-feedback d-block">
+                    {errors.password}
+                  </div>
+                )}
+              </div>
+
+              {/* Confirm Password */}
+              <div className="col-md-6">
+                <label className="form-label">Confirm Password</label>
+                <div className="input-group">
+                  <input
+                    name="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    className={`form-control ${
+                      errors.confirmPassword && "is-invalid"
+                    }`}
+                    placeholder="Confirm your password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    style={placeholderStyle}
+                  />
+                  <span
+                    className="input-group-text"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <BsEyeSlash /> : <BsEye />}
+                  </span>
+                </div>
+                {errors.confirmPassword && (
+                  <div className="invalid-feedback d-block">
+                    {errors.confirmPassword}
+                  </div>
+                )}
+              </div>
+
+              {/* Country */}
               <div className="col-md-6">
                 <label className="form-label">Country or Region</label>
                 <input
@@ -200,9 +269,9 @@ const RegisterForm = () => {
                 <button
                   type="submit"
                   className="btn btn-primary w-100 d-flex justify-content-center align-items-center"
-                  disabled={isSubmitting}
+                  disabled={loading}
                 >
-                  {isSubmitting ? (
+                  {loading ? (
                     <>
                       <span
                         className="spinner-border spinner-border-sm me-2"
