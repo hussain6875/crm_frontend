@@ -11,7 +11,7 @@ export const getAllActivities = createAsyncThunk(
 export const createNewActivity = createAsyncThunk(
   "activities/createNewActivity",
   async ({ module, id, data, type }) => {
-    console.log(module,id,data,type);
+
     return await ActivityService.createActivity(module, id, data, type);
   }
 );

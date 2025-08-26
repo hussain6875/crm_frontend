@@ -25,7 +25,7 @@ export default function Calls({ onCreateClick, module, id }) {
       <div className="d-flex justify-content-between">
         <div>
           <h6>Calls</h6>
-          <h6>June 2025</h6>
+          
         </div>
         <button
           style={{

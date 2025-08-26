@@ -37,28 +37,27 @@ class ActivityService {
     // Static function to create a new activity
     static async createActivity(module, id, data, type) {
         try {
-            console.log(`${this.BASE_URL}/${module}/create/${id}?activity=${type}`);
-            // const response = await fetch(
-            //     `${this.BASE_URL}/${module}/create/${id}?activity=${type}`,
-            //     {
-            //         method: "POST",
-            //         headers: {
-            //             "Content-Type": "application/json",
-            //         },
-            //         body: JSON.stringify(data),
-            //     }
-            // );
-            // if (!response.ok) {
-            //     // Return mock success if backend is not available
-            //     console.warn(`Backend not available, simulating ${type} creation`);
-            //     return {
-            //         id: Date.now(),
-            //         ...data,
-            //         type: type
-            //     };
-            // }
-            // const result = await response.json();
-            // return result;
+            const response = await fetch(
+                `${this.BASE_URL}/${module}/create/${id}?activity=${type}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                }
+            );
+            if (!response.ok) {
+                // Return mock success if backend is not available
+                console.warn(`Backend not available, simulating ${type} creation`);
+                return {
+                    id: Date.now(),
+                    ...data,
+                    type: type
+                };
+            }
+            const result = await response.json();
+            return result;
         } catch (error) {
             // Return mock success on network error
             console.warn(`Network error, simulating ${type} creation:`, error.message);

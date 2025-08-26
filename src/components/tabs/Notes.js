@@ -23,7 +23,7 @@ export default function Notes({ onCreateClick, module, id }) {
       <div className="d-flex justify-content-between">
         <div>
           <h6>Notes</h6>
-          <h6>June 2025</h6>
+   
         </div>
         <button
           style={{ height: "40px", width: "125px", backgroundColor: "#6c63ff" }}

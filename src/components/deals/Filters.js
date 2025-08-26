@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaRegCalendarAlt } from "react-icons/fa";
+import { DEAL_STAGES } from '../../constants/dealStages';
 
 export default function Filters({
   selectedOwner,
@@ -44,13 +45,9 @@ export default function Filters({
       >
         <option value="" disabled>Deal Stage</option>
         <option value="All">All Stages</option>
-        <option value="Presentation Scheduled">Presentation Scheduled</option>
-        <option value="Qualified to buy">Qualified to buy</option>
-        <option value="Contract Sent">Contract Sent</option>
-        <option value="Closed Won">Closed Won</option>
-        <option value="Appointment Scheduled">Appointment Scheduled</option>
-        <option value="Decision Maker Bought In">Decision Maker Bought In</option>
-        <option value="Closed Lost">Closed Lost</option>
+        {DEAL_STAGES.filter(stage => stage.value).map(stage => (
+          <option key={stage.value} value={stage.value}>{stage.label}</option>
+        ))}
       </select>
 
       {/* Created Date Picker */}
