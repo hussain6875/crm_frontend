@@ -27,11 +27,11 @@ class AuthService {
     return data;
   }
 
-  static async resetPassword(email,newPassword) {
+  static async resetPassword(email, newPassword) {
     const response = await fetch(`${this.BASE_URL}/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email,newPassword }),
+      body: JSON.stringify({ email, newPassword }),
     });
     const data = await response.json();
     if (!response.ok) {
