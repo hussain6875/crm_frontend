@@ -4,6 +4,7 @@ import dealReducer from "./dealSlice";
 import ticketReducer from "./features/ticketSlice";
 import activityReducer from "./features/activitySlice";
 import userReducer from "./userSlice";
+import fileReducer from "./features/fileSlice";
 
 const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ const store = configureStore({
     tickets: ticketReducer,
     activities: activityReducer,
     users: userReducer,
+    attachments: fileReducer,
   },
 });
 

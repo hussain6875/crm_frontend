@@ -18,10 +18,10 @@ import CreateCall from "../components/tabs/CreateCall";
 import CreateTask from "../components/tabs/CreateTask";
 import CreateMeeting from "../components/tabs/CreateMeeting";
 import { createNewActivity } from "../redux/features/activitySlice";
+import Attachment from "../components/ui/Attachment";
 
 const TicketDetails = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAttachmentOpen, setIsAttachmentOpen] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
@@ -144,14 +144,6 @@ const TicketDetails = () => {
       setIsOpen(false);
     } else {
       setIsOpen(true);
-    }
-  };
-
-  const handleAttachmentButton = () => {
-    if (isAttachmentOpen) {
-      setIsAttachmentOpen(false);
-    } else {
-      setIsAttachmentOpen(true);
     }
   };
 
@@ -401,30 +393,7 @@ const TicketDetails = () => {
                     </div>
 
                     <div className={styles.rightPanel}>
-                      <div className="d-flex align-items-center">
-                        <div
-                          onClick={handleAttachmentButton}
-                          style={{ cursor: "pointer" }}
-                        >
-                          <i
-                            className={`bi ${
-                              isAttachmentOpen
-                                ? "bi-chevron-down"
-                                : "bi-chevron-right"
-                            } me-2 small`}
-                          ></i>
-                          <strong>Attachments</strong>
-                        </div>
-                        <a href="/" className="text-decoration-none ms-auto">
-                          + Add
-                        </a>
-                      </div>
-                      {isAttachmentOpen && (
-                        <p className="text-muted small">
-                          See the files attached to your activities or uploaded
-                          to this record.
-                        </p>
-                      )}
+                      <Attachment module={"ticket"} id={ticketId} />
                     </div>
                   </div>
                 </div>
