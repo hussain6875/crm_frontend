@@ -55,7 +55,7 @@ const LoginForm = () => {
       setForgotError("");
       dispatch(resetPassword(forgotEmail)).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
-          setForgotSuccess("✅ Password reset link sent to your email!");
+          setForgotSuccess(" Password reset link sent to your email!");
           setTimeout(() => {
             setShowForgotModal(false);
             setForgotEmail("");
