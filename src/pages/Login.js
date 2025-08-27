@@ -1,13 +1,9 @@
 import "../App.css";
 import { useState, useEffect } from "react";
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { validateLoginForm, validateForgotPassword } from "../utils/validation";
-import { validateLoginForm, validateForgotPassword } from "../utils/validation";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useDispatch, useSelector } from "react-redux";
-import { loginUser, resetPassword } from "../redux/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, forgotPassword } from "../redux/AuthSlice";
 
@@ -20,25 +16,18 @@ const LoginForm = () => {
   const [forgotError, setForgotError] = useState("");
   const [forgotSuccess, setForgotSuccess] = useState("");
 
-  const [showForgotModal, setShowForgotModal] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState("");
-  const [forgotError, setForgotError] = useState("");
-  const [forgotSuccess, setForgotSuccess] = useState("");
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, error, success, token } = useSelector((state) => state.auth||{});
-  const dispatch = useDispatch();
-  const { loading, error, success, token } = useSelector((state) => state.auth);
+  const { loading, error, success, token } = useSelector(
+    (state) => state.auth || {}
+  );
 
-  // Handle input changes
   // Handle input changes
   const handleChange = (e) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  // Submit login
   // Submit login
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -66,41 +55,9 @@ const LoginForm = () => {
       setForgotSuccess("");
     } else {
       setForgotError("");
-      dispatch(resetPassword(forgotEmail)).then((res) => {
-        if (res.meta.requestStatus === "fulfilled") {
-          setForgotSuccess(" Password reset link sent to your email!");
-          setTimeout(() => {
-            setShowForgotModal(false);
-            setForgotEmail("");
-            setForgotSuccess("");
-          }, 2000);
-        } else {
-          setForgotError(res.payload || "Something went wrong");
-        }
-      });
-      dispatch(loginUser(formValues));
-    }
-  };
-
-  // Redirect after login success
-  useEffect(() => {
-    if (token) {
-      setTimeout(() => navigate("/dashboard"), 1500);
-    }
-  }, [token, navigate]);
-
-  // Forgot Password Submit (Redux version)
-  const handleForgotPassword = (e) => {
-    e.preventDefault();
-    const error = validateForgotPassword(forgotEmail);
-    if (error) {
-      setForgotError(error);
-      setForgotSuccess("");
-    } else {
-      setForgotError("");
       dispatch(forgotPassword(forgotEmail)).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
-          setForgotSuccess("✅ Password reset link sent to your email!");
+          setForgotSuccess("Password reset link sent to your email!");
           setTimeout(() => {
             setShowForgotModal(false);
             setForgotEmail("");
@@ -122,9 +79,7 @@ const LoginForm = () => {
         <h4 className="text-center fw-bold mb-4">Log in</h4>
 
         {/* Login Form */}
-        {/* Login Form */}
         <form onSubmit={handleSubmit} noValidate>
-          {/* Email */}
           {/* Email */}
           <div className="mb-3">
             <label className="form-label">Email</label>
@@ -143,7 +98,6 @@ const LoginForm = () => {
           </div>
 
           {/* Password */}
-          {/* Password */}
           <div className="mb-3">
             <div className="d-flex justify-content-between">
               <label className="form-label">Password</label>
@@ -152,13 +106,7 @@ const LoginForm = () => {
                 role="button"
                 onClick={() => setShowForgotModal(true)}
               >
-              <span
-                className="text-primary text-decoration-none small"
-                role="button"
-                onClick={() => setShowForgotModal(true)}
-              >
                 Forgot password?
-              </span>
               </span>
             </div>
 
@@ -211,16 +159,6 @@ const LoginForm = () => {
             disabled={loading}
           >
             {loading ? "Logging in..." : "Log in"}
-          {/* Error & Success Messages */}
-          {error && <div className="text-danger mb-2">{error}</div>}
-          {success && <div className="text-success mb-2">{success}</div>}
-
-          <button
-            type="submit"
-            className="btn btn-primary w-100 mt-2"
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Log in"}
           </button>
         </form>
 
@@ -238,61 +176,6 @@ const LoginForm = () => {
           </small>
         </div>
       </div>
-
-      {/* Forgot Password Modal */}
-      {showForgotModal && (
-        <div
-          className="modal fade show d-block"
-          tabIndex="-1"
-          role="dialog"
-          style={{ background: "rgba(0,0,0,0.5)" }}
-        >
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Forgot Password</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowForgotModal(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <form onSubmit={handleForgotPassword}>
-                  <div className="mb-3">
-                    <label className="form-label">Enter your email</label>
-                    <input
-                      type="email"
-                      className={`form-control ${
-                        forgotError ? "is-invalid" : ""
-                      }`}
-                      placeholder="Enter your registered email"
-                      value={forgotEmail}
-                      onChange={(e) => setForgotEmail(e.target.value)}
-                      required
-                    />
-                    {forgotError && (
-                      <div className="invalid-feedback">{forgotError}</div>
-                    )}
-                  </div>
-                  {forgotSuccess && (
-                    <div className="alert alert-success py-2">
-                      {forgotSuccess}
-                    </div>
-                  )}
-                  <button
-                    type="submit"
-                    className="btn btn-primary w-100 mt-2"
-                    disabled={loading}
-                  >
-                    {loading ? "Sending..." : "Reset Password"}
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Forgot Password Modal */}
       {showForgotModal && (
