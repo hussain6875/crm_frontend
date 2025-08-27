@@ -40,6 +40,7 @@ static get token() {
   // POST create new user
   static async createUser(userData) {
       
+      
     const response = await fetch(this.BASE_URL, {
      headers:this.authHeaders,
     });
@@ -48,7 +49,5 @@ static get token() {
     }
     return response.json();
   }
-
- 
 }
 export default UserService;
