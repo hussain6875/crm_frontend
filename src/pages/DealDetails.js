@@ -73,7 +73,7 @@ export default function DealDetails() {
         module: "deal",
         id: id,
         data: noteData,
-        type: "notes"
+        type: "Note"
       }));
       // Refresh activities to show the new note
       dispatch(getAllActivities({ module: "deal", id: id }));

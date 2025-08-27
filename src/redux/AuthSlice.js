@@ -1,22 +1,14 @@
+
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { AUTH_ENDPOINTS } from "../../constants/api"; 
+import AuthService from "../services/AuthService";
 
 // REGISTER USER
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await fetch(AUTH_ENDPOINTS.REGISTER, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
-      }
-      return data; // server should return user or success message
+      return await AuthService.register(formData);
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -28,39 +20,20 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await fetch(AUTH_ENDPOINTS.LOGIN, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-      return data; // server should return token & user
+      console.log(formData);
+      return await AuthService.login(formData);
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
 
-// FORGOT PASSWORD
-export const forgotPassword = createAsyncThunk(
-  "auth/forgotPassword",
+// RESET PASSWORD
+export const resetPassword = createAsyncThunk(
+  "auth/resetPassword",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await fetch(AUTH_ENDPOINTS.FORGOT_PASSWORD,{
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Email not found");
-      }
-      return data.message; // server should return "Reset link sent"
+      return await AuthService.resetPassword(email);
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -111,10 +84,12 @@ const authSlice = createSlice({
       state.success = null;
     });
     builder.addCase(loginUser.fulfilled, (state, action) => {
+   
       state.loading = false;
       state.token = action.payload.token;
       state.user = action.payload.user;
       localStorage.setItem("token", action.payload.token);
+      console.log(localStorage);
       state.error = null;
     });
     builder.addCase(loginUser.rejected, (state, action) => {
@@ -122,18 +97,18 @@ const authSlice = createSlice({
       state.error = action.payload;
     });
 
-    // FORGOT PASSWORD
-    builder.addCase(forgotPassword.pending, (state) => {
+    // RESET PASSWORD
+    builder.addCase(resetPassword.pending, (state) => {
       state.loading = true;
       state.error = null;
       state.success = null;
     });
-    builder.addCase(forgotPassword.fulfilled, (state, action) => {
+    builder.addCase(resetPassword.fulfilled, (state, action) => {
       state.loading = false;
       state.success = action.payload;
       state.error = null;
     });
-    builder.addCase(forgotPassword.rejected, (state, action) => {
+    builder.addCase(resetPassword.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
     });
@@ -142,5 +117,7 @@ const authSlice = createSlice({
 
 export const { logout, clearMessages } = authSlice.actions;
 export default authSlice.reducer;
+
+
 
 

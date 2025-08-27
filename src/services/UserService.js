@@ -3,7 +3,13 @@ class UserService {
 
   // GET all users
   static async getUsers() {
-    const response = await fetch(this.BASE_URL);
+    const token = localStorage.getItem('token');
+    const response = await fetch(this.BASE_URL, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+    });
     if (!response.ok) {
       throw new Error("Failed to fetch the users");
     }
@@ -12,7 +18,13 @@ class UserService {
 
   // GET user by ID
   static async getUserById(id) {
-    const response = await fetch(`${this.BASE_URL}/${id}`);
+      const token = localStorage.getItem('token');
+    const response = await fetch(`${this.BASE_URL}/${id}`,{
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+    });
     if (!response.ok) {
       throw new Error("Failed to fetch the user");
     }
@@ -21,13 +33,9 @@ class UserService {
 
   // POST create new user
   static async createUser(userData) {
-      const token = localStorage.getItem('token'); // getting token that is send to the localstorage at the time of login
-
+      
     const response = await fetch(this.BASE_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-       },      
       body: JSON.stringify(userData),
     });
     if (!response.ok) {
