@@ -54,7 +54,7 @@ const LoginForm = () => {
       setForgotSuccess("");
     } else {
       setForgotError("");
-      dispatch(forgotPassword(forgotEmail)).then((res) => {
+      dispatch(resetPassword(forgotEmail)).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
         if (res.payload?.exists) {
           // ✅ if email exists in backend, navigate to reset page

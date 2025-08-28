@@ -1,7 +1,7 @@
 import { FiSearch, FiBell } from "react-icons/fi";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../redux/authSlice"; 
+import { logout } from "../../redux/AuthSlice"; 
 import { useState } from "react";
 
 const TopBar = () => {

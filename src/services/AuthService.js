@@ -33,17 +33,17 @@ class AuthService {
 
   // FORGOT PASSWORD
   static async forgotPassword(email) {
-    const response = await fetch(`${this.BASE_URL}/forgot-password`, {
+    const response = await fetch(`${this.BASE_URL}/validate-email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
     const data = await response.json();
 
-    if (!response.ok) {
+    if (!response.ok|| !data.exists) {
       throw new Error(data.message || "Email not found");
     }
-    return data.message;
+    return data.exists;
   }
 
   // RESET PASSWORD
