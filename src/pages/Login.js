@@ -5,7 +5,7 @@ import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { validateLoginForm, validateForgotPassword } from "../utils/validation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, resetPassword } from "../redux/AuthSlice";
+import { loginUser, forgotPassword } from "../redux/AuthSlice";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -62,7 +62,7 @@ const LoginForm = () => {
             setForgotSuccess("");
           }, 2000);
         } else {
-          setForgotError(res.payload || "Something went wrong");
+          setForgotError("Email not found");
         }
       });
     }
@@ -234,3 +234,5 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+
+

@@ -46,7 +46,7 @@ const RegisterForm = () => {
       dispatch(registerUser(formData)).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
           // navigate after success
-          setTimeout(() => navigate("/login"), 2000);
+          setTimeout(() => navigate("/"), 2000);
         }
       });
     }
