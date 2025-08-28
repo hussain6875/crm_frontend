@@ -64,6 +64,10 @@ const dealSlice = new createSlice({
       })
       .addCase(createDeal.fulfilled, (state, action) => {
         state.loading = false;
+        // ensure state.deals is always an array before pushing
+        if (!Array.isArray(state.deals)) {
+          state.deals = [];
+        }
         state.deals.push(action.payload);
       })
       .addCase(createDeal.rejected, (state, action) => {

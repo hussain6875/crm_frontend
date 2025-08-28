@@ -221,7 +221,7 @@ export default function DealDetails() {
               </p>
               <span>Created Date</span>
               <span>
-                <strong></strong>
+                <strong>{new Date().toISOString()}</strong>
               </span>
             </div>
           </div>
