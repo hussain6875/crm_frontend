@@ -224,23 +224,38 @@ const TicketDetails = () => {
                     <div
                       className={`d-flex flex-nowrap rounded justify-content-between gap-3 mb-4 ${styles.buttons}`}
                     >
-                      <section className="text-center pt-2 pb-0 ps-0">
+                      <section
+                        className="text-center pt-2 pb-0 ps-0"
+                        onClick={() => setShowNoteModal(true)}
+                      >
                         <i className="bi bi-pencil-square rounded p-2 border border-secondary"></i>
                         <p className="mt-2 mb-0">Note</p>
                       </section>
-                      <section className="text-center pt-2 pb-0">
+                      <section
+                        className="text-center pt-2 pb-0"
+                        onClick={() => setShowEmailModal(true)}
+                      >
                         <i className="bi bi-envelope-fill rounded p-2 border border-secondary"></i>
                         <p className="mt-2 mb-0">Email</p>
                       </section>
-                      <section className="text-center pt-2 pb-0">
+                      <section
+                        className="text-center pt-2 pb-0"
+                        onClick={() => setShowCallModal(true)}
+                      >
                         <i className="bi bi-telephone-fill rounded p-2 border border-secondary"></i>
                         <p className="mt-2 mb-0">Call</p>
                       </section>
-                      <section className="text-center pt-2 pb-0">
+                      <section
+                        className="text-center pt-2 pb-0"
+                        onClick={() => setShowNoteModal(true)}
+                      >
                         <i className="bi bi-check2-square rounded p-2 border border-secondary"></i>
                         <p className="mt-2 mb-0">Task</p>
                       </section>
-                      <section className="text-center pt-2 pb-0">
+                      <section
+                        className="text-center pt-2 pb-0"
+                        onClick={() => setShowMeetingModal(true)}
+                      >
                         <i className="bi bi-calendar2-range-fill rounded p-2 border border-secondary"></i>
                         <p className="mt-2 mb-0">Meet..</p>
                       </section>
