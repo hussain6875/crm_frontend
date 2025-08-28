@@ -1,6 +1,30 @@
 import { FiSearch, FiBell } from "react-icons/fi";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../redux/AuthSlice"; 
+import { useState } from "react";
 
 const TopBar = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { user } = useSelector((state) => state.auth);
+
+  // dropdown toggle
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  // get first letter from username or email
+  const getInitial = () => {
+    if (user?.name) return user.name.charAt(0).toUpperCase();
+    if (user?.email) return user.email.charAt(0).toUpperCase();
+    return "?";
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
   return (
     <div
       className="d-flex justify-content-between align-items-center px-4 py-3 bg-white shadow-sm position-fixed top-0 start-0 w-100"
@@ -13,7 +37,6 @@ const TopBar = () => {
       <div className="d-flex align-items-center gap-3">
         {/* Search box with icon and divider */}
         <div style={{ maxWidth: 250, position: "relative" }}>
-          {/* Search Icon */}
           <FiSearch
             style={{
               position: "absolute",
@@ -25,8 +48,6 @@ const TopBar = () => {
               zIndex: 2,
             }}
           />
-
-          {/* Vertical Divider */}
           <div
             style={{
               position: "absolute",
@@ -35,12 +56,10 @@ const TopBar = () => {
               transform: "translateY(-50%)",
               width: "1px",
               height: "20px",
-              backgroundColor: "#d4d4d8", // light grey line
+              backgroundColor: "#d4d4d8",
               zIndex: 1,
             }}
           ></div>
-
-          {/* Input */}
           <input
             type="text"
             className="form-control"
@@ -70,19 +89,43 @@ const TopBar = () => {
           <FiBell style={{ color: "#6c63ff", fontSize: "1.2rem" }} />
         </button>
 
-        {/* Avatar */}
-        <div
-          className="rounded-circle d-flex justify-content-center align-items-center"
-          style={{
-            width: 40,
-            height: 40,
-            backgroundColor: "#6c63ff",
-            color: "white",
-            fontWeight: "bold",
-            fontSize: "1rem",
-          }}
-        >
-          A
+        {/* Avatar with dropdown */}
+        <div className="position-relative">
+          <div
+            className="rounded-circle d-flex justify-content-center align-items-center"
+            style={{
+              width: 40,
+              height: 40,
+              backgroundColor: "#6c63ff",
+              color: "white",
+              fontWeight: "bold",
+              fontSize: "1rem",
+              cursor: "pointer",
+            }}
+            onClick={() => setShowDropdown((prev) => !prev)}
+          >
+            {getInitial()}
+          </div>
+
+          {/* Dropdown */}
+          {showDropdown && (
+            <div
+              className="position-absolute bg-white shadow rounded p-2"
+              style={{
+                top: "110%",
+                right: 0,
+                minWidth: "120px",
+                zIndex: 1001,
+              }}
+            >
+              <button
+                className="dropdown-item text-danger"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -90,3 +133,5 @@ const TopBar = () => {
 };
 
 export default TopBar;
+
+
