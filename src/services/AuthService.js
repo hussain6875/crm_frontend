@@ -47,19 +47,22 @@ class AuthService {
   }
 
   // RESET PASSWORD
-  static async resetPassword(email, newPassword) {
+  static async resetPasswordApi(email, newPassword) {
     const response = await fetch(`${this.BASE_URL}/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, newPassword }),
     });
+
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || "Password reset failed");
+      throw new Error(data.message || "Something went wrong");
     }
-    return data.message;
+
+    return data;
   }
 }
 
 export default AuthService;
+
