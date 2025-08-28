@@ -2,7 +2,7 @@ import React, { useState , useEffect} from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
 import * as bootstrap from "bootstrap";
-import { updateLead } from "../../redux/feature/leads/leadsThunks"; // ✅ Correct path here
+import { updateLead } from "../../redux/features/leads/leadsThunks"; // ✅ Correct path here
 import { useDispatch} from "react-redux";
 
 const EditLead = ({ isOpen, onClose, onSave, initialData }) => {

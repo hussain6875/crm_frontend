@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from "react";
 import PageWrapper from "../components/layout/PageWrapper";
 import styles from "../components/leads/leads.module.css";
-import { useNavigate, useParams } from "react-router-dom";
+import { data, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchLeads } from "../redux/feature/leads/leadsThunks";
+import { fetchLeads } from "../redux/features/leads/leadsThunks";
 
 import Activity from "../components/tabs/Activity";
 import Notes from "../components/tabs/Notes";
-import Email from "../components/tabs/Email";
 import Calls from "../components/tabs/Calls";
 import Task from "../components/tabs/Task";
 import Meetings from "../components/tabs/Meetings";
-import CreateNotes from "../components/tabs/CreateNotes";
 import CreateEmail from "../components/tabs/CreateEmail";
-import CreateCalls from "../components/tabs/CreateCalls";
 import CreateTask from "../components/tabs/CreateTask";
 import CreateMeeting from "../components/tabs/CreateMeeting";
 import EditLead from "../components/leads/EditLead";
 import { Offcanvas } from "bootstrap";
+import { createNewActivity } from "../redux/features/activitySlice";
+import Emails from "../components/tabs/Emails";
+import CreateNote from "../components/tabs/CreateNote";
+import CreateCall from "../components/tabs/CreateCall";
 
 const LeadDetails = (updatedLeadData) => {
     const [lead, setLead] = useState({});
@@ -33,12 +34,24 @@ const LeadDetails = (updatedLeadData) => {
     const [showMeetingModal, setShowMeetingModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
 
+    const navigate = useNavigate();
+    const location= useLocation()
+    const dispatch = useDispatch();
+
+
     const openEditModal = () => setShowEditModal(true);
     const closeEditModal = () => setShowEditModal(false);
 
     //Saving note content
     const handleSave = (noteContent) => {
-        console.log("Note saved:", noteContent);
+        dispatch(
+            createNewActivity({
+                module: "lead",
+                id: leadId,
+                data:{content: noteContent},
+                type:"note"
+            })
+        );
         setShowNoteModal(false);
     };
     //methods to update notes modal
@@ -62,7 +75,7 @@ const LeadDetails = (updatedLeadData) => {
     const closeMeetingModal = () => setShowMeetingModal(false);
 
     // const { tab = "activity" } = queryString.parse(location.search);
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(location.search);
     const tab = params.get("tab") || "activity";
 
     const handleTabChange = (tabName) => {
@@ -72,30 +85,27 @@ const LeadDetails = (updatedLeadData) => {
     const renderTabContent = () => {
         switch (tab) {
             case "activity":
-                return <Activity />;
+                return <Activity module={"lead"} id={leadId}/>;
             case "notes":
-                return <Notes onCreateClick={openNoteModal} />;
+                return <Notes onCreateClick={openNoteModal} module={"lead"} id={leadId}/>;
             case "emails":
-                return <Email onCreateClick={openEmailModal} />;
+                return <Emails onCreateClick={openEmailModal} module={"lead"} id={leadId}/>;
             case "calls":
-                return <Calls onCreateClick={openCallModal} />;
+                return <Calls onCreateClick={openCallModal} module={'lead'} id={leadId} />;
             case "tasks":
-                return <Task onCreateClick={openTaskModal} />;
+                return <Task onCreateClick={openTaskModal} module={'lead'} id={leadId} />;
             case "meetings":
-                return <Meetings onCreateClick={openMeetingModal} />;
+                return <Meetings onCreateClick={openMeetingModal} module={'lead'} id={leadId} />;
             default:
                 return null;
         }
     };
 
-    //redux
-    const dispatch = useDispatch();
     const leads = useSelector((state) => state.leads.list);
     useEffect(() => {
         dispatch(fetchLeads());
     }, [dispatch]);
 
-    const navigate = useNavigate();
     const params1 = useParams();
     const { leadId } = params1;
 
@@ -392,9 +402,9 @@ const LeadDetails = (updatedLeadData) => {
                                 <div className="tab-content mt-3">{renderTabContent()}</div>
                             </div>
 
-                            <hr className="border mt-0 border-secondary border-opacity-50" />
+                            {/* <hr className="border mt-0 border-secondary border-opacity-50" /> */}
 
-                            {"Activity" && (
+                            {/* {"Activity" && (
                                 <div className="mx-2">
                                     <strong className="mb-2 d-block">Upcoming</strong>
                                     <div className="border rounded p-3 mb-2">
@@ -421,8 +431,9 @@ const LeadDetails = (updatedLeadData) => {
                                         <div className="text-muted small fw-semibold">June 24, 2025 at 5:30PM</div>
                                     </div>
                                 </div>
-                            )}
-                            {/* {hasOption === "Notes" && (
+                            )} */}
+
+                            {hasOption === "Notes" && (
                                 <div className="mx-2">
                                     <strong className="mb-2 d-block">Notes</strong>
                                 </div>
@@ -446,7 +457,7 @@ const LeadDetails = (updatedLeadData) => {
                                 <div className="mx-2">
                                     <strong className="mb-2 d-block">Meetings</strong>
                                 </div>
-                            )} */}
+                            )}
                         </div>
 
                         {/* Right panel */}
@@ -483,12 +494,12 @@ const LeadDetails = (updatedLeadData) => {
                             </div>
                         </div>
                     </div>
+                {setShowNoteModal && <CreateNote isOpen={showNoteModal} onClose={closeNoteModal} onSave={handleSave} />}
+                {setShowEmailModal && <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} module={"lead"} id={leadId} />}
+                {setShowCallModal && <CreateCall isOpen={showCallModal} onClose={closeCallModal} module={"lead"} details={lead} />}
+                {setShowTaskModal && <CreateTask isOpen={showTaskModal} onClose={closeTaskModal} module={"lead"} details={lead} />}
+                {setShowMeetingModal && <CreateMeeting isOpen={showMeetingModal} onClose={closeMeetingModal} module={"lead"} details={lead} />}
                 </div>
-                {/* {setShowNoteModal && <CreateNotes isOpen={showNoteModal} onClose={closeNoteModal} onSave={handleSave} />}
-                {setShowEmailModal && <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} />}
-                {setShowCallModal && <CreateCalls isOpen={showCallModal} onClose={closeCallModal} />}
-                {setShowTaskModal && <CreateTask isOpen={showTaskModal} onClose={closeTaskModal} />}
-                {setShowMeetingModal && <CreateMeeting isOpen={showMeetingModal} onClose={closeMeetingModal} />} */}
             </PageWrapper>
             <EditLead  isOpen={showEditModal}
   onClose={closeEditModal}
