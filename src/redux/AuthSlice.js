@@ -1,7 +1,7 @@
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AuthService from "../services/AuthService";
-import AuthService from "../services/AuthService";
+
 
 // REGISTER
 export const registerUser = createAsyncThunk(
@@ -28,9 +28,9 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// FOROT PASSWORD
+// FORGOT PASSWORD
 export const forgotPassword = createAsyncThunk(
-  "auth/resetPassword",
+  "auth/forgotPassword",
   async (email, { rejectWithValue }) => {
     try {
       return await AuthService.forgotPassword(email);
