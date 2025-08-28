@@ -33,7 +33,7 @@ export default function CreateMeeting({ isOpen, onClose, module, details }) {
         module,
         id: details.id,
         data: formData,
-        type: "meeting",
+        type: "Meeting",
       })
     );
 

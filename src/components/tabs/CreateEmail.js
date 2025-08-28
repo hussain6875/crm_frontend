@@ -29,7 +29,7 @@ export default function CreateEmail({ isOpen, onClose, module, id }) {
         module,
         id,
         data: newData,
-        type: "email",
+        type: "Email",
       })
     );
 

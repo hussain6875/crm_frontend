@@ -1,44 +1,27 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { AUTH_ENDPOINTS } from "../../constants/api"; 
 
-// REGISTER USER
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import AuthService from "../services/AuthService";
+
+
+// REGISTER
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await fetch(AUTH_ENDPOINTS.REGISTER, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
-      }
-      return data; // server should return user or success message
+      return await AuthService.register(formData);
+      return await AuthService.register(formData);
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
 
-// LOGIN USER
+// LOGIN
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await fetch(AUTH_ENDPOINTS.LOGIN, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-      return data; // server should return token & user
+      return await AuthService.login(formData);
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -50,17 +33,19 @@ export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
   async (email, { rejectWithValue }) => {
     try {
-      const response = await fetch(AUTH_ENDPOINTS.FORGOT_PASSWORD,{
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      return await AuthService.forgotPassword(email);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || "Email not found");
-      }
-      return data.message; // server should return "Reset link sent"
+// RESET PASSWORD
+export const resetPassword = createAsyncThunk(
+  "auth/resetPassword",
+  async ({ email, newPassword }, { rejectWithValue }) => {
+    try {
+      return await AuthService.resetPassword(email, newPassword);
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -89,58 +74,70 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     // REGISTER
-    builder.addCase(registerUser.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-      state.success = null;
-    });
-    builder.addCase(registerUser.fulfilled, (state) => {
-      state.loading = false;
-      state.success = "Registration successful!";
-      state.error = null;
-    });
-    builder.addCase(registerUser.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    });
+    builder
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = null;
+      })
+      .addCase(registerUser.fulfilled, (state) => {
+        state.loading = false;
+        state.success = "Registration successful!";
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
 
     // LOGIN
-    builder.addCase(loginUser.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-      state.success = null;
-    });
-    builder.addCase(loginUser.fulfilled, (state, action) => {
-      state.loading = false;
-      state.token = action.payload.token;
-      state.user = action.payload.user;
-      localStorage.setItem("token", action.payload.token);
-      state.error = null;
-    });
-    builder.addCase(loginUser.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    });
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+        localStorage.setItem("token", action.payload.token);
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
 
     // FORGOT PASSWORD
-    builder.addCase(forgotPassword.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-      state.success = null;
-    });
-    builder.addCase(forgotPassword.fulfilled, (state, action) => {
-      state.loading = false;
-      state.success = action.payload;
-      state.error = null;
-    });
-    builder.addCase(forgotPassword.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    });
+    builder
+      .addCase(forgotPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = action.payload || "Reset link sent to your email!";
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    // RESET PASSWORD
+    builder
+      .addCase(resetPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = action.payload || "Password reset successful!";
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
 export const { logout, clearMessages } = authSlice.actions;
 export default authSlice.reducer;
-
 
