@@ -9,6 +9,7 @@
 .buttons section {
   font-size: 0.8rem;
   padding: 0;
+  cursor: pointer;
 }
 .buttons i,
 .about i {
