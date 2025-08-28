@@ -1,11 +1,12 @@
 import React from "react";
-import {useLocation,useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PageWrapper from "../components/layout/PageWrapper";
 import styles from "./dealdetails.module.css";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchDealsByID } from "../redux/dealSlice";
+import { createNewActivity, getAllActivities } from "../redux/features/activitySlice";
 import {
   FaSearch,
   FaArrowLeft,
@@ -36,7 +37,7 @@ import CreateMeeting from "../components/tabs/CreateMeeting";
 import CreateEdit from "../components/tabs/CreateEdit";
 
 export default function DealDetails() {
-  const { id } = useParams();
+  const { id: routeId } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -45,22 +46,41 @@ export default function DealDetails() {
   const [showCallModal, setShowCallModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showMeetingModal, setShowMeetingModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [isAttachmentOpen, setIsAttachmentOpen] = useState(false);
+
 
   const { selectedDeal, loading, error } = useSelector((state) => state.deals);
   useEffect(() => {
-    dispatch(fetchDealsByID(id));
-  }, [dispatch, id]);
+    dispatch(fetchDealsByID(routeId));
+  }, [dispatch, routeId]);
 
+  // Use dealId from selectedDeal if available, otherwise take route param
+  const id = selectedDeal?.data?.dealId || routeId;
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
- 
-  if (!selectedDeal) return <p>No deal found.</p>;
+
+  if (!selectedDeal?.data) return <p>No deal found.</p>;
 
   //Saving note content
-  const handleSave = (noteContent) => {
-    console.log("Note saved:", noteContent);
-    setShowNoteModal(false);
+  const handleSave = async (noteContent) => {
+    try {
+      const noteData = {
+        content: noteContent,
+        createdAt: new Date().toISOString(),
+      };
+      await dispatch(createNewActivity({
+        module: "deal",
+        id: id,
+        data: noteData,
+        type: "notes"
+      }));
+      // Refresh activities to show the new note
+      dispatch(getAllActivities({ module: "deal", id: id }));
+          setShowNoteModal(false);
+    } catch (error) {
+      console.error("Error saving note:", error);
+    }
   };
   //methods to update notes modal
   const openNoteModal = () => setShowNoteModal(true);
@@ -93,17 +113,17 @@ export default function DealDetails() {
   const renderTabContent = () => {
     switch (tab) {
       case "activity":
-        return <Activity />;
+        return <Activity module="deal" id={id}  />;
       case "notes":
-        return <Notes onCreateClick={openNoteModal} />;
+        return <Notes onCreateClick={openNoteModal} module="deal" id={id} />;
       case "emails":
-        return <Emails onCreateClick={openEmailModal} />;
+        return <Emails onCreateClick={openEmailModal} module="deal" id={id} />;
       case "calls":
-        return <Calls onCreateClick={openCallModal} />;
+        return <Calls onCreateClick={openCallModal} module="deal" id={id}  />;
       case "tasks":
-        return <Tasks onCreateClick={openTaskModal} />;
+        return <Tasks onCreateClick={openTaskModal} module="deal" id={id} />;
       case "meetings":
-        return <Meetings onCreateClick={openMeetingModal} />;
+        return <Meetings onCreateClick={openMeetingModal} module="deal" id={id}  />;
       default:
         return null;
     }
@@ -135,10 +155,10 @@ export default function DealDetails() {
               </button>
 
               <h2 className={`${styles.dealTitle}`}>
-                <strong>{selectedDeal.name}</strong>
+                <strong>{selectedDeal.data.name}</strong>
               </h2>
               <p>
-                Amount: <strong>{selectedDeal.amount}</strong>
+                Amount: <strong>{selectedDeal.data.amount}</strong>
               </p>
               <div
                 className="stage-dropdown"
@@ -149,7 +169,7 @@ export default function DealDetails() {
                 }}
               >
                 <span style={{ marginRight: "5px" }}>
-                  <strong>Stage:</strong> {selectedDeal.stage}
+                  <strong>Stage:</strong> {selectedDeal.data.stage}
                 </span>
                 <span style={{ color: "#5A32EA", fontSize: "14px" }}>▼</span>
               </div>
@@ -186,18 +206,18 @@ export default function DealDetails() {
                 <h4>About this Deal</h4>
                 <button
                   className="btn btn-link text-decoration-none text-secondary fw-semibold mb-3 p-0"
-                  onClick={() => navigate("")}
+                  onClick={() => setShowEditModal(true)}
                 >
                   <FaPen className="text-primary" />
                 </button>
               </div>
               <span>Deal Owner</span>
               <p>
-                <strong>{selectedDeal.owner?.userName}</strong>
+                <strong>{selectedDeal.data.owner?.userName}</strong>
               </p>
               <span>Priority</span>
               <p>
-                <strong>{selectedDeal.priority}</strong>
+                <strong>{selectedDeal.data.priority}</strong>
               </p>
               <span>Created Date</span>
               <span>
@@ -334,7 +354,13 @@ export default function DealDetails() {
             <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} />
           )}
           {setShowCallModal && (
-            <CreateCall isOpen={showCallModal} onClose={closeCallModal} />
+            <CreateCall
+              isOpen={showCallModal}
+              onClose={closeCallModal}
+              module="deal"
+              details={selectedDeal?.data}
+              id={id}
+            />
           )}
           {setShowTaskModal && (
             <CreateTask isOpen={showTaskModal} onClose={closeTaskModal} />
@@ -343,6 +369,13 @@ export default function DealDetails() {
             <CreateMeeting
               isOpen={showMeetingModal}
               onClose={closeMeetingModal}
+            />
+          )}
+          {showEditModal && (
+            <CreateEdit
+              isOpen={showEditModal}
+              onClose={() => setShowEditModal(false)}
+              deal={selectedDeal?.data} // pass selectedDeal.data
             />
           )}
         </div>

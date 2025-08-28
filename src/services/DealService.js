@@ -6,8 +6,7 @@ class DealService{
         if(!response.ok){
             throw new Error('failed to fetch the deal by this id');
         }
-        const data = response.json();
-        console.log(data);
+        const data = await response.json();   
         return data;
         }
           //static function to fetch the deals data
@@ -16,7 +15,7 @@ class DealService{
             if(!response.ok){
                 throw new Error('failed to fetch the deal');
             }
-            return response.json();
+            return await response.json();
           }
           //static function to create a new Deal
           static async createDeal(data){
@@ -29,6 +28,20 @@ class DealService{
             })
             if(!response.ok){
                 throw new Error('failed to create the new Deal');
+            }
+            return await response.json();
+          }
+          //static function to update a Deal
+          static async updateDeal(id, data){
+            const response = await fetch(`${this.BASE_URL}/${id}`,{
+                method:'PUT',
+                headers:{
+                    'Content-type':'application/json',                    
+                },
+                body:JSON.stringify(data),                                
+            })
+            if(!response.ok){
+                throw new Error('failed to update the Deal');
             }
             return await response.json();
           }

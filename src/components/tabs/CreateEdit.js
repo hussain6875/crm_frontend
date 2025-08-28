@@ -1,31 +1,77 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./createModal.module.css";
+import { updateDeal } from "../../redux/dealSlice";
+import { useDispatch } from "react-redux";
+import UserService from '../../services/UserService';
 
-export default function CreateEdit({ isOpen, onClose }) {
-     const [dealName, setDealName] = useState('');
-      const [dealStage, setDealStage] = useState('');
-      const [amount, setAmount] = useState('');
-      const [dealOwner, setDealOwner] = useState('');
-      const [closeDate, setCloseDate] = useState('');
-      const [priority, setPriority] = useState('');
-     const handleSubmit = (e) => {
-    e.preventDefault();
+export default function CreateEdit({ isOpen, onClose, deal }) {
+  const dispatch = useDispatch();
+   const[users,setUsers] = useState([]);//stores users data from usersAPI
+ useEffect(() => {
+    if (isOpen) {
+      UserService.getUsers()
+        .then((data) => {setUsers(data);
+          console.log("users:",data);
+        })
+        .catch((err) => console.error('Error fetching users:', err));
+    }
+  }, [isOpen]); 
+  const [formData, setFormData] = useState({
+    name: "",
+    stage: "",
+    amount: "",
+    closeDate: "",
+    priority: "",
+    dealOwner: "",
+    companyId: "",
+    leadId: "",
+  });
 
+  // Pre-fill form from the passed deal
+  useEffect(() => {
+    if (deal && isOpen) {
+      setFormData({
+        name: deal.name || "",
+        stage: deal.stage || "",
+        amount: deal.amount || "",
+        closeDate: deal.closeDate ? deal.closeDate.split("T")[0] : "",
+        priority: deal.priority || "",
+        dealOwner: deal.owner?.userId || deal.dealOwner || "",
+        companyId: deal.companyId || "",
+        leadId: deal.leadId || "",
+      });
+    }
+  }, [deal, isOpen]);
 
-
-      // TODO: dispatch to Redux, send to backend, etc.
-
-    onClose(); // close after submission
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await dispatch(
+        updateDeal({ id: deal.dealId, updatedData: formData })
+      ).unwrap();
+
+      alert("Deal updated successfully");
+      onClose();
+    } catch (err) {
+      console.error(err);
+      alert("Error updating deal");
+    }
+  };
+
   if (!isOpen) return null;
-  return(
-     <>
+
+  return (
+    <>
       <div className={styles.drawerBackdrop} onClick={onClose}></div>
 
       <div className={styles.drawerContainer}>
         <div className="drawer-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
-          <h5 className="mb-0">Create Deal</h5>
+          <h5 className="mb-0">Edit Deal</h5>
           <button className="btn-close" onClick={onClose}></button>
         </div>
 
@@ -36,9 +82,10 @@ export default function CreateEdit({ isOpen, onClose }) {
               <input
                 type="text"
                 className="form-control"
+                name="name"
                 placeholder="Enter"
-                value={dealName}
-                onChange={(e) => setDealName(e.target.value)}
+                value={formData.name}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -47,8 +94,9 @@ export default function CreateEdit({ isOpen, onClose }) {
               <label className="form-label">Deal Stage *</label>
               <select
                 className="form-select"
-                value={dealStage}
-                onChange={(e) => setDealStage(e.target.value)}
+                name="stage"
+                value={formData.stage}
+                onChange={handleChange}
                 required
               >
                 <option value="">Choose</option>
@@ -65,9 +113,10 @@ export default function CreateEdit({ isOpen, onClose }) {
               <input
                 type="number"
                 className="form-control"
+                name="amount"
                 placeholder="Enter"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                value={formData.amount}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -76,15 +125,19 @@ export default function CreateEdit({ isOpen, onClose }) {
               <label className="form-label">Deal Owner *</label>
               <select
                 className="form-select"
-                value={dealOwner}
-                onChange={(e) => setDealOwner(e.target.value)}
+                name="dealOwner"
+                value={formData.dealOwner}
+                onChange={handleChange}
                 required
               >
                 <option value="">Choose</option>
-                <option value="Jane Cooper">Jane Cooper</option>
-                <option value="Wade Warren">Wade Warren</option>
-                <option value="Guy Hawkins">Guy Hawkins</option>
+               {users.map((user) => (
+                  <option key={user.userId} value={user.userId}>
+                    {user.userName}
+                  </option>
+                ))}
               </select>
+             
             </div>
 
             <div className="row mb-3">
@@ -93,8 +146,9 @@ export default function CreateEdit({ isOpen, onClose }) {
                 <input
                   type="date"
                   className="form-control"
-                  value={closeDate}
-                  onChange={(e) => setCloseDate(e.target.value)}
+                  name="closeDate"
+                  value={formData.closeDate}
+                  onChange={handleChange}
                   required
                 />
               </div>
@@ -102,8 +156,9 @@ export default function CreateEdit({ isOpen, onClose }) {
                 <label className="form-label">Priority *</label>
                 <select
                   className="form-select"
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value)}
+                  name="priority"
+                  value={formData.priority}
+                  onChange={handleChange}
                   required
                 >
                   <option value="">Choose</option>
@@ -115,16 +170,20 @@ export default function CreateEdit({ isOpen, onClose }) {
             </div>
 
             <div className="d-flex justify-content-end gap-2">
-              <button type="button" className="btn btn-outline-secondary" onClick={onClose}>
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={onClose}
+              >
                 Cancel
               </button>
               <button type="submit" className="btn btn-primary">
-                Save
+                Update
               </button>
             </div>
           </form>
         </div>
       </div>
     </>
-  )
+  );
 }

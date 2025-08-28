@@ -1,26 +1,27 @@
+
 import React from 'react'
-import { useState,useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import {createDeal} from '../../redux/dealSlice';
-import UserService from '../../services/UserService';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { createDeal } from '../../redux/dealSlice';
+import { fetchUsers } from '../../redux/userSlice';
+import { DEAL_STAGES } from '../../constants/dealStages';
 import styles from './createDeal.module.css'
 
-export default function CreateDeal({isOpen,onClose}) {
+export default function CreateDeal({ isOpen, onClose }) {
   const [dealName, setDealName] = useState('');
   const [dealStage, setDealStage] = useState('');
   const [amount, setAmount] = useState('');
   const [dealOwner, setDealOwner] = useState('');
   const [closeDate, setCloseDate] = useState('');
   const [priority, setPriority] = useState('');
-  const[users,setUsers] = useState([]);//stores users data from usersAPI
   const dispatch = useDispatch();
-   useEffect(() => {
+  const users = useSelector((state) => state.users.users) || [];
+console.log(users);
+  useEffect(() => {
     if (isOpen) {
-      UserService.getUsers()
-        .then((data) => setUsers(data))
-        .catch((err) => console.error('Error fetching users:', err));
+      dispatch(fetchUsers());
     }
-  }, [isOpen]);
+  }, [isOpen, dispatch]);
    const handleSubmit = async(e) => {
     e.preventDefault();
 
@@ -80,12 +81,10 @@ export default function CreateDeal({isOpen,onClose}) {
                 onChange={(e) => setDealStage(e.target.value)}
                 required
               >
-                <option value="">Choose</option>
-                <option value="Qualified to Buy">Qualified to Buy</option>
-                <option value="Presentation Scheduled">Presentation Scheduled</option>
-                <option value="Contract Sent">Contract Sent</option>
-                <option value="Closed Won">Closed Won</option>
-                <option value="Closed Lost">Closed Lost</option>
+                {DEAL_STAGES.map((stage)=>(
+                   <option key={stage.value} value={stage.value}>{stage.label}</option>
+                ))}
+               
               </select>
             </div>
 

@@ -1,44 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { allActivities } from "./API";
+import ActivityService from "../../services/ActivityService";
 
 export const getAllActivities = createAsyncThunk(
   "activities/getAllActivities",
   async ({ module, id }) => {
-    try {
-      const response = await fetch(`${allActivities}/${module}/${id}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return await response.json();
-    } catch (err) {
-      throw err;
-    }
+    return await ActivityService.getActivitiesByModuleId(module, id);
   }
 );
 
 export const createNewActivity = createAsyncThunk(
   "activities/createNewActivity",
   async ({ module, id, data, type }) => {
-    try {
-      const response = await fetch(
-        `${allActivities}/${module}/create/${id}?activity=${type}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
-      if (!response.ok) {
-        throw new Error("failed to create the module.");
-      }
-      const result = await response.json();
-      console.log(result);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    console.log(module,id,data,type);
+    return await ActivityService.createActivity(module, id, data, type);
   }
 );
 

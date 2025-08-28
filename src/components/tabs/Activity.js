@@ -240,15 +240,14 @@ export default function Activity({ module, id }) {
           )}
         </div>
       ))}
-
-      {activities?.notes?.map((note) => (
+      {activities?.notes?.filter(note => note && note.id).map((note) => (
         <div
           key={note.id}
           style={{
             marginTop: "5px",
             border: "1px solid #dee2e6",
             borderRadius: "6px",
-            padding: "10px",
+            padding: "10px"
           }}
         >
           <i
@@ -268,6 +267,7 @@ export default function Activity({ module, id }) {
           )}
         </div>
       ))}
+      
     </>
   );
 }

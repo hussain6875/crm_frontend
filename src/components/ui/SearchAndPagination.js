@@ -2,8 +2,7 @@ import React from 'react'
 import { FaSearch } from 'react-icons/fa'
 import { useState } from 'react';
 
-export default function SearchAndPagination() {
-  const [activePage, setActivePage] = React.useState(1);
+export default function SearchAndPagination({ activePage, setActivePage, totalPages }) {
   const handlePageClick = (page) => {
     setActivePage(page);
   };
@@ -31,7 +30,14 @@ export default function SearchAndPagination() {
 
   {/* Pagination */}
   <div className="d-flex align-items-center gap-2 ms-auto flex-wrap">
-    <span className="btn text-muted">&larr; Previous</span>
+    <button
+      className="btn text-muted"
+      onClick={() => activePage > 1 && setActivePage(activePage - 1)}
+      disabled={activePage === 1}
+      style={{ cursor: activePage === 1 ? 'not-allowed' : 'pointer' }}
+    >
+      &larr; Previous
+    </button>
     <button 
       className="btn btn-sm rounded-lg px-3" 
       style={{ backgroundColor: activePage === 1 ? '#6c63ff' : 'transparent', color: activePage === 1 ? '#fff' : '#000' }}
@@ -68,7 +74,14 @@ export default function SearchAndPagination() {
     >
       68
     </button>
-    <span className="btn" style={{ color: '#6c63ff' }}>Next &rarr;</span>
+    <button
+      className="btn"
+      style={{ color: '#6c63ff', cursor: activePage === totalPages ? 'not-allowed' : 'pointer' }}
+      onClick={() => activePage < totalPages && setActivePage(activePage + 1)}
+      disabled={activePage === totalPages}
+    >
+      Next &rarr;
+    </button>
   </div>
 </div>
         

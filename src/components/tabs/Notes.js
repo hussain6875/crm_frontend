@@ -15,7 +15,6 @@ export default function Notes({ onCreateClick, module, id }) {
       [noteId]: !prev[noteId],
     }));
   };
-
   useEffect(() => {
     dispatch(getAllActivities({ module, id }));
   }, [dispatch, module, id]);
