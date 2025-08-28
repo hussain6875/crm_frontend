@@ -6,13 +6,14 @@ import SearchAndPagination from "../components/ui/SearchAndPagination";
 import { Offcanvas } from "bootstrap";
 import CreateLead from "../components/leads/CreateLead";
 import { useDispatch, useSelector } from "react-redux";
-import { createLead, fetchLeads } from "../redux/feature/leads/leadsThunks"; // ✅ Correct path here
+import { createLead, fetchLeads } from "../redux/features/leads/leadsThunks"; // ✅ Correct path here
 
 const Leads = ({ onCreateLead, onViewLead }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
 
     const dispatch = useDispatch();
+    // const { leads, error } = useSelector((state) => state.leads);
     const leads = useSelector((state) => state.leads.list);
     const loading = useSelector((state) => state.leads.loading);
     const error = useSelector((state) => state.leads.error);
@@ -85,7 +86,8 @@ const Leads = ({ onCreateLead, onViewLead }) => {
                 <CreateLead onSave={handleSaveLead} />
                 <SearchAndPagination />
                 {loading && <div className="p-4">Loading leads...</div>}
-                {error && <div className="p-4 text-danger">Error: {error}</div>}
+                {error && <div className="p-4 text-danger">Error: {error.message || error}</div>}
+
                 <div className="container-fluid p-4">
                     <div className=" gap-3 d-flex ">
                         <div className="col-md-3">
