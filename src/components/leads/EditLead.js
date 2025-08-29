@@ -2,7 +2,7 @@ import React, { useState , useEffect} from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
 import * as bootstrap from "bootstrap";
-import { updateLead } from "../../redux/features/leads/leadsThunks"; // ✅ Correct path here
+import { updateLead } from "../../redux/features/leads/leadsThunks"; 
 import { useDispatch} from "react-redux";
 
 const EditLead = ({ isOpen, onClose, onSave, initialData }) => {
@@ -21,23 +21,6 @@ const EditLead = ({ isOpen, onClose, onSave, initialData }) => {
   };
 
   const dispatch = useDispatch();
-
-// const handleSubmit = async (e) => {
-//   e.preventDefault();
-
-//   try {
-//     // await dispatch(updateLead(formData)).unwrap();
-//     await dispatch(updateLead({ id: formData.id, data: formData }))
-
-//     // Close offcanvas
-//     const offcanvasEl = document.getElementById("editLead");
-//     const modalInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
-//     if (modalInstance) modalInstance.hide();
-//   } catch (err) {
-//     console.error("Failed to update lead", err);
-//     alert("Update failed");
-//   }
-// };
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -85,17 +68,6 @@ const handleSubmit = async (e) => {
       });
     }
   }, [initialData]);
-  
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   onSave(formData);
-
-  //   const offcanvasEl = document.getElementById("editLead");
-  //   const modalInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
-  //   if (modalInstance) modalInstance.hide();
-
-    
-  // };
 
   return (
     <>

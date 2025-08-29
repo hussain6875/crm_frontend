@@ -15,7 +15,9 @@ const store = configureStore({
     deals: dealReducer,
     tickets: ticketReducer,
     activities: activityReducer,
-    users: userReducer
+    users: userReducer,
+    attachments: fileReducer,
+    leads: leadsReducer,
   },
 });
 
