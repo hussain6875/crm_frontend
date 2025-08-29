@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../redux//AuthSlice"; //  redux action
+import { registerUser } from "../redux/AuthSlice";
 import { validateRegisterForm } from "../utils/validation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
@@ -10,7 +10,6 @@ const RegisterForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // redux state
   const { loading, error, success } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
@@ -31,9 +30,7 @@ const RegisterForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const updatedForm = { ...formData, [name]: value };
-    setFormData(updatedForm);
-    setErrors(validateRegisterForm(updatedForm)); // validation
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (e) => {
@@ -42,10 +39,8 @@ const RegisterForm = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      //  send to redux action (which calls backend)
       dispatch(registerUser(formData)).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
-          // navigate after success
           setTimeout(() => navigate("/"), 2000);
         }
       });
@@ -66,17 +61,8 @@ const RegisterForm = () => {
         >
           <h4 className="text-center fw-bold mb-4">Register</h4>
 
-          {/* Redux success/error messages */}
-          {success && (
-            <div className="alert alert-success text-center" role="alert">
-              {success}
-            </div>
-          )}
-          {error && (
-            <div className="alert alert-danger text-center" role="alert">
-              {error}
-            </div>
-          )}
+          {success && <div className="alert alert-success text-center">{success}</div>}
+          {error && <div className="alert alert-danger text-center">{error}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="row g-4">
@@ -192,9 +178,7 @@ const RegisterForm = () => {
                   <input
                     name="password"
                     type={showPassword ? "text" : "password"}
-                    className={`form-control ${
-                      errors.password && "is-invalid"
-                    }`}
+                    className={`form-control ${errors.password && "is-invalid"}`}
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
@@ -209,9 +193,7 @@ const RegisterForm = () => {
                   </span>
                 </div>
                 {errors.password && (
-                  <div className="invalid-feedback d-block">
-                    {errors.password}
-                  </div>
+                  <div className="invalid-feedback d-block">{errors.password}</div>
                 )}
               </div>
 
@@ -222,9 +204,7 @@ const RegisterForm = () => {
                   <input
                     name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    className={`form-control ${
-                      errors.confirmPassword && "is-invalid"
-                    }`}
+                    className={`form-control ${errors.confirmPassword && "is-invalid"}`}
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
@@ -239,9 +219,7 @@ const RegisterForm = () => {
                   </span>
                 </div>
                 {errors.confirmPassword && (
-                  <div className="invalid-feedback d-block">
-                    {errors.confirmPassword}
-                  </div>
+                  <div className="invalid-feedback d-block">{errors.confirmPassword}</div>
                 )}
               </div>
 
@@ -309,3 +287,8 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
+
+
+
+
+
