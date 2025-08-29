@@ -19,6 +19,7 @@ import { createNewActivity } from "../redux/features/activitySlice";
 import Emails from "../components/tabs/Emails";
 import CreateNote from "../components/tabs/CreateNote";
 import CreateCall from "../components/tabs/CreateCall";
+import CreateDeal from "../components/deals/CreateDeal";
 
 const LeadDetails = (updatedLeadData) => {
     const [lead, setLead] = useState({});
@@ -33,6 +34,7 @@ const LeadDetails = (updatedLeadData) => {
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [showMeetingModal, setShowMeetingModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showDealDrawer, setShowDealDrawer] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -40,6 +42,9 @@ const LeadDetails = (updatedLeadData) => {
 
     const openEditModal = () => setShowEditModal(true);
     const closeEditModal = () => setShowEditModal(false);
+
+    const openDealDrawer = () => setShowDealDrawer(true);
+    const closeDealDrawer = () => setShowDealDrawer(false);
 
     //Saving note content
     const handleSave = (noteContent) => {
@@ -327,6 +332,7 @@ const LeadDetails = (updatedLeadData) => {
                                         backgroundColor: "#6c63ff",
                                         borderColor: "#6c63ff",
                                     }}
+                                    onClick={openDealDrawer}
                                 >
                                     Convert
                                 </button>
@@ -467,6 +473,8 @@ const LeadDetails = (updatedLeadData) => {
                     )}
                 </div>
             </PageWrapper>
+            <CreateDeal isOpen={showDealDrawer} onClose={closeDealDrawer} />
+
             <EditLead isOpen={showEditModal} onClose={closeEditModal} onSave={handleUpdateLead} initialData={lead} />
         </>
     );
