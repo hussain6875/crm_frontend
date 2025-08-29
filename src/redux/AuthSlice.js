@@ -52,11 +52,21 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
+const getInitialUser = () => {
+  try {
+    const userStr = localStorage.getItem("user");
+    return userStr ? JSON.parse(userStr) : null;
+  } catch {
+    return null;
+  }
+};
+const getInitialToken = () => localStorage.getItem("token") || null;
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null,
-    token: null,
+    user: getInitialUser(),
+    token: getInitialToken(),
     loading: false,
     error: null,
     success: null,
@@ -66,6 +76,7 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
     },
     clearMessages: (state) => {
       state.error = null;
@@ -100,6 +111,7 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.user = action.payload.user;
         localStorage.setItem("token", action.payload.token);
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;

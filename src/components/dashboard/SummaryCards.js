@@ -2,8 +2,60 @@ import { BriefcaseBusiness } from "lucide-react";
 import { LuUsersRound } from "react-icons/lu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoneyBill } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
 
 const SummaryCards = () => {
+  const { deals } = useSelector((state) => state.deals);
+  const { user } = useSelector((state) => state.auth);
+
+  // Robust deals array extraction (handles array or object shape)
+  const dealsArray = Array.isArray(deals?.data)
+    ? deals.data
+    : Array.isArray(deals)
+    ? deals
+    : [];
+  // Show loading if deals or user is not loaded
+  if (!user || !dealsArray.length) {
+    return <div>Loading summary cards...</div>;
+  }
+  // Filter deals for the current user only
+  const userDeals = dealsArray.filter(
+    (deal) =>
+      (deal.owner?.userId === user.userId) ||
+      (deal.dealOwner === user.userId)
+  );
+  // For getting Active Deals
+  const activeDeals = userDeals.filter(
+    (deal) => deal.stage !== "Closed Won" && deal.stage !== "Closed Lost"
+  );
+  const totalActiveDeals = activeDeals.length;
+  // For getting Closed Deals
+  const closedDeals = userDeals.filter(
+    (deal) => deal.stage === "Closed Won" || deal.stage === "Closed Lost"
+  );
+  const totalClosedDeals = closedDeals.length;
+  // For getting total revenue
+  // Get today's date
+  const today = new Date();
+  const currentMonth = today.getMonth(); // 0-indexed (0 = January)
+  const currentYear = today.getFullYear();
+
+  // Filter deals closed as "Closed Won" in the current month and year
+  const monthlyClosedDeals = userDeals.filter((deal) => {
+    if (deal.stage === "Closed Won" && deal.closeDate) {
+      const closeDate = new Date(deal.closeDate);
+      return (
+        closeDate.getMonth() === currentMonth &&
+        closeDate.getFullYear() === currentYear
+      );
+    }
+    return false;
+  });
+  // Sum the amounts for these deals
+  const monthlyRevenue = monthlyClosedDeals.reduce(
+    (sum, deal) => sum + (parseFloat(deal.amount) || 0),
+    0
+  );
   const cards = [
     {
       title: "Total Leads",
@@ -15,7 +67,7 @@ const SummaryCards = () => {
     },
     {
       title: "Active Deals",
-      value: "136",
+      value: totalActiveDeals,
       icon: (color, size) => <BriefcaseBusiness color={color} size={size} />,
       iconBg:
         "linear-gradient(135deg,rgb(205, 248, 237),rgb(175, 229, 211) 100%)",
@@ -23,7 +75,7 @@ const SummaryCards = () => {
     },
     {
       title: "Closed Deals",
-      value: "136",
+      value: totalClosedDeals,
       icon: (color, size) => <BriefcaseBusiness color={color} size={size} />,
       iconBg:
         "linear-gradient(135deg,rgb(197, 168, 168) 0%,rgb(241, 173, 173) 100%)",
@@ -31,7 +83,7 @@ const SummaryCards = () => {
     },
     {
       title: "Monthly Revenue",
-      value: "45,000",
+      value: monthlyRevenue,
       icon: (color, size) => (
         <FontAwesomeIcon
           icon={faMoneyBill}
