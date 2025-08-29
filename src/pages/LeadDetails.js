@@ -35,9 +35,8 @@ const LeadDetails = (updatedLeadData) => {
     const [showEditModal, setShowEditModal] = useState(false);
 
     const navigate = useNavigate();
-    const location= useLocation()
+    const location = useLocation();
     const dispatch = useDispatch();
-
 
     const openEditModal = () => setShowEditModal(true);
     const closeEditModal = () => setShowEditModal(false);
@@ -48,8 +47,8 @@ const LeadDetails = (updatedLeadData) => {
             createNewActivity({
                 module: "lead",
                 id: leadId,
-                data:{content: noteContent},
-                type:"note"
+                data: { content: noteContent },
+                type: "note",
             })
         );
         setShowNoteModal(false);
@@ -85,17 +84,17 @@ const LeadDetails = (updatedLeadData) => {
     const renderTabContent = () => {
         switch (tab) {
             case "activity":
-                return <Activity module={"lead"} id={leadId}/>;
+                return <Activity module={"lead"} id={leadId} />;
             case "notes":
-                return <Notes onCreateClick={openNoteModal} module={"lead"} id={leadId}/>;
+                return <Notes onCreateClick={openNoteModal} module={"lead"} id={leadId} />;
             case "emails":
-                return <Emails onCreateClick={openEmailModal} module={"lead"} id={leadId}/>;
+                return <Emails onCreateClick={openEmailModal} module={"lead"} id={leadId} />;
             case "calls":
-                return <Calls onCreateClick={openCallModal} module={'lead'} id={leadId} />;
+                return <Calls onCreateClick={openCallModal} module={"lead"} id={leadId} />;
             case "tasks":
-                return <Task onCreateClick={openTaskModal} module={'lead'} id={leadId} />;
+                return <Task onCreateClick={openTaskModal} module={"lead"} id={leadId} />;
             case "meetings":
-                return <Meetings onCreateClick={openMeetingModal} module={'lead'} id={leadId} />;
+                return <Meetings onCreateClick={openMeetingModal} module={"lead"} id={leadId} />;
             default:
                 return null;
         }
@@ -305,54 +304,39 @@ const LeadDetails = (updatedLeadData) => {
 
                         {/* Middle panel */}
                         <div className="col-12 col-md-6">
-                            <div className={`${styles.search} mb-3 mx-2 d-flex align-items-center border rounded bg-light`}>
-                                <i className="bi bi-search m-2"></i>
-                                <div className="vr my-2"></div>
-                                <input
-                                    type="text"
-                                    className="form-control border-0 bg-light fw-medium shadow-none"
-                                    placeholder="Search activities"
-                                />
+                            <div
+                                className="d-flex align-items-center justify-content-between rounded p-2 mb-3 mx-2"
+                                style={{ gap: "10px" }}
+                            >
+                                {/* Search Box */}
+                                <div className="d-flex align-items-center flex-grow-1 border rounded bg-white px-2">
+                                    <i className="bi bi-search text-muted"></i>
+                                    <div className="vr mx-2"></div>
+                                    <input
+                                        type="text"
+                                        className="form-control border-0 bg-white fw-medium shadow-none"
+                                        placeholder="Search activities"
+                                    />
+                                </div>
+
+                                {/* Convert Button */}
+                                <button
+                                    className="btn btn-primary fw-semibold shadow-sm"
+                                    style={{
+                                        width: "120px",
+                                        backgroundColor: "#6c63ff",
+                                        borderColor: "#6c63ff",
+                                    }}
+                                >
+                                    Convert
+                                </button>
                             </div>
-                            <button
-        className={`btn btn-primary me-2`}
-        // onClick={}
-        style={{
-          width: "120px",
-          backgroundColor: "#6c63ff",
-          borderColor: "#6c63ff",
-        }}
-      >
-        Convert
-      </button>
-                            {/* <ul className="nav nav-underline gap-0">
-                {[
-                  "Activity",
-                  "Notes",
-                  "Emails",
-                  "Calls",
-                  "Tasks",
-                  "Meetings",
-                ].map((tab, index) => (
-                  <li className={`nav-item`} key={index}>
-                    <button
-                      className={`nav-link link-dark px-2 ${styles.navHover} ${
-                        hasOption === tab ? `${styles.middleNav} active` : ""
-                      }`}
-                      type="button"
-                      onClick={() => setHasOption(tab)}
-                    >
-                      {tab}
-                    </button>
-                  </li>
-                ))}
-              </ul> */}
 
                             <div style={{ borderBottom: "1px solid #dee2e6" }}>
                                 <ul className="nav nav-underline">
                                     <li className="nav-item">
                                         <a
-                                            className={`nav-link ${tab === "activity" ? `${styles.middleNav} active`  : ""}`}
+                                            className={`nav-link ${tab === "activity" ? `${styles.middleNav} active` : ""}`}
                                             onClick={() => handleTabChange("activity")}
                                         >
                                             Activity
@@ -401,37 +385,6 @@ const LeadDetails = (updatedLeadData) => {
                                 </ul>
                                 <div className="tab-content mt-3">{renderTabContent()}</div>
                             </div>
-
-                            {/* <hr className="border mt-0 border-secondary border-opacity-50" /> */}
-
-                            {/* {"Activity" && (
-                                <div className="mx-2">
-                                    <strong className="mb-2 d-block">Upcoming</strong>
-                                    <div className="border rounded p-3 mb-2">
-                                        <div className="d-flex justify-content-between">
-                                            <strong>Task</strong>
-                                            <div className="text-muted small fw-semibold">June 24, 2025 at 5:30PM</div>
-                                        </div>
-                                        <div className="d-flex justify-content-between">
-                                            <strong>Task</strong>
-                                            <div className="text-muted small fw-semibold">June 24, 2025 at 5:30PM</div>
-                                        </div>
-
-                                        <div className="text-muted small mb-1">
-                                            <strong>Maria Johnson</strong> to new
-                                        </div>
-
-                                        <strong className="mb-2 d-block">June 2025</strong>
-                                    </div>
-
-                                    <div className="border rounded p-3 d-flex justify-content-between">
-                                        <div className="text-muted small">
-                                            was created by <strong>Maria Johnson</strong>
-                                        </div>
-                                        <div className="text-muted small fw-semibold">June 24, 2025 at 5:30PM</div>
-                                    </div>
-                                </div>
-                            )} */}
 
                             {hasOption === "Notes" && (
                                 <div className="mx-2">
@@ -494,17 +447,27 @@ const LeadDetails = (updatedLeadData) => {
                             </div>
                         </div>
                     </div>
-                {setShowNoteModal && <CreateNote isOpen={showNoteModal} onClose={closeNoteModal} onSave={handleSave} />}
-                {setShowEmailModal && <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} module={"lead"} id={leadId} />}
-                {setShowCallModal && <CreateCall isOpen={showCallModal} onClose={closeCallModal} module={"lead"} details={lead} />}
-                {setShowTaskModal && <CreateTask isOpen={showTaskModal} onClose={closeTaskModal} module={"lead"} details={lead} />}
-                {setShowMeetingModal && <CreateMeeting isOpen={showMeetingModal} onClose={closeMeetingModal} module={"lead"} details={lead} />}
+                    {setShowNoteModal && <CreateNote isOpen={showNoteModal} onClose={closeNoteModal} onSave={handleSave} />}
+                    {setShowEmailModal && (
+                        <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} module={"lead"} id={leadId} />
+                    )}
+                    {setShowCallModal && (
+                        <CreateCall isOpen={showCallModal} onClose={closeCallModal} module={"lead"} details={lead} />
+                    )}
+                    {setShowTaskModal && (
+                        <CreateTask isOpen={showTaskModal} onClose={closeTaskModal} module={"lead"} details={lead} />
+                    )}
+                    {setShowMeetingModal && (
+                        <CreateMeeting
+                            isOpen={showMeetingModal}
+                            onClose={closeMeetingModal}
+                            module={"lead"}
+                            details={lead}
+                        />
+                    )}
                 </div>
             </PageWrapper>
-            <EditLead  isOpen={showEditModal}
-  onClose={closeEditModal}
-  onSave={handleUpdateLead}
-  initialData={lead} />
+            <EditLead isOpen={showEditModal} onClose={closeEditModal} onSave={handleUpdateLead} initialData={lead} />
         </>
     );
 };

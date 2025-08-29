@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { AUTH_ENDPOINTS } from "../../constants/api"; 
+import { AUTH_ENDPOINTS } from "../constants/api"; 
 
 // REGISTER USER
 export const registerUser = createAsyncThunk(
