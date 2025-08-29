@@ -33,7 +33,7 @@ export default function CreateTask({ isOpen, onClose, module, details }) {
 
     console.log(data);
 
-    dispatch(createNewActivity({ module, id: details.id, data, type: "task" }));
+    dispatch(createNewActivity({ module, id: details.id, data, type: "Task" }));
 
     setFormData({
       name: "",

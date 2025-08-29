@@ -1,5 +1,6 @@
 
 import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "./AuthSlice";
 import dealReducer from "./dealSlice";
 import ticketReducer from "./features/ticketSlice";
 import activityReducer from "./features/activitySlice";
@@ -10,13 +11,11 @@ import authReducer from "./AuthSlice"
 
 const store = configureStore({
   reducer: {
+    auth: authReducer,
     deals: dealReducer,
     tickets: ticketReducer,
     activities: activityReducer,
-    users: userReducer,
-    attachments: fileReducer,
-    leads: leadsReducer,
-     auth: authReducer,
+    users: userReducer
   },
 });
 

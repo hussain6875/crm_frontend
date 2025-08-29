@@ -4,8 +4,18 @@ import SummaryCards from "../components/dashboard/SummaryCards";
 import ConversionChart from "../components/dashboard/ConversionChart";
 import SalesReport from "../components/dashboard/SalesReport";
 import TeamPerformance from "../components/dashboard/TeamPerformance";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { fetchUsers } from "../redux/userSlice";
+import { fetchDeals } from "../redux/dealSlice";
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchUsers());
+    dispatch(fetchDeals());
+  }, [dispatch]);
+
   return (
     <>
       <TopBar />

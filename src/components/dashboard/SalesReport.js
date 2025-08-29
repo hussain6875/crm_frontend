@@ -1,24 +1,50 @@
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const SalesReport = () => {
-  const data = [
-    { month: "Jan", primary: 3000, secondary: 4000, total: 3500 },
-    { month: "Feb", primary: 1500, secondary: 5000, total: 4200 },
-    { month: "Mar", primary: 2200, secondary: 3000, total: 1500 },
-    { month: "Apr", primary: 3000, secondary: 3000, total: 6000 },
-    { month: "May", primary: 1000, secondary: 4500, total: 4000 },
-    { month: "Jun", primary: 1000, secondary: 2500, total: 1800 },
-    { month: "Jul", primary: 1500, secondary: 2500, total: 6000 },
-    { month: "Aug", primary: 2000, secondary: 4500, total: 4000 },
-    { month: "Sep", primary: 4000, secondary: 4000, total: 4800 },
-    { month: "Oct", primary: 3000, secondary: 3000, total: 3500 },
-    { month: "Nov", primary: 3500, secondary: 4000, total: 3900 },
-    { month: "Dec", primary: 3000, secondary: 4000, total: 5000 },
-  ];
+  const {deals} = useSelector((state)=>state.deals);
+  const {user} = useSelector((state)=>state.auth);
+  const dealsArray = deals?.data || deals || [];
 
-  const maxValue = 10000;
+
+   // Filter deals for the current user
+  const userDeals = user
+    ? dealsArray.filter(
+        (deal) =>
+          (deal.owner?.userId === user.userId) ||
+          (deal.dealOwner === user.userId)
+      )
+    : dealsArray;
+  // Calculate monthly revenue for each month
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+  const monthlyData = months.map((month, idx) => {
+    // Sum amounts for deals closed as 'Closed Won' in this month
+    const total = userDeals
+      .filter(
+        (deal) =>
+          deal.stage === "Closed Won" &&
+          deal.closeDate &&
+          new Date(deal.closeDate).getMonth() === idx
+      )
+      .reduce((sum, deal) => sum + (parseFloat(deal.amount) || 0), 0);
+
+    return {
+      month,
+      total,
+      // You can add primary/secondary if you want to show more bars
+      primary: total,
+      secondary: 0,
+    };
+  });
+
+
+
+  const maxValue = Math.max(...monthlyData.map(item => item.primary), 10000);
   const chartHeight = 500;
   const yAxisValues = [10000, 5000, 1000, 500, 200, 0];
 
@@ -115,7 +141,7 @@ const SalesReport = () => {
 
           {/* Bars */}
           <div className="flex-grow-1 d-flex align-items-end justify-content-between ps-2">
-            {data.map((item) => {
+            {monthlyData.map((item) => {
               const primaryHeight = (item.primary / maxValue) * chartHeight;
               const secondaryHeight = (item.secondary / maxValue) * chartHeight;
 

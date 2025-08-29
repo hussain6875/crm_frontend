@@ -5,7 +5,7 @@ import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { validateLoginForm, validateForgotPassword } from "../utils/validation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, forgotPassword } from "../redux/AuthSlice";
+import { loginUser, resetPassword } from "../redux/AuthSlice";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,7 +18,7 @@ const LoginForm = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, error, success, token } = useSelector((state) => state.auth);
+  const { loading, error, success, token } = useSelector((state) => state.auth||{});
 
   // Handle input changes
   const handleChange = (e) => {
@@ -53,9 +53,9 @@ const LoginForm = () => {
       setForgotSuccess("");
     } else {
       setForgotError("");
-      dispatch(forgotPassword(forgotEmail)).then((res) => {
+      dispatch(resetPassword(forgotEmail)).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
-          setForgotSuccess("✅ Password reset link sent to your email!");
+          setForgotSuccess(" Password reset link sent to your email!");
           setTimeout(() => {
             setShowForgotModal(false);
             setForgotEmail("");

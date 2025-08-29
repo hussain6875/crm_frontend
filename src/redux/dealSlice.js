@@ -64,6 +64,10 @@ const dealSlice = new createSlice({
       })
       .addCase(createDeal.fulfilled, (state, action) => {
         state.loading = false;
+        // ensure state.deals is always an array before pushing
+        if (!Array.isArray(state.deals)) {
+          state.deals = [];
+        }
         state.deals.push(action.payload);
       })
       .addCase(createDeal.rejected, (state, action) => {
@@ -75,20 +79,22 @@ const dealSlice = new createSlice({
         state.error = null;
       })
       .addCase(updateDeal.fulfilled, (state, action) => {
-  state.loading = false;
-  const updatedDeal = action.payload;
-
-  // update in deals array
-  const index = state.deals.findIndex((deal) => deal.id === updatedDeal.id);
-  if (index !== -1) {
-    state.deals[index] = updatedDeal;
-  }
-
-  // update selectedDeal if currently being viewed
-  if (state.selectedDeal && state.selectedDeal.id === updatedDeal.id) {
-    state.selectedDeal = updatedDeal;
-  }
-})
+        state.loading = false;
+        const updatedDeal = action.payload;
+        //ensure state.deals is always an array
+        if (!Array.isArray(state.deals)) {
+          state.deals = [];
+        }
+        // update in deals array
+        const index = state.deals.findIndex((deal) => deal.id === updatedDeal.id);
+        if (index !== -1) {
+          state.deals[index] = updatedDeal;
+        }
+        // update selectedDeal if currently being viewed
+        if (state.selectedDeal && state.selectedDeal.id === updatedDeal.id) {
+          state.selectedDeal = updatedDeal;
+        }
+      })
       .addCase(updateDeal.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;

@@ -1,38 +1,40 @@
+import { useSelector} from "react-redux";
 const TeamPerformance = () => {
-  const teamData = [
-    {
-      name: "Ethan Harper",
-      activeDeals: 25,
-      closedDeals: 10,
-      revenue: "$12,000",
-      change: "+3.4%",
-      changeType: "positive",
-    },
-    {
-      name: "Olivia Bennett",
-      activeDeals: 30,
-      closedDeals: 15,
-      revenue: "$15,000",
-      change: "-0.1%",
-      changeType: "negative",
-    },
-    {
-      name: "Liam Carter",
-      activeDeals: 22,
-      closedDeals: 12,
-      revenue: "$10,000",
-      change: "+3.4%",
-      changeType: "positive",
-    },
-    {
-      name: "Sophia Evans",
-      activeDeals: 28,
-      closedDeals: 14,
-      revenue: "$14,000",
-      change: "-0.1%",
-      changeType: "negative",
-    },
-  ];
+  const {deals} = useSelector((state)=>state.deals);
+  const {users} = useSelector((state)=>state.users);
+console.log(deals.data,users);
+  // Robust deals array extraction (handles array or object shape)
+  const dealsArray = Array.isArray(deals?.data)
+    ? deals.data
+    : Array.isArray(deals)
+    ? deals
+    : [];
+  const usersArray = users?.data || users || [];
+  // Build team data dynamically
+  const teamData = usersArray.map((user) => {
+    const userDeals = dealsArray.filter(
+      (deal) =>
+        (deal.owner?.userId === user.userId) ||
+        (deal.dealOwner === user.userId)
+    );
+    const activeDeals = userDeals.filter(
+      (deal) => deal.stage !== "Closed Won" && deal.stage !== "Closed Lost"
+    );
+    const closedDeals = userDeals.filter(
+      (deal) => deal.stage === "Closed Won" || deal.stage === "Closed Lost"
+    );
+    const revenue = closedDeals
+      .filter((deal) => deal.stage === "Closed Won")
+      .reduce((sum, deal) => sum + (parseFloat(deal.amount) || 0), 0);
+
+    return {
+      name: user.userName,
+      activeDeals: activeDeals.length,
+      closedDeals: closedDeals.length,
+      revenue: `$${revenue.toLocaleString()}`,
+    
+    };
+  });
 
   return (
     <div className="my-5">

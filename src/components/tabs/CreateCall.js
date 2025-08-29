@@ -31,7 +31,7 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
         module,
         id: details.id,
         data: data,
-        type: "call",
+        type: "Call",
       })
     );
     setFormData({

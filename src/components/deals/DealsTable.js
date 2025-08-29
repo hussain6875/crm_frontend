@@ -4,20 +4,31 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import styles from "./deals.module.css";
 import { Link } from "react-router-dom";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {fetchDeals} from "../../redux/dealSlice";
 import { forwardRef } from "react";
 
 const DealsTable = forwardRef(function DealsTable({ selectedOwner, selectedStage, createdDate, closedDate, activePage, pageSize, onFilteredCount }, ref) {
   const dispatch = useDispatch();
   const { deals, loading, error } = useSelector((state) => state.deals);
+  const { user } = useSelector((state) => state.auth);
+
   useEffect(() => {
     dispatch(fetchDeals());
   }, [dispatch]);
 
-  // Filtering logic
-  const dealsArray = deals?.data || [];
+  // Robust deals array extraction (handles array or object shape)
+  const dealsArray = Array.isArray(deals?.data)
+    ? deals.data
+    : Array.isArray(deals)
+    ? deals
+    : [];
+
+  // Only show deals for the logged-in user (robust for both deal.owner and deal.dealOwner)
   const filteredDeals = dealsArray.filter((deal) => {
+    if (user && !((deal.owner?.userId === user.userId) || (deal.dealOwner === user.userId))) {
+      return false;
+    }
     let match = true;
     if (selectedOwner && selectedOwner !== "All") {
       match = match && deal.owner?.userName === selectedOwner;
@@ -46,8 +57,15 @@ const DealsTable = forwardRef(function DealsTable({ selectedOwner, selectedStage
   const endIndex = startIndex + pageSize;
   const paginatedDeals = filteredDeals.slice(startIndex, endIndex);
 
+
+  if (!user) return <p>Loading user...</p>;
   if (loading) return <p>Loading deals...</p>;
   if (error) return <p>Error: {error}</p>;
+
+  // Empty state
+  if (paginatedDeals.length === 0) {
+    return <p className="text-center mt-4">No deals to display.</p>;
+  }
 
   return (
     <table className={`table table-hover`}>

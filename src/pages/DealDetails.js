@@ -73,7 +73,7 @@ export default function DealDetails() {
         module: "deal",
         id: id,
         data: noteData,
-        type: "notes"
+        type: "Note"
       }));
       // Refresh activities to show the new note
       dispatch(getAllActivities({ module: "deal", id: id }));
@@ -221,7 +221,7 @@ export default function DealDetails() {
               </p>
               <span>Created Date</span>
               <span>
-                <strong></strong>
+                <strong>{new Date().toISOString()}</strong>
               </span>
             </div>
           </div>
