@@ -18,7 +18,6 @@ const store = configureStore({
     users: userReducer,
     attachments: fileReducer,
     leads: leadsReducer,
-     auth: authReducer,
   },
 });
 
