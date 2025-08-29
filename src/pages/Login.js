@@ -6,7 +6,7 @@ import { validateLoginForm, validateForgotPassword } from "../utils/validation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, forgotPassword } from "../redux/AuthSlice";
-import { resetPassword } from "../redux/AuthSlice";
+//import { resetPassword } from "../redux/AuthSlice";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
