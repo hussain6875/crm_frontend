@@ -2,6 +2,8 @@ import React, { useState , useEffect} from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
 import * as bootstrap from "bootstrap";
+import { updateLead } from "../../redux/feature/leads/leadsThunks"; // ✅ Correct path here
+import { useDispatch} from "react-redux";
 
 const EditLead = ({ isOpen, onClose, onSave, initialData }) => {
   const defaultData = {
@@ -18,7 +20,55 @@ const EditLead = ({ isOpen, onClose, onSave, initialData }) => {
     status: "New",
   };
 
-  const [formData, setFormData] = useState(initialData || defaultData);
+  const dispatch = useDispatch();
+
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+
+//   try {
+//     // await dispatch(updateLead(formData)).unwrap();
+//     await dispatch(updateLead({ id: formData.id, data: formData }))
+
+//     // Close offcanvas
+//     const offcanvasEl = document.getElementById("editLead");
+//     const modalInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
+//     if (modalInstance) modalInstance.hide();
+//   } catch (err) {
+//     console.error("Failed to update lead", err);
+//     alert("Update failed");
+//   }
+// };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    await dispatch(
+      updateLead({
+        id: formData.id,
+        data: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          jobTitle: formData.jobTitle,
+          contactOwner: formData.contactOwner,
+          leadStatus: formData.leadStatus,
+        },
+      })
+    ).unwrap();
+
+    const offcanvasEl = document.getElementById("editLead");
+    const modalInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
+    if (modalInstance) modalInstance.hide();
+  } catch (err) {
+    console.error("Failed to update lead", err);
+    alert("Update failed");
+  }
+};
+
+
+  const [formData, setFormData] = useState( defaultData);
   
   useEffect(() => {
     if (initialData) {
@@ -36,28 +86,16 @@ const EditLead = ({ isOpen, onClose, onSave, initialData }) => {
     }
   }, [initialData]);
   
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave(formData);
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   onSave(formData);
 
-    const offcanvasEl = document.getElementById("editLead");
-    const modalInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
-    if (modalInstance) modalInstance.hide();
+  //   const offcanvasEl = document.getElementById("editLead");
+  //   const modalInstance = bootstrap.Offcanvas.getInstance(offcanvasEl);
+  //   if (modalInstance) modalInstance.hide();
 
-    // setFormData({
-    //   firstName: "",
-    //   lastName: "",
-    //   email: "",
-    //   phone: "",
-    //   company: "",
-    //   position: "",
-    //   lifecycleStage: "Lead",
-    //   leadSource: "Website",
-    //   budget: 0,
-    //   owner: "John Smith",
-    //   status: "New",
-    // });
-  };
+    
+  // };
 
   return (
     <>
@@ -143,9 +181,9 @@ const EditLead = ({ isOpen, onClose, onSave, initialData }) => {
                 type="text"
                 className="form-control"
                 placeholder="Enter job title"
-                value={formData.position}
+                value={formData.jobTitle}
                 onChange={(e) =>
-                  setFormData({ ...formData, position: e.target.value })
+                  setFormData({ ...formData, jobTitle: e.target.value })
                 }
               />
             </div>
@@ -154,9 +192,9 @@ const EditLead = ({ isOpen, onClose, onSave, initialData }) => {
               <label className="form-label">Contact Owner</label>
               <select
                 className="form-select"
-                value={formData.owner}
+                value={formData.contactOwner}
                 onChange={(e) =>
-                  setFormData({ ...formData, owner: e.target.value })
+                  setFormData({ ...formData, contactOwner: e.target.value })
                 }
               >
                 <option value="">Choose owner</option>
@@ -170,16 +208,15 @@ const EditLead = ({ isOpen, onClose, onSave, initialData }) => {
               <label className="form-label">Lead Status</label>
               <select
                 className="form-select"
-                value={formData.status}
+                value={formData.leadStatus}
                 onChange={(e) =>
-                  setFormData({ ...formData, status: e.target.value })
+                  setFormData({ ...formData, leadStatus: e.target.value })
                 }
               >
                 <option value="">Choose status</option>
                 <option value="New">New</option>
-                <option value="Contacted">Contacted</option>
-                <option value="Qualified">Qualified</option>
-                <option value="Unqualified">Unqualified</option>
+                <option value="Open">Contacted</option>
+                <option value="Inprogress">Qualified</option>
               </select>
             </div>
 
