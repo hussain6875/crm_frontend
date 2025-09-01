@@ -9,12 +9,16 @@ import TicketTable from "../components/tickets/TicketTable";
 import CreateTicket from "../components/tickets/CreateTicket";
 import { Offcanvas } from "bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTickets } from "../redux/features/ticketSlice";
+import { fetchTicketById, fetchTickets } from "../redux/features/ticketSlice";
+import { fetchUsers } from "../redux/userSlice";
+import EditTicket from "../components/tickets/EditTicket";
 
 const Tickets = () => {
   const dateRef = useRef(null);
   const dispatch = useDispatch();
-  const { tickets } = useSelector((state) => state.tickets);
+  const { tickets, ticket } = useSelector((state) => state.tickets);
+  const { users = [] } = useSelector((state) => state.users);
+
   const [selectedTickets, setSelectedTickets] = useState([]);
   const [selectedDate, setSelectedDate] = useState("");
   const [filters, setFilters] = useState({
@@ -83,8 +87,16 @@ const Tickets = () => {
     }
   };
 
+  const handleEdit = (ticket) => {
+    const offcanvasEl = document.getElementById("editTicket");
+    const bsOffcanvas = new Offcanvas(offcanvasEl);
+    bsOffcanvas.show();
+    dispatch(fetchTicketById(ticket.id));
+  };
+
   useEffect(() => {
     dispatch(fetchTickets());
+    dispatch(fetchUsers());
   }, [dispatch]);
 
   return (
@@ -110,11 +122,7 @@ const Tickets = () => {
                 <FilterDropdown
                   label="Ticket Owner"
                   value={filters.owner}
-                  options={[
-                    ...new Set(
-                      tickets.map((owner) => toTitleCase(owner.owner))
-                    ),
-                  ]}
+                  options={users.map((user) => toTitleCase(user.userName))}
                   onChange={(value) => setFilters({ ...filters, owner: value })}
                 />
               </div>
@@ -191,11 +199,16 @@ const Tickets = () => {
                 tickets={filteredTickets}
                 selectedTickets={selectedTickets}
                 setSelectedTickets={setSelectedTickets}
+                handleEditButton={handleEdit}
               />
             </table>
           </div>
         </div>
       </PageWrapper>
+      <EditTicket
+        ticket={ticket}
+        onTicketUpdated={() => dispatch(fetchTickets())}
+      />
     </>
   );
 };

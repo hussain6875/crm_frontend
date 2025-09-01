@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { attachImage } from "./API";
+import { attachImage, getAuthHeaders, token } from "./API";
 
 export const attachImages = createAsyncThunk(
   "attachments/attachImages",
@@ -12,6 +12,7 @@ export const attachImages = createAsyncThunk(
       const response = await fetch(`${attachImage}/${module}/${id}`, {
         method: "POST",
         body: formData,
+        headers: getAuthHeaders(),
       });
       const data = await response.json();
       return data;
@@ -25,7 +26,9 @@ export const getImages = createAsyncThunk(
   "attachments/getImages",
   async ({ module, id }) => {
     try {
-      const response = await fetch(`${attachImage}/${module}/${id}`);
+      const response = await fetch(`${attachImage}/${module}/${id}`, {
+        headers: getAuthHeaders(),
+      });
       const data = await response.json();
       return data;
     } catch (error) {
@@ -40,6 +43,7 @@ export const deleteImage = createAsyncThunk(
     try {
       const response = await fetch(`${attachImage}/${id}`, {
         method: "DELETE",
+        headers: getAuthHeaders(),
       });
       const data = await response.json();
       return data;
@@ -68,7 +72,8 @@ const fileSlice = createSlice({
       })
       .addCase(attachImages.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = [...state.data, ...action.payload];
+        const files = Array.isArray(action.payload) ? action.payload : [];
+        state.data = [...state.data, ...files];
       })
       .addCase(attachImages.rejected, (state, action) => {
         state.loading = false;
@@ -80,7 +85,7 @@ const fileSlice = createSlice({
       })
       .addCase(getImages.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload;
+        state.data = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(getImages.rejected, (state, action) => {
         state.loading = false;

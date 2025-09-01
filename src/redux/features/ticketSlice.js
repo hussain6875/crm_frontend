@@ -1,11 +1,19 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { createTicket, editTicket, getAllTickets, getTicketById } from "./API";
+import {
+  createTicket,
+  editTicket,
+  getAllTickets,
+  getAuthHeaders,
+  getTicketById,
+} from "./API";
 
 export const fetchTickets = createAsyncThunk(
   "tickets/fetchTickets",
   async () => {
-    const response = await fetch(getAllTickets);
+    const response = await fetch(getAllTickets, {
+      headers: getAuthHeaders(),
+    });
     if (!response.ok) {
       throw new Error("failed to fetch Tickets");
     }
@@ -17,7 +25,9 @@ export const fetchTickets = createAsyncThunk(
 export const fetchTicketById = createAsyncThunk(
   "tickets/fetchTicketsById",
   async (id) => {
-    const response = await fetch(getTicketById(id));
+    const response = await fetch(getTicketById(id), {
+      headers: getAuthHeaders(),
+    });
     if (!response.ok) {
       throw new Error("failed to fetch Ticket");
     }
@@ -32,7 +42,8 @@ export const createTicketAPI = createAsyncThunk(
     const response = await fetch(createTicket, {
       method: "POST",
       headers: {
-        "Content-Type": "Application/json",
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
       },
       body: JSON.stringify(newData),
     });
@@ -50,7 +61,8 @@ export const updateTicket = createAsyncThunk(
     const response = await fetch(editTicket + id, {
       method: "PUT",
       headers: {
-        "Content-Type": "Application/json",
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
       },
       body: JSON.stringify(updatedData),
     });

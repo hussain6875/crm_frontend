@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllActivities } from "../../redux/features/activitySlice";
+import moment from "moment";
 
 export default function Tasks({ onCreateClick, module, id }) {
   const dispatch = useDispatch();
@@ -15,6 +16,10 @@ export default function Tasks({ onCreateClick, module, id }) {
       ...prev,
       [taskId]: !prev[taskId],
     }));
+  };
+
+  const formatDateTime = (isoString) => {
+    return moment(isoString).format("MMMM D, YYYY [at] h:mm A");
   };
 
   useEffect(() => {
@@ -60,15 +65,15 @@ export default function Tasks({ onCreateClick, module, id }) {
           <span style={{ color: "#666666" }}>
             <strong>Task</strong> assigned to {task.assigned}
           </span>
-          <span style={{ float: "right", color: "#666666" }}>
-            {task.due_date}
+          <span style={{ float: "right", color: "#666666" }} className="small">
+            {formatDateTime(task.due_date)}
           </span>
           <p style={{ color: "#4B647A" }}>{task.note}</p>
           {opentask[task.id] && (
             <div className="border-0 w-100 h-25 rounded-3 bg-primary-subtle d-flex justify-content-between p-2">
               <div>
                 <p className="mb-0 text-secondary">Due Date & Time</p>
-                <h3 className="fs-6">{task.due_date}</h3>
+                <h3 className="fs-6">{moment(task.due_date).format("MMMM D, YYYY [at] h:mm A")}</h3>
               </div>
               <div>
                 <p className="mb-0 text-secondary">Priority</p>

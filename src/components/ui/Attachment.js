@@ -80,36 +80,41 @@ const Attachment = ({ module, id }) => {
           <div className="d-flex flex-wrap gap-2">
             {loading && <p>Uploading...</p>}
             {error && <p style={{ color: "red" }}>{error}</p>}
-            {data.map((file) => (
-              <div
-                key={file.id}
-                className="d-flex align-items-center justify-content-between bg-secondary-subtle rounded-3 p-2 mt-2 w-100"
-              >
-                <div className="d-flex align-items-center">
-                  <div
-                    className="rounded me-3 d-flex align-items-center justify-content-center bg-secondary-subtle"
-                    style={{ width: "50px", height: "50px", cursor: "pointer" }}
-                    onClick={() => setPreviewImage(file)}
-                  >
-                    <img
-                      src={file.image}
-                      alt={file.name}
-                      className="img-fluid object-fit-contain rounded"
-                      style={{ maxHeight: "40px" }}
-                    />
-                  </div>
-                  <div>
-                    <div className="fw-semibold small">
-                      {truncateFileName(file.name, 15)}
+            {Array.isArray(data) &&
+              data.map((file) => (
+                <div
+                  key={file.id}
+                  className="d-flex align-items-center justify-content-between bg-secondary-subtle rounded-3 p-2 mt-2 w-100"
+                >
+                  <div className="d-flex align-items-center">
+                    <div
+                      className="rounded me-3 d-flex align-items-center justify-content-center bg-secondary-subtle"
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => setPreviewImage(file)}
+                    >
+                      <img
+                        src={file.image}
+                        alt={file.name}
+                        className="img-fluid object-fit-contain rounded"
+                        style={{ maxHeight: "40px" }}
+                      />
                     </div>
-                    <div className="text-muted small">
-                      {new Date(file.upload_time).toLocaleString()}
+                    <div>
+                      <div className="fw-semibold small">
+                        {truncateFileName(file.name, 15)}
+                      </div>
+                      <div className="text-muted small">
+                        {new Date(file.upload_time).toLocaleString()}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-            {data.length === 0 && (
+              ))}
+            {Array.isArray(data) && data.length === 0 && (
               <p className="text-muted small">
                 See the files attached to your activities or uploaded to this
                 record.

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllActivities } from "../../redux/features/activitySlice";
+import moment from "moment";
 
 export default function Activity({ module, id }) {
   const dispatch = useDispatch();
@@ -72,6 +73,10 @@ export default function Activity({ module, id }) {
     return `${hours > 0 ? `${hours} hr ` : ""}${minutes} min`;
   };
 
+  const formatDateTime = (isoString) => {
+    return moment(isoString).format("MMMM D, YYYY [at] h:mm A");
+  };
+
   useEffect(() => {
     dispatch(getAllActivities({ module, id }));
   }, [dispatch, module, id]);
@@ -99,15 +104,15 @@ export default function Activity({ module, id }) {
           <span style={{ color: "#666666" }}>
             <strong>Task</strong> assigned to {task.assigned}
           </span>
-          <span style={{ float: "right", color: "#666666" }}>
-            {task.due_date}
+          <span style={{ float: "right", color: "#666666" }} className="small">
+            {formatDateTime(task.due_date)}
           </span>
           <p style={{ color: "#4B647A" }}>{task.note}</p>
           {opentask[task.id] && (
             <div className="border-0 w-100 h-25 rounded-3 bg-primary-subtle d-flex justify-content-between p-2">
               <div>
                 <p className="mb-0 text-secondary">Due Date & Time</p>
-                <h3 className="fs-6">{task.due_date}</h3>
+                <h3 className="fs-6">{moment(task.due_date).format("MMMM D, YYYY [at] h:mm A")}</h3>
               </div>
               <div>
                 <p className="mb-0 text-secondary">Priority</p>
@@ -142,8 +147,8 @@ export default function Activity({ module, id }) {
           <span style={{ color: "#666666" }}>
             <strong>Call</strong> from {call.connected}
           </span>
-          <span style={{ float: "right", color: "#666666" }}>
-            {call.createdAt}
+          <span style={{ float: "right", color: "#666666" }} className="small">
+            {formatDateTime(call.createdAt)}
           </span>
           <p style={{ color: "#4B647A" }}>{call.note}</p>
 
@@ -155,7 +160,7 @@ export default function Activity({ module, id }) {
               </div>
               <div>
                 <p className="mb-0 text-secondary">Duration</p>
-                <h3 className="fs-6">{call.call_time}</h3>
+                <h3 className="fs-6">{moment(call.call_time).format("h:mm A")}</h3>
               </div>
             </div>
           )}
@@ -182,16 +187,19 @@ export default function Activity({ module, id }) {
           <span style={{ color: "#666666" }}>
             <strong>Meeting</strong> {meeting.title}
           </span>
-          <span style={{ float: "right", color: "#666666" }}>
-            {meeting.createdAt}
+          <span style={{ float: "right", color: "#666666" }} className="small">
+            {formatDateTime(meeting.createdAt)}
           </span>
           <p style={{ color: "#4B647A" }}>{meeting.note}</p>
           {openMeeting[meeting.id] && (
             <div className="border-0 w-100 h-25 rounded-3 bg-primary-subtle d-flex p-2">
               <div className="col-6">
-                <p className="mb-0 text-secondary">Date 7 Time</p>
+                <p className="mb-0 text-secondary">Date & Time</p>
                 <h3 className="fs-6">
-                  {meeting.start_date} at {meeting.start_time}
+                  {moment(
+                    `${meeting.start_date} ${meeting.start_time}`,
+                    "YYYY-MM-DD HH:mm"
+                  ).format("MMMM D, YYYY [at] h:mm A")}
                 </h3>
               </div>
               <div className="col-3">
@@ -226,8 +234,8 @@ export default function Activity({ module, id }) {
             onClick={() => toggleEmail(email.id)}
             style={{ cursor: "pointer" }}
           ></i>
-          <span style={{ float: "right", color: "#666666" }}>
-            {email.createdAt}
+          <span style={{ float: "right", color: "#666666" }} className="small">
+            {formatDateTime(email.createdAt)}
           </span>
           <span style={{ color: "#666666" }}>
             <strong>Logged Email - </strong>
@@ -240,34 +248,38 @@ export default function Activity({ module, id }) {
           )}
         </div>
       ))}
-      {activities?.notes?.filter(note => note && note.id).map((note) => (
-        <div
-          key={note.id}
-          style={{
-            marginTop: "5px",
-            border: "1px solid #dee2e6",
-            borderRadius: "6px",
-            padding: "10px"
-          }}
-        >
-          <i
-            className={`bi ${
-              openNote[note.id] ? "bi-chevron-down" : "bi-chevron-right"
-            } me-2`}
-            onClick={() => toggleNote(note.id)}
-          ></i>
-          <span style={{ color: "#666666" }}>
-            <strong>Note</strong>
-          </span>
-          <span style={{ float: "right", color: "#666666" }}>
-            {note.createdAt}
-          </span>
-          {openNote[note.id] && (
-            <p style={{ color: "#4B647A" }}>{note.content}</p>
-          )}
-        </div>
-      ))}
-      
+      {activities?.notes
+        ?.filter((note) => note && note.id)
+        .map((note) => (
+          <div
+            key={note.id}
+            style={{
+              marginTop: "5px",
+              border: "1px solid #dee2e6",
+              borderRadius: "6px",
+              padding: "10px",
+            }}
+          >
+            <i
+              className={`bi ${
+                openNote[note.id] ? "bi-chevron-down" : "bi-chevron-right"
+              } me-2`}
+              onClick={() => toggleNote(note.id)}
+            ></i>
+            <span style={{ color: "#666666" }}>
+              <strong>Note</strong>
+            </span>
+            <span
+              style={{ float: "right", color: "#666666" }}
+              className="small"
+            >
+              {formatDateTime(note.createdAt)}
+            </span>
+            {openNote[note.id] && (
+              <p style={{ color: "#4B647A" }}>{note.content}</p>
+            )}
+          </div>
+        ))}
     </>
   );
 }
