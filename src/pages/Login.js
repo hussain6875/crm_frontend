@@ -5,7 +5,8 @@ import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { validateLoginForm, validateForgotPassword } from "../utils/validation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, resetPassword } from "../redux/AuthSlice";
+import { loginUser, forgotPassword } from "../redux/AuthSlice";
+import { resetPassword } from "../redux/AuthSlice";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -55,15 +56,15 @@ const LoginForm = () => {
       setForgotError("");
       dispatch(resetPassword(forgotEmail)).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
-          setForgotSuccess(" Password reset link sent to your email!");
-          setTimeout(() => {
-            setShowForgotModal(false);
-            setForgotEmail("");
-            setForgotSuccess("");
-          }, 2000);
+        if (res.payload?.exists) {
+          // ✅ if email exists in backend, navigate to reset page
+          navigate("/reset-password", { state: { email: forgotEmail } });
         } else {
-          setForgotError(res.payload || "Something went wrong");
+          setForgotError("Email not found");
         }
+      } else {
+        setForgotError(res.payload || "Something went wrong");
+      }
       });
     }
   };
@@ -234,3 +235,5 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+
+
