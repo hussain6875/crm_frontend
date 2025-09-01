@@ -30,7 +30,7 @@ const CreateTicket = ({ onTicketCreated }) => {
       source,
       owner,
     };
-    console.log(newTicket);
+    //console.log(newTicket);
     dispatch(createTicketAPI(newTicket));
     setSubmitted(true);
   };

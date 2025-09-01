@@ -9,14 +9,7 @@ const SalesReport = () => {
   const dealsArray = deals?.data || deals || [];
 
 
-   // Filter deals for the current user
-  const userDeals = user
-    ? dealsArray.filter(
-        (deal) =>
-          (deal.owner?.userId === user.userId) ||
-          (deal.dealOwner === user.userId)
-      )
-    : dealsArray;
+ 
   // Calculate monthly revenue for each month
   const months = [
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -24,7 +17,7 @@ const SalesReport = () => {
   ];
   const monthlyData = months.map((month, idx) => {
     // Sum amounts for deals closed as 'Closed Won' in this month
-    const total = userDeals
+    const total = dealsArray
       .filter(
         (deal) =>
           deal.stage === "Closed Won" &&
@@ -46,7 +39,7 @@ const SalesReport = () => {
 
   const maxValue = Math.max(...monthlyData.map(item => item.primary), 10000);
   const chartHeight = 500;
-  const yAxisValues = [10000, 5000, 1000, 500, 200, 0];
+  const yAxisValues = [60000, 50000, 40000, 30000, 20000, 10000];
 
   const formatCurrency = (value) => `$${value.toLocaleString()}`;
 

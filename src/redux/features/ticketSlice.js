@@ -2,10 +2,14 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import { createTicket, editTicket, getAllTickets, getTicketById } from "./API";
 
+
 export const fetchTickets = createAsyncThunk(
   "tickets/fetchTickets",
   async () => {
-    const response = await fetch(getAllTickets);
+    const token = localStorage.getItem("token");
+    const response = await fetch(getAllTickets, {
+      authorizaton: `Bearer ${token}`
+    });
     if (!response.ok) {
       throw new Error("failed to fetch Tickets");
     }
@@ -29,10 +33,12 @@ export const fetchTicketById = createAsyncThunk(
 export const createTicketAPI = createAsyncThunk(
   "tickets/createNewTicket",
   async (newData) => {
+    const token = localStorage.getItem("token");
     const response = await fetch(createTicket, {
       method: "POST",
       headers: {
         "Content-Type": "Application/json",
+           authorizaton: `Bearer ${token}`,
       },
       body: JSON.stringify(newData),
     });
