@@ -35,7 +35,8 @@ export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
   async (email, { rejectWithValue }) => {
     try {
-      return await AuthService.forgotPassword(email);
+      const response = await AuthService.forgotPassword(email);
+      return response;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -47,9 +48,10 @@ export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
   async ({ email, newPassword }, { rejectWithValue }) => {
     try {
-      return await AuthService.resetPassword(email, newPassword);
-    } catch (error) {
-      return rejectWithValue(error.message);
+      const response = await AuthService.resetPassword(email, newPassword);
+      return response; 
+    } catch (err) {
+      return rejectWithValue(err.message);
     }
   }
 );
@@ -128,7 +130,7 @@ const authSlice = createSlice({
       })
       .addCase(forgotPassword.fulfilled, (state, action) => {
         state.loading = false;
-        state.success = action.payload || "Reset link sent to your email!";
+        state.success = action.payload?.message || "Reset link sent to your email!";
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.loading = false;
@@ -143,7 +145,7 @@ const authSlice = createSlice({
       })
       .addCase(resetPassword.fulfilled, (state, action) => {
         state.loading = false;
-        state.success = action.payload || "Password reset successful!";
+        state.success = action.payload?.message || "Password reset successful!";
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
@@ -154,4 +156,5 @@ const authSlice = createSlice({
 
 export const { logout, clearMessages } = authSlice.actions;
 export default authSlice.reducer;
+
 

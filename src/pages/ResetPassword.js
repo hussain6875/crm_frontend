@@ -1,20 +1,24 @@
+import "../App.css";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
 import { resetPassword } from "../redux/AuthSlice";
 
 const ResetPasswordForm = () => {
-  const [email, setEmail] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, success } = useSelector((state) => state.auth);
+
+  // ✅ Get email from ForgotPasswordModal
+  const emailFromState = location.state?.email || "";
+  const [email] = useState(emailFromState); // keep it fixed
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState("");
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { loading, success } = useSelector((state) => state.auth);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -25,32 +29,28 @@ const ResetPasswordForm = () => {
     }
     setError("");
 
-    // dispatch redux resetPassword with email + new password
+    // ✅ Send email + new password to backend
     dispatch(resetPassword({ email, newPassword: password })).then((res) => {
       if (res.meta.requestStatus === "fulfilled") {
-        setTimeout(() => navigate("/"), 2000); // redirect to login
+        setTimeout(() => navigate("/"), 2000); // back to login
       }
     });
   };
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div
-        className="card p-4 shadow-sm w-100 mx-2"
-        style={{ maxWidth: "450px" }}
-      >
+      <div className="card p-4 shadow-sm w-100 mx-2" style={{ maxWidth: "450px" }}>
         <h4 className="text-center fw-bold mb-4">Reset Password</h4>
 
         <form onSubmit={handleSubmit}>
-          {/* Email */}
+          {/* Email (Disabled) */}
           <div className="mb-3">
             <label className="form-label">Email</label>
             <input
               type="email"
               className="form-control"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              disabled
             />
           </div>
 
@@ -113,3 +113,4 @@ const ResetPasswordForm = () => {
 };
 
 export default ResetPasswordForm;
+
