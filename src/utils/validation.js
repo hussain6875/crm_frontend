@@ -1,16 +1,16 @@
-// Login validation
-export const validateLoginForm = (values) => {
+export const validateLoginForm = ({ email, password }) => {
   const errors = {};
-  if (!values.email) {
+
+  if (!email || email.trim() === "") {
     errors.email = "Email is required";
-  } else if (!/\S+@\S+\.\S+/.test(values.email)) {
-    errors.email = "Email address is invalid";
+  } else if (!/\S+@\S+\.\S+/.test(email)) {
+    errors.email = "Email is invalid";
   }
 
-  if (!values.password) {
+  if (!password || password.trim() === "") {
     errors.password = "Password is required";
-  } else if (values.password.length < 6) {
-    errors.password = "Password must be at least 6 characters";
+  } else if (password.length < 8) {
+    errors.password = "Password must be at least 8 characters";
   }
 
   return errors;
@@ -80,4 +80,26 @@ export const validateForgotPassword = (email) => {
   return "";
 };
 
+// Reset password validation
+export const validateResetPassword = (values) => {
+  const errors = {};
 
+  if (!values.password) {
+    errors.password = "New password is required";
+  } else {
+    const strongPasswordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!strongPasswordRegex.test(values.password)) {
+      errors.password =
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and special character";
+    }
+  }
+
+  if (!values.confirmPassword) {
+    errors.confirmPassword = "Please confirm your new password";
+  } else if (values.password !== values.confirmPassword) {
+    errors.confirmPassword = "Passwords do not match";
+  }
+
+  return errors;
+};

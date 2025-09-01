@@ -8,10 +8,25 @@ import DealDetails from "./pages/DealDetails";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import TicketDetails from "./pages/TicketDetails";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <Router>
+      {/* ToastContainer to show toast messages */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />

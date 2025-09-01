@@ -8,6 +8,7 @@ class AuthService {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
+
     const data = await response.json();
 
     if (!response.ok) {
@@ -23,6 +24,7 @@ class AuthService {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
+
     const data = await response.json();
 
     if (!response.ok) {
@@ -38,20 +40,21 @@ class AuthService {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
+
     const data = await response.json();
 
     if (!response.ok) {
       throw new Error(data.message || "Email not found");
     }
-    return data.message;
+    return data; // expected { message: "...", resetToken?: "..." }
   }
 
   // RESET PASSWORD
-  static async resetPasswordApi(email, newPassword) {
+  static async resetPassword(token, newPassword) {
     const response = await fetch(`${this.BASE_URL}/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, newPassword }),
+      body: JSON.stringify({ token, newPassword }),
     });
 
     const data = await response.json();
@@ -60,9 +63,8 @@ class AuthService {
       throw new Error(data.message || "Something went wrong");
     }
 
-    return data;
+    return data; // expected { message: "Password reset successful" }
   }
 }
 
 export default AuthService;
-

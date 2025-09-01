@@ -1,10 +1,13 @@
-import { useState } from "react";
+import "../App.css";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../redux/AuthSlice";
 import { validateRegisterForm } from "../utils/validation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -41,11 +44,24 @@ const RegisterForm = () => {
     if (Object.keys(validationErrors).length === 0) {
       dispatch(registerUser(formData)).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
+          toast.success("Registration successful! Redirecting to login...");
           setTimeout(() => navigate("/"), 2000);
         }
       });
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (success) {
+      toast.success(success);
+    }
+  }, [success]);
 
   const placeholderStyle = { color: "#625f5f", opacity: 1 };
 
@@ -60,9 +76,6 @@ const RegisterForm = () => {
           style={{ border: "1px solid #eaeaea" }}
         >
           <h4 className="text-center fw-bold mb-4">Register</h4>
-
-          {success && <div className="alert alert-success text-center">{success}</div>}
-          {error && <div className="alert alert-danger text-center">{error}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="row g-4">
@@ -178,7 +191,9 @@ const RegisterForm = () => {
                   <input
                     name="password"
                     type={showPassword ? "text" : "password"}
-                    className={`form-control ${errors.password && "is-invalid"}`}
+                    className={`form-control ${
+                      errors.password && "is-invalid"
+                    }`}
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
@@ -193,7 +208,9 @@ const RegisterForm = () => {
                   </span>
                 </div>
                 {errors.password && (
-                  <div className="invalid-feedback d-block">{errors.password}</div>
+                  <div className="invalid-feedback d-block">
+                    {errors.password}
+                  </div>
                 )}
               </div>
 
@@ -204,7 +221,9 @@ const RegisterForm = () => {
                   <input
                     name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    className={`form-control ${errors.confirmPassword && "is-invalid"}`}
+                    className={`form-control ${
+                      errors.confirmPassword && "is-invalid"
+                    }`}
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
@@ -219,7 +238,9 @@ const RegisterForm = () => {
                   </span>
                 </div>
                 {errors.confirmPassword && (
-                  <div className="invalid-feedback d-block">{errors.confirmPassword}</div>
+                  <div className="invalid-feedback d-block">
+                    {errors.confirmPassword}
+                  </div>
                 )}
               </div>
 
@@ -287,8 +308,3 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
-
-
-
-
-

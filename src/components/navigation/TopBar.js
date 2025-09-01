@@ -1,19 +1,18 @@
 import { FiSearch, FiBell } from "react-icons/fi";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../redux/AuthSlice"; 
+import { logout } from "../../redux/AuthSlice";
 import { useState } from "react";
+import "./TopBar.css";
 
 const TopBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const { user } = useSelector((state) => state.auth);
 
-  // dropdown toggle
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // get first letter from username or email
   const getInitial = () => {
     if (user?.name) return user.name.charAt(0).toUpperCase();
     if (user?.email) return user.email.charAt(0).toUpperCase();
@@ -30,12 +29,9 @@ const TopBar = () => {
       className="d-flex justify-content-between align-items-center px-4 py-3 bg-white shadow-sm position-fixed top-0 start-0 w-100"
       style={{ zIndex: 1000, height: "70px" }}
     >
-      {/* Logo */}
       <h5 className="m-0 fw-bold">CRM</h5>
 
-      {/* Right Side */}
       <div className="d-flex align-items-center gap-3">
-        {/* Search box with icon and divider */}
         <div style={{ maxWidth: 250, position: "relative" }}>
           <FiSearch
             style={{
@@ -75,7 +71,6 @@ const TopBar = () => {
           />
         </div>
 
-        {/* Bell Icon */}
         <button
           className="btn d-flex align-items-center justify-content-center"
           style={{
@@ -89,7 +84,6 @@ const TopBar = () => {
           <FiBell style={{ color: "#6c63ff", fontSize: "1.2rem" }} />
         </button>
 
-        {/* Avatar with dropdown */}
         <div className="position-relative">
           <div
             className="rounded-circle d-flex justify-content-center align-items-center"
@@ -107,7 +101,6 @@ const TopBar = () => {
             {getInitial()}
           </div>
 
-          {/* Dropdown */}
           {showDropdown && (
             <div
               className="position-absolute bg-white shadow rounded p-2"
@@ -120,7 +113,7 @@ const TopBar = () => {
             >
               <button
                 className="dropdown-item text-danger"
-                onClick={handleLogout}
+                onClick={() => setShowLogoutModal(true)}
               >
                 Logout
               </button>
@@ -128,10 +121,26 @@ const TopBar = () => {
           )}
         </div>
       </div>
+
+      {/* Logout Modal */}
+      <div className={`modal-backdrop ${showLogoutModal ? "show" : ""}`}>
+        <div className={`modal-content ${showLogoutModal ? "show" : ""}`}>
+          <h6>Are you sure you want to sign out?</h6>
+          <div className="d-flex justify-content-between mt-4">
+            <button
+              className="btn btn-secondary"
+              onClick={() => setShowLogoutModal(false)}
+            >
+              Cancel
+            </button>
+            <button className="btn btn-danger" onClick={handleLogout}>
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default TopBar;
-
-
