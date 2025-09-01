@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-<<<<<<< HEAD
 import styles from "./createTicket.module.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,20 +13,12 @@ const CreateTicket = ({ onTicketCreated }) => {
   );
   const { users = [] } = useSelector((state) => state.users || {});
 
-=======
-import mockTickets from "./Tickets";
-import styles from "./createTicket.module.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-
-const CreateTicket = () => {
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [ticketStatus, setTicketStatus] = useState("");
   const [source, setSource] = useState("");
   const [priority, setPriority] = useState("");
   const [owner, setOwner] = useState("");
-<<<<<<< HEAD
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -39,16 +30,10 @@ const CreateTicket = () => {
     if (!priority) newErrors.priority = "Priority is required";
     if (!owner) newErrors.owner = "Ticket owner is required";
     return newErrors;
-=======
-
-  const createNewTicket = (newTicket) => {
-    mockTickets.push(newTicket);
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-<<<<<<< HEAD
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -109,49 +94,6 @@ const CreateTicket = () => {
   useEffect(() => {
     dispatch(fetchUsers());
   }, [dispatch]);
-=======
-
-    const formatDate = () => {
-      const date = new Date();
-      const dd = String(date.getDate()).padStart(2, "0");
-      const mm = String(date.getMonth() + 1).padStart(2, "0");
-      const yyyy = date.getFullYear();
-      return `${dd}-${mm}-${yyyy}`;
-    };
-
-    const newTicket = {
-      id: Date.now().toString(),
-      name,
-      description,
-      status: ticketStatus,
-      priority,
-      source,
-      owner,
-      createdDate: formatDate(),
-    };
-
-    createNewTicket(newTicket);
-    e.target.reset();
-
-    const offcanvasElement = document.getElementById("createTicket");
-    const bsOffcanvas =
-      window.bootstrap.Offcanvas.getInstance(offcanvasElement);
-    bsOffcanvas?.hide();
-  };
-
-  useEffect(() => {
-    // optional: reset state when modal opens
-    const offcanvasElement = document.getElementById("createTicket");
-    offcanvasElement?.addEventListener("shown.bs.offcanvas", () => {
-      setName("");
-      setDescription("");
-      setTicketStatus("");
-      setSource("");
-      setPriority("");
-      setOwner("");
-    });
-  }, []);
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
 
   return (
     <div
@@ -176,11 +118,7 @@ const CreateTicket = () => {
         ></button>
       </div>
       <hr className="border border-secondary border-opacity-25 m-0" />
-<<<<<<< HEAD
       <div className="offcanvas-body mx-2 position-relative pb-0">
-=======
-      <div className="offcanvas-body mx-2 position-relative pb-5">
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label
@@ -191,7 +129,6 @@ const CreateTicket = () => {
             </label>
             <input
               type="text"
-<<<<<<< HEAD
               className={`form-control form-control-sm ${
                 errors.name ? "is-invalid" : ""
               }`}
@@ -203,14 +140,6 @@ const CreateTicket = () => {
             {errors.name && (
               <div className="invalid-feedback">{errors.name}</div>
             )}
-=======
-              className="form-control form-control-sm"
-              id="ticketNameInput"
-              placeholder="Enter"
-              required
-              onChange={(e) => setName(e.target.value)}
-            />
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
           </div>
           <div className="my-3">
             <label
@@ -224,10 +153,7 @@ const CreateTicket = () => {
               className="form-control form-control-sm"
               id="descriptionInput"
               placeholder="Enter"
-<<<<<<< HEAD
               value={description}
-=======
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
@@ -241,7 +167,6 @@ const CreateTicket = () => {
               </label>
               <select
                 id="ticketStatus"
-<<<<<<< HEAD
                 className={`form-select form-select-sm ${
                   errors.ticketStatus ? "is-invalid" : ""
                 }`}
@@ -256,16 +181,6 @@ const CreateTicket = () => {
               {errors.ticketStatus && (
                 <div className="invalid-feedback">{errors.ticketStatus}</div>
               )}
-=======
-                className="form-select form-select-sm"
-                required
-                onChange={(e) => setTicketStatus(e.target.value)}
-              >
-                <option value="">Choose</option>
-                <option value="New">New</option>
-                <option value="Waiting on us">Waiting on us</option>
-              </select>
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
             </div>
             <div className="col">
               <label
@@ -276,7 +191,6 @@ const CreateTicket = () => {
               </label>
               <select
                 id="source"
-<<<<<<< HEAD
                 className={`form-select form-select-sm ${
                   errors.source ? "is-invalid" : ""
                 }`}
@@ -291,17 +205,6 @@ const CreateTicket = () => {
               {errors.source && (
                 <div className="invalid-feedback">{errors.source}</div>
               )}
-=======
-                className="form-select form-select-sm"
-                required
-                onChange={(e) => setSource(e.target.value)}
-              >
-                <option value="">Choose</option>
-                <option value="Chat">Chat</option>
-                <option value="Email">Email</option>
-                <option value="Phone">Phone</option>
-              </select>
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
             </div>
           </div>
           <div className="my-3">
@@ -313,7 +216,6 @@ const CreateTicket = () => {
             </label>
             <select
               id="priority"
-<<<<<<< HEAD
               className={`form-select form-select-sm ${
                 errors.priority ? "is-invalid" : ""
               }`}
@@ -329,18 +231,6 @@ const CreateTicket = () => {
             {errors.priority && (
               <div className="invalid-feedback">{errors.priority}</div>
             )}
-=======
-              className="form-select form-select-sm"
-              required
-              onChange={(e) => setPriority(e.target.value)}
-            >
-              <option value="">Choose</option>
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
-              <option value="Critical">Critical</option>
-            </select>
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
           </div>
           <div className="my-3">
             <label
@@ -349,7 +239,6 @@ const CreateTicket = () => {
             >
               Ticket Owner <span className="text-danger">*</span>
             </label>
-<<<<<<< HEAD
             <select
               id="ticketOwnerInput"
               className={`form-select form-select-sm ${
@@ -376,18 +265,6 @@ const CreateTicket = () => {
                 : ""
             }`}
           >
-=======
-            <input
-              type="text"
-              className="form-control form-control-sm"
-              id="ticketOwnerInput"
-              placeholder="Enter"
-              required
-              onChange={(e) => setOwner(e.target.value)}
-            />
-          </div>
-          <div className="d-flex justify-content-between position-absolute bottom-0 start-0 end-0 px-4 pb-3 gap-3">
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
             <button
               className={`${styles.close} btn w-100`}
               type="button"
@@ -400,11 +277,8 @@ const CreateTicket = () => {
               className={`${styles.save} btn text-white w-100`}
               type="submit"
             >
-<<<<<<< HEAD
               {loading ? "Saving..." : "Save"}
-=======
               Save
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
             </button>
           </div>
         </form>
