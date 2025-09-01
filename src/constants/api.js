@@ -1,5 +1,5 @@
 // Base URL for your backend API
-export const API_BASE_URL = "http://localhost:5000/api";
+export const API_BASE_URL = "http://localhost:8080/api";
 
 // Auth Endpoints
 export const AUTH_ENDPOINTS = {
