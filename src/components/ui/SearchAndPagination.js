@@ -1,4 +1,5 @@
 import React from 'react'
+<<<<<<< HEAD
 import { FaSearch } from 'react-icons/fa'
 import { useState } from 'react';
 
@@ -84,6 +85,23 @@ export default function SearchAndPagination({ activePage, setActivePage, totalPa
     </button>
   </div>
 </div>
+=======
+
+export default function SearchAndPagination() {
+  return (
+     <div
+          className="bg-white rounded-top d-flex flex-nowrap align-items-center"
+          style={{
+            width: "95%",
+            margin: "auto",
+            height: "10%",
+            marginLeft: "20px",
+            marginRight: "10px",
+            marginTop:"2px",
+            justifyContent: "space-between",
+          }}
+        >
+>>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
         
         </div>
   )

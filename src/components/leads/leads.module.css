@@ -9,10 +9,6 @@
 .buttons section {
   font-size: 0.8rem;
   padding: 0;
-<<<<<<< HEAD
-  cursor: pointer;
-=======
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
 }
 .buttons i,
 .about i {
@@ -30,11 +26,6 @@
 .search input {
   font-size: 0.9rem;
 }
-<<<<<<< HEAD
-.middleNav,
-.navHover:hover {
-  border-bottom: 5px solid #4338ca !important;
-=======
 .middleNav {
   border-bottom: 5px solid #4338ca !important;
   border-bottom-left-radius: 5px;
@@ -44,7 +35,6 @@
   border-bottom: 5px solid #4338ca !important;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
->>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
 }
 .ai {
   background-color: #f7f6fb;

@@ -1,7 +1,11 @@
 import React from "react";
 import ButtonGroup from "./ButtonGroup";
 
+<<<<<<< HEAD
 export default function PageHeader({ title, onCreateClick }) {
+=======
+export default function PageHeader({ title, offCanvasId }) {
+>>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
   return (
     <div
       className="bg-white rounded-top d-flex flex-nowrap align-items-center"
@@ -14,11 +18,15 @@ export default function PageHeader({ title, onCreateClick }) {
         justifyContent: "space-between",
       }}
     >
-      <h5 style={{ paddingLeft: "20px" }} className="m-0">
+      <h3 style={{ paddingLeft: "20px" }} className="m-0 fw-bold">
         {title}
-      </h5>
+      </h3>
 
+<<<<<<< HEAD
       <ButtonGroup onCreateClick={onCreateClick} />
+=======
+      <ButtonGroup createTarget={offCanvasId} />
+>>>>>>> 195647c (add Leads list, Lead detail page, and Create Lead offcanvas drawer)
     </div>
   );
 }
