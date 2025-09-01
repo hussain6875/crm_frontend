@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllActivities } from "../../redux/features/activitySlice";
@@ -283,3 +284,16 @@ export default function Activity({ module, id }) {
     </>
   );
 }
+=======
+import React from 'react'
+
+const Activity = () => {
+  return (
+    <div>
+      <h2>activity</h2>
+    </div>
+  )
+}
+
+export default Activity
+>>>>>>> dec2b41 (db connected)

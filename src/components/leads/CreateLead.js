@@ -3,19 +3,15 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
 import * as bootstrap from "bootstrap";
 
-const CreateLeadDrawer = ({ onSave }) => {
+const CreateLead = ({ onSave }) => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
-    company: "",
-    position: "",
-    lifecycleStage: "Lead",
-    leadSource: "Website",
-    budget: 0,
-    owner: "John Smith",
-    status: "New",
+    jobTitle: "",
+    contactOwner: "John Smith",
+    leadStatus: "New",
   });
 
   const handleSubmit = (e) => {
@@ -31,13 +27,9 @@ const CreateLeadDrawer = ({ onSave }) => {
       lastName: "",
       email: "",
       phone: "",
-      company: "",
-      position: "",
-      lifecycleStage: "Lead",
-      leadSource: "Website",
-      budget: 0,
-      owner: "John Smith",
-      status: "New",
+      jobTitle: "",
+      contactOwner: "John Smith",
+      leadStatus: "New",
     });
   };
 
@@ -125,9 +117,9 @@ const CreateLeadDrawer = ({ onSave }) => {
                 type="text"
                 className="form-control"
                 placeholder="Enter job title"
-                value={formData.position}
+                value={formData.jobTitle}
                 onChange={(e) =>
-                  setFormData({ ...formData, position: e.target.value })
+                  setFormData({ ...formData, jobTitle: e.target.value })
                 }
               />
             </div>
@@ -136,9 +128,9 @@ const CreateLeadDrawer = ({ onSave }) => {
               <label className="form-label">Contact Owner</label>
               <select
                 className="form-select"
-                value={formData.owner}
+                value={formData.contactOwner}
                 onChange={(e) =>
-                  setFormData({ ...formData, owner: e.target.value })
+                  setFormData({ ...formData, contactOwner: e.target.value })
                 }
               >
                 <option value="">Choose owner</option>
@@ -152,16 +144,15 @@ const CreateLeadDrawer = ({ onSave }) => {
               <label className="form-label">Lead Status</label>
               <select
                 className="form-select"
-                value={formData.status}
+                value={formData.leadStatus}
                 onChange={(e) =>
-                  setFormData({ ...formData, status: e.target.value })
+                  setFormData({ ...formData, leadStatus: e.target.value })
                 }
               >
                 <option value="">Choose status</option>
                 <option value="New">New</option>
-                <option value="Contacted">Contacted</option>
-                <option value="Qualified">Qualified</option>
-                <option value="Unqualified">Unqualified</option>
+                <option value="Open">Open</option>
+                <option value="InProgress">InProgress</option>
               </select>
             </div>
 
@@ -184,4 +175,4 @@ const CreateLeadDrawer = ({ onSave }) => {
   );
 };
 
-export default CreateLeadDrawer;
+export default CreateLead;

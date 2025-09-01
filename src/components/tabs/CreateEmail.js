@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect } from "react";
 import { useState } from "react";
 import styles from "../tabs/createModal.module.css";
@@ -162,3 +163,14 @@ export default function CreateEmail({ isOpen, onClose, module, id }) {
     </div>
   );
 }
+=======
+import React from 'react'
+
+const CreateEmail = () => {
+  return (
+    <div>CreateEmail</div>
+  )
+}
+
+export default CreateEmail
+>>>>>>> dec2b41 (db connected)

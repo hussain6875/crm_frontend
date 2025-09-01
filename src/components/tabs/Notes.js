@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllActivities } from "../../redux/features/activitySlice";
@@ -70,3 +71,14 @@ export default function Notes({ onCreateClick, module, id }) {
     </>
   );
 }
+=======
+import React from 'react'
+
+const Notes = () => {
+  return (
+    <div>Notes hi</div>
+  )
+}
+
+export default Notes
+>>>>>>> dec2b41 (db connected)

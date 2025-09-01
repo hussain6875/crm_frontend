@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import styles from "../tabs/createModal.module.css";
 import { useDispatch } from "react-redux";
@@ -292,3 +293,14 @@ export default function CreateTask({ isOpen, onClose, module, details }) {
     </div>
   );
 }
+=======
+import React from 'react'
+
+const CreateTask = () => {
+  return (
+    <div>CreateTask</div>
+  )
+}
+
+export default CreateTask
+>>>>>>> dec2b41 (db connected)

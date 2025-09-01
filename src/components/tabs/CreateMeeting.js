@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import styles from "../tabs/createModal.module.css";
 import { useDispatch } from "react-redux";
@@ -285,3 +286,14 @@ export default function CreateMeeting({ isOpen, onClose, module, details }) {
     </div>
   );
 }
+=======
+import React from 'react'
+
+const CreateMeeting = () => {
+  return (
+    <div>CreateMeeting</div>
+  )
+}
+
+export default CreateMeeting
+>>>>>>> dec2b41 (db connected)
