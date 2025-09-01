@@ -18,10 +18,10 @@ import CreateCall from "../components/tabs/CreateCall";
 import CreateTask from "../components/tabs/CreateTask";
 import CreateMeeting from "../components/tabs/CreateMeeting";
 import { createNewActivity } from "../redux/features/activitySlice";
+import Attachment from "../components/ui/Attachment";
 
 const TicketDetails = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAttachmentOpen, setIsAttachmentOpen] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
@@ -147,14 +147,6 @@ const TicketDetails = () => {
     }
   };
 
-  const handleAttachmentButton = () => {
-    if (isAttachmentOpen) {
-      setIsAttachmentOpen(false);
-    } else {
-      setIsAttachmentOpen(true);
-    }
-  };
-
   useEffect(() => {
     dispatch(fetchTicketById(ticketId));
   }, [dispatch, ticketId]);
@@ -232,23 +224,38 @@ const TicketDetails = () => {
                     <div
                       className={`d-flex flex-nowrap rounded justify-content-between gap-3 mb-4 ${styles.buttons}`}
                     >
-                      <section className="text-center pt-2 pb-0 ps-0">
+                      <section
+                        className="text-center pt-2 pb-0 ps-0"
+                        onClick={() => setShowNoteModal(true)}
+                      >
                         <i className="bi bi-pencil-square rounded p-2 border border-secondary"></i>
                         <p className="mt-2 mb-0">Note</p>
                       </section>
-                      <section className="text-center pt-2 pb-0">
+                      <section
+                        className="text-center pt-2 pb-0"
+                        onClick={() => setShowEmailModal(true)}
+                      >
                         <i className="bi bi-envelope-fill rounded p-2 border border-secondary"></i>
                         <p className="mt-2 mb-0">Email</p>
                       </section>
-                      <section className="text-center pt-2 pb-0">
+                      <section
+                        className="text-center pt-2 pb-0"
+                        onClick={() => setShowCallModal(true)}
+                      >
                         <i className="bi bi-telephone-fill rounded p-2 border border-secondary"></i>
                         <p className="mt-2 mb-0">Call</p>
                       </section>
-                      <section className="text-center pt-2 pb-0">
+                      <section
+                        className="text-center pt-2 pb-0"
+                        onClick={() => setShowNoteModal(true)}
+                      >
                         <i className="bi bi-check2-square rounded p-2 border border-secondary"></i>
                         <p className="mt-2 mb-0">Task</p>
                       </section>
-                      <section className="text-center pt-2 pb-0">
+                      <section
+                        className="text-center pt-2 pb-0"
+                        onClick={() => setShowMeetingModal(true)}
+                      >
                         <i className="bi bi-calendar2-range-fill rounded p-2 border border-secondary"></i>
                         <p className="mt-2 mb-0">Meet..</p>
                       </section>
@@ -401,30 +408,7 @@ const TicketDetails = () => {
                     </div>
 
                     <div className={styles.rightPanel}>
-                      <div className="d-flex align-items-center">
-                        <div
-                          onClick={handleAttachmentButton}
-                          style={{ cursor: "pointer" }}
-                        >
-                          <i
-                            className={`bi ${
-                              isAttachmentOpen
-                                ? "bi-chevron-down"
-                                : "bi-chevron-right"
-                            } me-2 small`}
-                          ></i>
-                          <strong>Attachments</strong>
-                        </div>
-                        <a href="/" className="text-decoration-none ms-auto">
-                          + Add
-                        </a>
-                      </div>
-                      {isAttachmentOpen && (
-                        <p className="text-muted small">
-                          See the files attached to your activities or uploaded
-                          to this record.
-                        </p>
-                      )}
+                      <Attachment module={"ticket"} id={ticketId} />
                     </div>
                   </div>
                 </div>

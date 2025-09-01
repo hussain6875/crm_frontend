@@ -14,9 +14,9 @@ export default function PageHeader({ title, onCreateClick }) {
         justifyContent: "space-between",
       }}
     >
-      <h5 style={{ paddingLeft: "20px" }} className="m-0">
+      <h3 style={{ paddingLeft: "20px" }} className="m-0 fw-bold">
         {title}
-      </h5>
+      </h3>
 
       <ButtonGroup onCreateClick={onCreateClick} />
     </div>
