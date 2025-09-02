@@ -56,20 +56,11 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
     }
     if (!formData.amount || formData.amount.toString().trim() === "") {
       newErrors.amount = "Deal amount is required.";
-    }else
-    if(formData.amount<=0){
-      newErrors.amount = "Deal amount must be greater than zero."
+    } else if (formData.amount <= 0) {
+      newErrors.amount = "Deal amount must be greater than zero.";
     }
     if (!formData.closeDate || formData.closeDate.trim() === "") {
       newErrors.closeDate = "Close date is required.";
-    } else {
-      // Check if close date is in the past
-      const today = new Date();
-      today.setHours(0,0,0,0);
-      const closeDate = new Date(formData.closeDate);
-      if (closeDate < today) {
-        newErrors.closeDate = "Close date cannot be in the past. Please select a future date.";
-      }
     }
     return newErrors;
   };
@@ -176,39 +167,43 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
               <div className="col">
                 <label className="form-label">Close Date *</label>
                 <div className="position-relative" style={{ width: "100%" }}>
-                  <input
-                    type="date"
-                    className="form-control"
-                    value={formData.closeDate || ''}
-                    onChange={e => {
-                      const val = e.target.value;
-                      setFormData(prev => ({ ...prev, closeDate: val }));
-                      // Validate immediately on change to clear error if valid
-                      const today = new Date();
-                      today.setHours(0,0,0,0);
-                      const closeDate = new Date(val);
-                      if (!val) {
-                        setErrors(prev => ({ ...prev, closeDate: undefined }));
-                      } else if (closeDate < today) {
-                        setErrors(prev => ({ ...prev, closeDate: "Close date cannot be in the past. Please select a future date." }));
-                      } else {
-                        setErrors(prev => ({ ...prev, closeDate: undefined }));
-                      }
-                    }}
-                    style={{ opacity: 0, position: 'absolute', width: '100%', height: '100%', cursor: 'pointer', left: 0, top: 0 }}
-                  />
-                  <div className="form-control d-flex justify-content-between align-items-center bg-white">
+                  {/* Compute today's date in YYYY-MM-DD format for min attribute */}
+                  {(() => {
+                    const todayObj = new Date();
+                    const yyyy = todayObj.getFullYear();
+                    const mm = String(todayObj.getMonth() + 1).padStart(2, '0');
+                    const dd = String(todayObj.getDate()).padStart(2, '0');
+                    const todayStr = `${yyyy}-${mm}-${dd}`;
+                    return (
+                      <input
+                        type="date"
+                        className="form-control"
+                        value={formData.closeDate || ''}
+                        min={todayStr}
+                        onChange={e => {
+                          const val = e.target.value;
+                          setFormData(prev => ({ ...prev, closeDate: val }));
+                          // Clear error on change if any
+                          setErrors(prev => ({ ...prev, closeDate: undefined }));
+                        }}
+                        style={{ opacity: 0, position: 'absolute', width: '100%', height: '100%', cursor: 'pointer', left: 0, top: 0 }}
+                      />
+                    );
+                  })()}
+                  <div 
+                    className="form-control d-flex justify-content-between align-items-center bg-white"
+                    style={errors.closeDate ? { border: '1px solid red' } : {}}
+                  >
                     <span className="text-muted">{formData.closeDate ? (() => {
                       const [year, month, day] = formData.closeDate.split('-');
                       if (!year || !month || !day) return "Close Date";
-                      const d = new Date(`${year}-${month}-${day}`);
-                      const options = { year: "numeric", month: "short", day: "numeric" };
-                      return d.toLocaleDateString("en-GB", options);
+                      // Format as dd-mm-yyyy
+                      return `${day}-${month}-${year}`;
                     })() : "Close Date"}</span>
                     <FaRegCalendarAlt color="#6c757d" />
                   </div>
                   {errors.closeDate && (
-                    <div style={{ color: 'red', fontSize: '0.9em' }}>{errors.closeDate}</div>
+                    <div style={{ color: 'red', fontSize: '0.9em', marginTop: 2 }}>{errors.closeDate}</div>
                   )}
                 </div>
               </div>

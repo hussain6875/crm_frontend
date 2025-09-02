@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {createDeal} from '../../redux/dealSlice';
+import {createDeal, fetchDeals} from '../../redux/dealSlice';
 import { fetchUsers } from '../../redux/userSlice';
 import { DEAL_STAGES } from '../../constants/dealStages';
 import { DEAL_PRIORITY } from '../../constants/dealPriority';
@@ -16,6 +16,7 @@ export default function CreateDeal({isOpen,onClose}) {
     closeDate: '',
     priority: ''
   });
+  const [errors, setErrors] = useState({});
   const users = useSelector((state) => state.users.users) || [];
   const dispatch = useDispatch();
 
@@ -28,6 +29,7 @@ export default function CreateDeal({isOpen,onClose}) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setDeal((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined })); // Clear error on change
   };
 
 
@@ -41,12 +43,37 @@ export default function CreateDeal({isOpen,onClose}) {
     return d.toLocaleDateString("en-GB", options);
   };
 
+  // Validation function for blank fields and business rules
+  const validate = () => {
+    const newErrors = {};
+    if (!deal.name || deal.name.trim() === "") {
+      newErrors.name = "Deal name is required.";
+    }
+    if (!deal.amount || deal.amount.toString().trim() === "") {
+      newErrors.amount = "Deal amount is required.";
+    } else if (parseFloat(deal.amount) <= 0) {
+      newErrors.amount = "Deal amount must be greater than zero.";
+    }
+    if (!deal.stage || deal.stage === "") {
+      newErrors.stage = "Deal stage is required.";
+    }
+    if (!deal.owner || deal.owner === "") {
+      newErrors.owner = "Deal owner is required.";
+    }
+    if (!deal.priority || deal.priority === "") {
+      newErrors.priority = "Priority is required.";
+    }
+    if (!deal.closeDate || deal.closeDate.trim() === "") {
+      newErrors.closeDate = "Close date is required.";
+    }
+    return newErrors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validate dd-mm-yyyy format
-    const dateRegex = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/;
-    if (!dateRegex.test(deal.closeDate)) {
-      alert('Please enter the close date in dd-mm-yyyy format.');
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
     // Convert dd-mm-yyyy to yyyy-mm-dd for backend
@@ -62,6 +89,8 @@ export default function CreateDeal({isOpen,onClose}) {
     };
     try {
       await dispatch(createDeal(newDeal)).unwrap();
+      // Refresh the deals list after creating a new deal
+      dispatch(fetchDeals());
       alert('Deal created successfully!');
       onClose();
     } catch (error) {
@@ -93,8 +122,11 @@ export default function CreateDeal({isOpen,onClose}) {
                 name="name"
                 value={deal.name}
                 onChange={handleChange}
-                required
+                autoComplete="off"
               />
+              {errors.name && (
+                <div style={{ color: 'red', fontSize: '0.9em' }}>{errors.name}</div>
+              )}
             </div>
 
             <div className="mb-3">
@@ -104,12 +136,15 @@ export default function CreateDeal({isOpen,onClose}) {
                 name="stage"
                 value={deal.stage}
                 onChange={handleChange}
-                required
               >
+                <option value="">Choose</option>
                 {DEAL_STAGES.map((stage) => (
                   <option key={stage.value} value={stage.value}>{stage.label}</option>
                 ))}
               </select>
+              {errors.stage && (
+                <div style={{ color: 'red', fontSize: '0.9em' }}>{errors.stage}</div>
+              )}
             </div>
 
             <div className="mb-3">
@@ -121,8 +156,11 @@ export default function CreateDeal({isOpen,onClose}) {
                 name="amount"
                 value={deal.amount}
                 onChange={handleChange}
-                required
+                autoComplete="off"
               />
+              {errors.amount && (
+                <div style={{ color: 'red', fontSize: '0.9em' }}>{errors.amount}</div>
+              )}
             </div>
 
             <div className="mb-3">
@@ -132,7 +170,6 @@ export default function CreateDeal({isOpen,onClose}) {
                 name="owner"
                 value={deal.owner}
                 onChange={handleChange}
-                required
               >
                 <option value="">Choose</option>
                 {users.map((user) => (
@@ -141,36 +178,54 @@ export default function CreateDeal({isOpen,onClose}) {
                   </option>
                 ))}
               </select>
+              {errors.owner && (
+                <div style={{ color: 'red', fontSize: '0.9em' }}>{errors.owner}</div>
+              )}
             </div>
 
             <div className="row mb-3">
               <div className="col-md-6">
                 <label className="form-label">Close Date *</label>
                 <div className="position-relative" style={{ width: "100%" }}>
-                  <input
-                    type="date"
-                    className="form-control"
-                    value={(() => {
-                      if (!deal.closeDate) return '';
-                      const parts = deal.closeDate.split('-');
-                      if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
-                      return '';
-                    })()}
-                    onChange={e => {
-                      const val = e.target.value;
-                      if (val) {
-                        const [year, month, day] = val.split('-');
-                        setDeal(prev => ({ ...prev, closeDate: `${day}-${month}-${year}` }));
-                      } else {
-                        setDeal(prev => ({ ...prev, closeDate: '' }));
-                      }
-                    }}
-                    style={{ opacity: 0, position: 'absolute', width: '100%', height: '100%', cursor: 'pointer', left: 0, top: 0 }}
-                  />
-                  <div className="form-control d-flex justify-content-between align-items-center bg-white">
+                  {/* Compute today's date in YYYY-MM-DD format for min attribute */}
+                  {(() => {
+                    const todayObj = new Date();
+                    const yyyy = todayObj.getFullYear();
+                    const mm = String(todayObj.getMonth() + 1).padStart(2, '0');
+                    const dd = String(todayObj.getDate()).padStart(2, '0');
+                    const todayStr = `${yyyy}-${mm}-${dd}`;
+                    return (
+                      <input
+                        type="date"
+                        className="form-control"
+                        value={(() => {
+                          if (!deal.closeDate) return '';
+                          const parts = deal.closeDate.split('-');
+                          if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+                          return '';
+                        })()}
+                        min={todayStr}
+                        onChange={e => {
+                          const val = e.target.value;
+                          if (val) {
+                            const [year, month, day] = val.split('-');
+                            setDeal(prev => ({ ...prev, closeDate: `${day}-${month}-${year}` }));
+                          } else {
+                            setDeal(prev => ({ ...prev, closeDate: '' }));
+                          }
+                          setErrors(prev => ({ ...prev, closeDate: undefined }));
+                        }}
+                        style={{ opacity: 0, position: 'absolute', width: '100%', height: '100%', cursor: 'pointer', left: 0, top: 0 }}
+                      />
+                    );
+                  })()}
+                  <div className="form-control d-flex justify-content-between align-items-center bg-white" style={errors.closeDate ? { border: '1px solid red' } : {}}>
                     <span className="text-muted">{deal.closeDate ? formatDate(deal.closeDate) : "Close Date"}</span>
                     <FaRegCalendarAlt color="#6c757d" />
                   </div>
+                  {errors.closeDate && (
+                    <div style={{ color: 'red', fontSize: '0.9em', marginTop: 2 }}>{errors.closeDate}</div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6">
@@ -180,12 +235,15 @@ export default function CreateDeal({isOpen,onClose}) {
                   name="priority"
                   value={deal.priority}
                   onChange={handleChange}
-                  required
                 >
+                  <option value="">Choose</option>
                   {DEAL_PRIORITY.map((priority) => (
                     <option key={priority.value} value={priority.value}>{priority.label}</option>
                   ))}
                 </select>
+                {errors.priority && (
+                  <div style={{ color: 'red', fontSize: '0.9em' }}>{errors.priority}</div>
+                )}
               </div>
             </div>
 
