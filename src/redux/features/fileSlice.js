@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { attachImage, getAuthHeaders, token } from "./API";
+import { attachImage, getAuthHeaders } from "./API";
 
 export const attachImages = createAsyncThunk(
   "attachments/attachImages",
-  async ({ module, id, files }) => {
+  async ({ module, id, files }, { rejectWithValue }) => {
     try {
       const formData = new FormData();
       for (let i = 0; i < files.length; i++) {
@@ -15,9 +15,12 @@ export const attachImages = createAsyncThunk(
         headers: getAuthHeaders(),
       });
       const data = await response.json();
+      if (!response.ok || data.success === false) {
+        return rejectWithValue(data.message || "upload failed");
+      }
       return data;
     } catch (error) {
-      throw error;
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -55,7 +58,9 @@ export const deleteImage = createAsyncThunk(
 
 const initialState = {
   data: [],
+  newData: [],
   loading: false,
+  uploadError: null,
   error: null,
   deleteMessage: null,
 };
@@ -63,21 +68,24 @@ const initialState = {
 const fileSlice = createSlice({
   name: "attachments",
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.uploadError = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(attachImages.pending, (state) => {
         state.loading = true;
-        state.error = null;
+        state.uploadError = null;
       })
       .addCase(attachImages.fulfilled, (state, action) => {
         state.loading = false;
-        const files = Array.isArray(action.payload) ? action.payload : [];
-        state.data = [...state.data, ...files];
+        state.newData = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(attachImages.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.uploadError = action.payload || action.error.message;
       })
       .addCase(getImages.pending, (state) => {
         state.loading = true;

@@ -9,7 +9,6 @@ export const registerUser = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       return await AuthService.register(formData);
-      return await AuthService.register(formData);
     } catch (error) {
       return rejectWithValue(error.message);
     }
