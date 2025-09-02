@@ -56,15 +56,15 @@ const LoginForm = () => {
       setForgotError("");
       dispatch(resetPassword(forgotEmail)).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
-          setForgotSuccess(" Password reset link sent to your email!");
-          setTimeout(() => {
-            setShowForgotModal(false);
-            setForgotEmail("");
-            setForgotSuccess("");
-          }, 2000);
+        if (res.payload?.exists) {
+          // ✅ if email exists in backend, navigate to reset page
+          navigate("/reset-password", { state: { email: forgotEmail } });
         } else {
           setForgotError("Email not found");
         }
+      } else {
+        setForgotError(res.payload || "Something went wrong");
+      }
       });
     }
   };

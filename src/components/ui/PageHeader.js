@@ -15,9 +15,7 @@ export default function PageHeader({ title, offCanvasId }) {
       }}
     >
       <h3 style={{ paddingLeft: "20px" }} className="m-0 fw-bold">
-      <h3 style={{ paddingLeft: "20px" }} className="m-0 fw-bold">
         {title}
-      </h3>
       </h3>
 
       <ButtonGroup createTarget={offCanvasId} />
