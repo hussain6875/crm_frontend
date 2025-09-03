@@ -112,9 +112,10 @@ const CreateLead = ({ onSave }) => {
             </div>
 
             <div>
-              <label className="form-label">Job Title</label>
+              <label className="form-label">Job Title *</label>
               <input
                 type="text"
+                required
                 className="form-control"
                 placeholder="Enter job title"
                 value={formData.jobTitle}
@@ -125,9 +126,10 @@ const CreateLead = ({ onSave }) => {
             </div>
 
             <div>
-              <label className="form-label">Contact Owner</label>
+              <label className="form-label">Contact Owner *</label>
               <select
                 className="form-select"
+                required
                 value={formData.contactOwner}
                 onChange={(e) =>
                   setFormData({ ...formData, contactOwner: e.target.value })
@@ -141,9 +143,10 @@ const CreateLead = ({ onSave }) => {
             </div>
 
             <div>
-              <label className="form-label">Lead Status</label>
+              <label className="form-label">Lead Status *</label>
               <select
                 className="form-select"
+                required
                 value={formData.leadStatus}
                 onChange={(e) =>
                   setFormData({ ...formData, leadStatus: e.target.value })
