@@ -37,14 +37,21 @@ export const forgotPassword = createAsyncThunk(
   }
 );
 
-// RESET PASSWORD
+// RESET PASSWORD (pulls email from state )
 export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
-  async ({ token, newPassword }, { rejectWithValue }) => {
+  async ({ newPassword }, thunkAPI) => {
     try {
-      return await AuthService.resetPassword(token, newPassword);
+      const state = thunkAPI.getState();
+      const email = state.auth.user?.email;
+
+      if (!email) {
+        throw new Error("Email not found in user state");
+      }
+
+      return await AuthService.resetPassword(email, newPassword);
     } catch (error) {
-      return rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );
@@ -93,7 +100,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
+        state.user = action.payload.user; // contains email
         state.token = action.payload.token;
         localStorage.setItem("token", action.payload.token);
       })

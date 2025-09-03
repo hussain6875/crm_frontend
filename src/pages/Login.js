@@ -48,7 +48,7 @@ const LoginForm = () => {
   // Redirect after login success
   useEffect(() => {
     if (token) {
-      setTimeout(() => navigate("/dashboard"), 1500);
+      setTimeout(() => navigate("/dashboard"), 1000);
     }
   }, [token, navigate]);
 

@@ -1,37 +1,27 @@
 import "../App.css";
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { resetPassword } from "../redux/AuthSlice";
 import { validateResetPassword } from "../utils/validation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ResetPassword = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // Extract token from URL query param
-  const query = new URLSearchParams(location.search);
-  const token = query.get("token");
+  const { loading } = useSelector((state) => state.auth);
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [errors, setErrors] = useState({}); // Inline validation errors
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!token) {
-      toast.error("Invalid or expired reset link");
-      return;
-    }
-
-    // Validate inputs
     const validationErrors = validateResetPassword({
       password,
       confirmPassword,
@@ -39,17 +29,14 @@ const ResetPassword = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      // Dispatch reset password action
-      dispatch(resetPassword({ token, newPassword: password })).then((res) => {
+      dispatch(resetPassword({ newPassword: password })).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
           toast.success("Password reset successful! Redirecting...");
           setPassword("");
           setConfirmPassword("");
-          setTimeout(() => navigate("/"), 2000); // redirect to login
+          setTimeout(() => navigate("/"), 1000);
         } else {
-          toast.error(
-            res.payload?.message || res.payload || "Failed to reset password"
-          );
+          toast.error(res.payload || "Failed to reset password");
         }
       });
     }
@@ -120,7 +107,9 @@ const ResetPassword = () => {
                 {showConfirmPassword ? <BsEyeSlash /> : <BsEye />}
               </span>
               {errors.confirmPassword && (
-                <div className="invalid-feedback">{errors.confirmPassword}</div>
+                <div className="invalid-feedback">
+                  {errors.confirmPassword}
+                </div>
               )}
             </div>
           </div>
@@ -130,9 +119,9 @@ const ResetPassword = () => {
             <button
               type="submit"
               className="btn btn-primary w-50"
-              disabled={isButtonDisabled}
+              disabled={isButtonDisabled || loading}
             >
-              Reset Password
+              {loading ? "Resetting..." : "Reset Password"}
             </button>
             <button
               type="button"
@@ -149,3 +138,4 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
+

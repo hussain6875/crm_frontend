@@ -68,7 +68,7 @@ export const getConfirmPasswordSuccess = (values, errors) => {
     !errors.confirmPassword &&
     values.password === values.confirmPassword
   ) {
-    return "Passwords match ✅";
+    return "Passwords match";
   }
   return "";
 };

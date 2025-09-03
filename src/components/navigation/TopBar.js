@@ -2,7 +2,7 @@ import { FiSearch, FiBell } from "react-icons/fi";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../redux/AuthSlice";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./TopBar.css";
 
 const TopBar = () => {
@@ -12,6 +12,7 @@ const TopBar = () => {
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const dropdownRef = useRef(null);
 
   const getInitial = () => {
     if (user?.name) return user.name.charAt(0).toUpperCase();
@@ -24,6 +25,16 @@ const TopBar = () => {
     navigate("/");
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div
       className="d-flex justify-content-between align-items-center px-4 py-3 bg-white shadow-sm position-fixed top-0 start-0 w-100"
@@ -32,6 +43,7 @@ const TopBar = () => {
       <h5 className="m-0 fw-bold">CRM</h5>
 
       <div className="d-flex align-items-center gap-3">
+        {/* Search Box */}
         <div style={{ maxWidth: 250, position: "relative" }}>
           <FiSearch
             style={{
@@ -71,6 +83,7 @@ const TopBar = () => {
           />
         </div>
 
+        {/* Notifications */}
         <button
           className="btn d-flex align-items-center justify-content-center"
           style={{
@@ -84,7 +97,8 @@ const TopBar = () => {
           <FiBell style={{ color: "#6c63ff", fontSize: "1.2rem" }} />
         </button>
 
-        <div className="position-relative">
+        {/* User Dropdown */}
+        <div className="position-relative" ref={dropdownRef}>
           <div
             className="rounded-circle d-flex justify-content-center align-items-center"
             style={{
@@ -123,22 +137,29 @@ const TopBar = () => {
       </div>
 
       {/* Logout Modal */}
-      <div className={`modal-backdrop ${showLogoutModal ? "show" : ""}`}>
-        <div className={`modal-content ${showLogoutModal ? "show" : ""}`}>
-          <h6>Are you sure you want to sign out?</h6>
-          <div className="d-flex justify-content-between mt-4">
-            <button
-              className="btn btn-secondary"
-              onClick={() => setShowLogoutModal(false)}
-            >
-              Cancel
-            </button>
-            <button className="btn btn-danger" onClick={handleLogout}>
-              Sign Out
-            </button>
+      {showLogoutModal && (
+        <>
+          <div className="modal-backdrop fade show"></div>
+          <div className="modal fade show d-block" tabIndex="-1">
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content p-4">
+                <h6>Are you sure you want to sign out?</h6>
+                <div className="d-flex justify-content-between mt-4">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => setShowLogoutModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button className="btn btn-danger" onClick={handleLogout}>
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };

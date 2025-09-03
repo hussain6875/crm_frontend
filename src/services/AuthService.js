@@ -10,7 +10,6 @@ class AuthService {
     });
 
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.message || "Registration failed");
     }
@@ -26,11 +25,10 @@ class AuthService {
     });
 
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.message || "Login failed");
     }
-    return data;
+    return data; // expected { user: {email,...}, token: "..." }
   }
 
   // FORGOT PASSWORD
@@ -42,28 +40,26 @@ class AuthService {
     });
 
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.message || "Email not found");
     }
-    return data; // expected { message: "...", resetToken?: "..." }
+    return data;
   }
 
-  // RESET PASSWORD
-  static async resetPassword(token, newPassword) {
+  // RESET PASSWORD (email + newPassword )
+  static async resetPassword(email, newPassword) {
     const response = await fetch(`${this.BASE_URL}/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, newPassword }),
+      body: JSON.stringify({ email, newPassword }),
     });
 
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.message || "Something went wrong");
     }
 
-    return data; // expected { message: "Password reset successful" }
+    return data; // { message: "Password reset successful" }
   }
 }
 

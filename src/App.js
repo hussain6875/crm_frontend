@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
+import ResetPassword from "./pages/ResetPassword";
 import Companies from "./pages/Companies";
 import Deals from "./pages/Deals";
 import Tickets from "./pages/Tickets";
@@ -35,6 +36,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/leads" element={<Leads />} />
         <Route path="/companies" element={<Companies />} />
         <Route path="/deals" element={<Deals />} />
