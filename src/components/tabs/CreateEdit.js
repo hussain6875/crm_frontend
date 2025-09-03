@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import styles from "./createModal.module.css";
 import { updateDeal } from "../../redux/dealSlice";
-import { useSelector,useDispatch } from "react-redux";
-import { fetchUsers } from '../../redux/userSlice';
+import { useSelector, useDispatch } from "react-redux";
+import { fetchUsers } from "../../redux/userSlice";
 import { DEAL_PRIORITY } from "../../constants/dealPriority";
 import { DEAL_STAGES } from "../../constants/dealStages";
-
+import { toast } from "react-toastify";
 export default function CreateEdit({ isOpen, onClose, deal }) {
   const dispatch = useDispatch();
 
@@ -37,7 +37,6 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
     }
   }, [deal, isOpen]);
 
-
   // Error state for field validation
   const [errors, setErrors] = useState({});
 
@@ -46,7 +45,6 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: undefined })); // Clear error on change
   };
-
 
   // Validation function for blank fields
   const validate = () => {
@@ -70,18 +68,24 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      toast.error("Please fix the highlighted errors before submitting.");
+
       return;
     }
+    // Show loading toast
+    const toastId = toast.info("Updating deal...", { autoClose: false });
+
     try {
       await dispatch(
         updateDeal({ id: deal.dealId, updatedData: formData })
       ).unwrap();
-
-      alert("Deal updated successfully");
+  toast.dismiss(toastId);
+      toast.success("Deal updated successfully");
       onClose();
     } catch (err) {
-      console.error(err);
-      alert("Error updating deal");
+        toast.dismiss(toastId);
+      console.error(err);      
+      toast.error("Error updating deal");
     }
   };
 
@@ -111,7 +115,9 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
                 autoComplete="off"
               />
               {errors.name && (
-                <div style={{ color: 'red', fontSize: '0.9em' }}>{errors.name}</div>
+                <div style={{ color: "red", fontSize: "0.9em" }}>
+                  {errors.name}
+                </div>
               )}
             </div>
 
@@ -125,7 +131,9 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
                 required
               >
                 {DEAL_STAGES.map((stage) => (
-                  <option key={stage.value} value={stage.value}>{stage.label}</option>
+                  <option key={stage.value} value={stage.value}>
+                    {stage.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -142,7 +150,9 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
                 autoComplete="off"
               />
               {errors.amount && (
-                <div style={{ color: 'red', fontSize: '0.9em' }}>{errors.amount}</div>
+                <div style={{ color: "red", fontSize: "0.9em" }}>
+                  {errors.amount}
+                </div>
               )}
             </div>
 
@@ -171,39 +181,59 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
                   {(() => {
                     const todayObj = new Date();
                     const yyyy = todayObj.getFullYear();
-                    const mm = String(todayObj.getMonth() + 1).padStart(2, '0');
-                    const dd = String(todayObj.getDate()).padStart(2, '0');
+                    const mm = String(todayObj.getMonth() + 1).padStart(2, "0");
+                    const dd = String(todayObj.getDate()).padStart(2, "0");
                     const todayStr = `${yyyy}-${mm}-${dd}`;
                     return (
                       <input
                         type="date"
                         className="form-control"
-                        value={formData.closeDate || ''}
+                        value={formData.closeDate || ""}
                         min={todayStr}
-                        onChange={e => {
+                        onChange={(e) => {
                           const val = e.target.value;
-                          setFormData(prev => ({ ...prev, closeDate: val }));
+                          setFormData((prev) => ({ ...prev, closeDate: val }));
                           // Clear error on change if any
-                          setErrors(prev => ({ ...prev, closeDate: undefined }));
+                          setErrors((prev) => ({
+                            ...prev,
+                            closeDate: undefined,
+                          }));
                         }}
-                        style={{ opacity: 0, position: 'absolute', width: '100%', height: '100%', cursor: 'pointer', left: 0, top: 0 }}
+                        style={{
+                          opacity: 0,
+                          position: "absolute",
+                          width: "100%",
+                          height: "100%",
+                          cursor: "pointer",
+                          left: 0,
+                          top: 0,
+                        }}
                       />
                     );
                   })()}
-                  <div 
+                  <div
                     className="form-control d-flex justify-content-between align-items-center bg-white"
-                    style={errors.closeDate ? { border: '1px solid red' } : {}}
+                    style={errors.closeDate ? { border: "1px solid red" } : {}}
                   >
-                    <span className="text-muted">{formData.closeDate ? (() => {
-                      const [year, month, day] = formData.closeDate.split('-');
-                      if (!year || !month || !day) return "Close Date";
-                      // Format as dd-mm-yyyy
-                      return `${day}-${month}-${year}`;
-                    })() : "Close Date"}</span>
+                    <span className="text-muted">
+                      {formData.closeDate
+                        ? (() => {
+                            const [year, month, day] =
+                              formData.closeDate.split("-");
+                            if (!year || !month || !day) return "Close Date";
+                            // Format as dd-mm-yyyy
+                            return `${day}-${month}-${year}`;
+                          })()
+                        : "Close Date"}
+                    </span>
                     <FaRegCalendarAlt color="#6c757d" />
                   </div>
                   {errors.closeDate && (
-                    <div style={{ color: 'red', fontSize: '0.9em', marginTop: 2 }}>{errors.closeDate}</div>
+                    <div
+                      style={{ color: "red", fontSize: "0.9em", marginTop: 2 }}
+                    >
+                      {errors.closeDate}
+                    </div>
                   )}
                 </div>
               </div>
@@ -216,7 +246,9 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
                   onChange={handleChange}
                 >
                   {DEAL_PRIORITY.map((priority) => (
-                    <option key={priority.value} value={priority.value}>{priority.label}</option>
+                    <option key={priority.value} value={priority.value}>
+                      {priority.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -226,7 +258,10 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
               <button
                 type="button"
                 className="btn btn-outline-secondary"
-                onClick={onClose}
+                onClick={() => {
+                  toast.info("Edit cancelled.");
+                  onClose();
+                }}
               >
                 Cancel
               </button>

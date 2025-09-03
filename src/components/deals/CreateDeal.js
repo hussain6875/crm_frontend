@@ -6,6 +6,7 @@ import { DEAL_STAGES } from '../../constants/dealStages';
 import { DEAL_PRIORITY } from '../../constants/dealPriority';
 import { FaRegCalendarAlt } from "react-icons/fa";
 import styles from './createDeal.module.css'
+import { toast } from 'react-toastify';
 
 export default function CreateDeal({isOpen,onClose}) {
   const [deal, setDeal] = useState({
@@ -74,6 +75,8 @@ export default function CreateDeal({isOpen,onClose}) {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+          toast.error("Please fix the highlighted errors before submitting.");
+
       return;
     }
     // Convert dd-mm-yyyy to yyyy-mm-dd for backend
@@ -87,15 +90,19 @@ export default function CreateDeal({isOpen,onClose}) {
       closeDate: backendDate,
       priority: deal.priority,
     };
+      const toastId = toast.info("Creating deal...", { autoClose: false });
+
     try {
       await dispatch(createDeal(newDeal)).unwrap();
       // Refresh the deals list after creating a new deal
       dispatch(fetchDeals());
-      alert('Deal created successfully!');
+       toast.dismiss(toastId);
+      toast.success('Deal created successfully!');
       onClose();
     } catch (error) {
+       toast.dismiss(toastId);
       console.error('Failed to create deal:', error);
-      alert('Error creating deal');
+      toast.error('Error creating deal');
     }
   };
 
@@ -248,7 +255,11 @@ export default function CreateDeal({isOpen,onClose}) {
             </div>
 
             <div className="d-flex justify-content-end gap-2">
-              <button type="button" className="btn btn-outline-secondary" onClick={onClose}>
+              <button type="button" className="btn btn-outline-secondary" 
+              onClick={() => {
+    toast.info("Deal creation cancelled.");
+    onClose();
+  }}>
                 Cancel
               </button>
               <button type="submit" className="btn btn-primary">
