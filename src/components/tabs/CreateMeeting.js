@@ -286,5 +286,3 @@ export default function CreateMeeting({ isOpen, onClose, module, details }) {
   );
 }
 
-export default CreateMeeting
->>>>>>> dec2b41 (db connected)

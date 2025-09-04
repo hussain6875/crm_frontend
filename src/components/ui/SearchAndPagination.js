@@ -1,4 +1,5 @@
 import React from 'react'
+import { FaSearch } from "react-icons/fa";
 
 export default function SearchAndPagination({ activePage, setActivePage, totalPages }) {
   const handlePageClick = (page) => {

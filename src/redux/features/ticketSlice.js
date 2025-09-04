@@ -12,14 +12,8 @@ import {
 export const fetchTickets = createAsyncThunk(
   "tickets/fetchTickets",
   async () => {
-<<<<<<< HEAD
-    const token = localStorage.getItem("token");
-    const response = await fetch(getAllTickets, {
-      authorizaton: `Bearer ${token}`
-=======
     const response = await fetch(getAllTickets, {
       headers: getAuthHeaders(),
->>>>>>> 09286afb830d58a5d3de183e0db6c8c31f3b266d
     });
     if (!response.ok) {
       throw new Error("failed to fetch Tickets");
@@ -50,13 +44,8 @@ export const createTicketAPI = createAsyncThunk(
     const response = await fetch(createTicket, {
       method: "POST",
       headers: {
-<<<<<<< HEAD
-        "Content-Type": "Application/json",
-           authorizaton: `Bearer ${token}`,
-=======
         "Content-Type": "application/json",
         ...getAuthHeaders(),
->>>>>>> 09286afb830d58a5d3de183e0db6c8c31f3b266d
       },
       body: JSON.stringify(newData),
     });
