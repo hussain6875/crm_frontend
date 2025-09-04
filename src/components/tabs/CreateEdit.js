@@ -7,6 +7,7 @@ import { fetchUsers } from "../../redux/userSlice";
 import { DEAL_PRIORITY } from "../../constants/dealPriority";
 import { DEAL_STAGES } from "../../constants/dealStages";
 import { toast } from "react-toastify";
+import { fetchDeals } from "../../redux/dealSlice";
 export default function CreateEdit({ isOpen, onClose, deal }) {
   const dispatch = useDispatch();
 
@@ -81,6 +82,7 @@ export default function CreateEdit({ isOpen, onClose, deal }) {
       ).unwrap();
   toast.dismiss(toastId);
       toast.success("Deal updated successfully");
+      dispatch(fetchDeals());
       onClose();
     } catch (err) {
         toast.dismiss(toastId);
