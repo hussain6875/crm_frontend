@@ -6,7 +6,11 @@ export default function SearchAndPagination({ activePage, setActivePage, totalPa
   const handlePageClick = (page) => {
     setActivePage(page);
   };
-
+// Generate page numbers dynamically based on totalPages
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
   return (
   
      <div className="bg-white rounded-top d-flex flex-nowrap align-items-center"
@@ -38,54 +42,31 @@ export default function SearchAndPagination({ activePage, setActivePage, totalPa
     >
       &larr; Previous
     </button>
-    <button 
-      className="btn btn-sm rounded-lg px-3" 
-      style={{ backgroundColor: activePage === 1 ? '#6c63ff' : 'transparent', color: activePage === 1 ? '#fff' : '#000' }}
-      onClick={() => handlePageClick(1)}
-    >
-      1
-    </button>
-    <button 
-      className="btn btn-sm rounded-lg px-3" 
-      style={{ backgroundColor: activePage === 2 ? '#6c63ff' : 'transparent', color: activePage === 2 ? '#fff' : '#000' }}
-      onClick={() => handlePageClick(2)}
-    >
-      2
-    </button>
-    <button 
-      className="btn btn-sm rounded-lg px-3" 
-      style={{ backgroundColor: activePage === 3 ? '#6c63ff' : 'transparent', color: activePage === 3 ? '#fff' : '#000' }}
-      onClick={() => handlePageClick(3)}
-    >
-      3
-    </button>
-    <span className="text-muted">...</span>
-    <button 
-      className="btn btn-sm rounded-lg px-3" 
-      style={{ backgroundColor: activePage === 67 ? '#6c63ff' : 'transparent', color: activePage === 67 ? '#fff' : '#000' }}
-      onClick={() => handlePageClick(67)}
-    >
-      67
-    </button>
-    <button 
-      className="btn btn-sm rounded-lg px-3" 
-      style={{ backgroundColor: activePage === 68 ? '#6c63ff' : 'transparent', color: activePage === 68 ? '#fff' : '#000' }}
-      onClick={() => handlePageClick(68)}
-    >
-      68
-    </button>
-    <button
-      className="btn"
-      style={{ color: '#6c63ff', cursor: activePage === totalPages ? 'not-allowed' : 'pointer' }}
-      onClick={() => activePage < totalPages && setActivePage(activePage + 1)}
-      disabled={activePage === totalPages}
-    >
-      Next &rarr;
-    </button>
-  </div>
-</div>
-        
+     {pageNumbers.map(page => (
+            <button
+              key={page}
+              className="btn btn-sm rounded-lg px-3"
+              style={{
+                backgroundColor: activePage === page ? '#6c63ff' : 'transparent',
+                color: activePage === page ? '#fff' : '#000'
+              }}
+              onClick={() => handlePageClick(page)}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            className="btn"
+            style={{ color: '#6c63ff', cursor: activePage === totalPages ? 'not-allowed' : 'pointer' }}
+            onClick={() => activePage < totalPages && setActivePage(activePage + 1)}
+            disabled={activePage === totalPages}
+          >
+            Next &rarr;
+          </button>
         </div>
+      </div>
+    </div>   
+  
   )
 }
 

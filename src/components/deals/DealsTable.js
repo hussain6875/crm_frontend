@@ -6,9 +6,8 @@ import styles from "./deals.module.css";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchDeals } from "../../redux/dealSlice";
-import { forwardRef } from "react";
 import CreateEdit from "../tabs/CreateEdit";
-const DealsTable = forwardRef(function DealsTable(
+function DealsTable(
   {
     selectedOwner,
     selectedStage,
@@ -18,8 +17,8 @@ const DealsTable = forwardRef(function DealsTable(
     pageSize,
     onFilteredCount,
   },
-  ref
-) {
+)
+ {
   const dispatch = useDispatch();
   const { deals, loading, error } = useSelector((state) => state.deals);
   const { user } = useSelector((state) => state.auth);
@@ -36,7 +35,7 @@ const DealsTable = forwardRef(function DealsTable(
     : Array.isArray(deals)
     ? deals
     : [];
-  console.log(selectedStage);
+
   // Only show deals for the logged-in user (robust for both deal.owner and deal.dealOwner)
   const filteredDeals = dealsArray.filter((deal) => {
     if (
@@ -156,6 +155,6 @@ const DealsTable = forwardRef(function DealsTable(
       )}
     </>
   );
-});
+};
 
 export default DealsTable;
