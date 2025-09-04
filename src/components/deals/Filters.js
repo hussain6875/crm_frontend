@@ -1,6 +1,8 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { DEAL_STAGES } from '../../constants/dealStages';
+import { useSelector, useDispatch } from "react-redux";
+import { fetchUsers } from '../../redux/userSlice';
 
 export default function Filters({
   selectedOwner,
@@ -17,7 +19,15 @@ export default function Filters({
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateStr).toLocaleDateString("en-GB", options);
   };
+  const dispatch=useDispatch();
+   const users = useSelector((state) => state.users.users) || [];
+console.log(users);
 
+useEffect(()=>{
+  if(!users || users.length ===0){
+    dispatch(fetchUsers());
+  }
+},[dispatch,users]);
   return (
     <div style={{ marginTop: "20px", marginBottom: "20px" }} className="d-flex gap-md-2 flex-wrap">
       
@@ -26,14 +36,14 @@ export default function Filters({
         className="form-select"
         style={{ width: "15%" }}
         value={selectedOwner}
-        onChange={(e) => setSelectedOwner(e.target.value)}
+        onChange={(e) => setSelectedOwner(Number(e.target.value))}
       >
-        <option value="" disabled>
-          Deal Owner
-        </option>
-        <option value="All">All</option>
-        <option value="Jane Cooper">Jane Cooper</option>
-        <option value="Wade Warren">Wade Warren</option>
+        <option value="">Choose</option>
+                {users.map((user) => (
+                  <option key={user.userId} value={user.userId}>
+                    {user.userName}
+                  </option>
+                ))}
       </select>
 
       {/* Deal Stage Dropdown */}

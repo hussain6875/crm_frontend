@@ -9,20 +9,23 @@ import styles from './createDeal.module.css'
 import { toast } from 'react-toastify';
 
 export default function CreateDeal({isOpen,onClose}) {
-  const [deal, setDeal] = useState({
-    name: '',
+  const initialDealState = {
+     name: '',
     stage: '',
     amount: '',
     owner: '',
     closeDate: '',
-    priority: ''
-  });
+    priority: ''    
+  }
+  const [deal, setDeal] = useState(initialDealState);
   const [errors, setErrors] = useState({});
   const users = useSelector((state) => state.users.users) || [];
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (isOpen) {
+      setDeal(initialDealState);
+      setErrors({})
       dispatch(fetchUsers());
     }
   }, [isOpen, dispatch]);

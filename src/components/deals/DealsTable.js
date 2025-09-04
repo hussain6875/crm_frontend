@@ -12,6 +12,7 @@ const DealsTable = forwardRef(function DealsTable({ selectedOwner, selectedStage
   const dispatch = useDispatch();
   const { deals, loading, error } = useSelector((state) => state.deals);
   const { user } = useSelector((state) => state.auth);
+  
 
   useEffect(() => {
     dispatch(fetchDeals());
@@ -23,7 +24,7 @@ const DealsTable = forwardRef(function DealsTable({ selectedOwner, selectedStage
     : Array.isArray(deals)
     ? deals
     : [];
-
+console.log(selectedStage);
   // Only show deals for the logged-in user (robust for both deal.owner and deal.dealOwner)
   const filteredDeals = dealsArray.filter((deal) => {
     if (user && !((deal.owner?.userId === user.userId) || (deal.dealOwner === user.userId))) {
@@ -31,7 +32,11 @@ const DealsTable = forwardRef(function DealsTable({ selectedOwner, selectedStage
     }
     let match = true;
     if (selectedOwner && selectedOwner !== "All") {
-      match = match && deal.owner?.userName === selectedOwner;
+      match = match && (
+        deal.owner?.userId === selectedOwner || 
+        deal.owner === selectedOwner // handle both possible owner fields
+
+      )
     }
     if (selectedStage && selectedStage !== "All") {
       match = match && deal.stage === selectedStage;
