@@ -45,7 +45,7 @@ const RegisterForm = () => {
       dispatch(registerUser(formData)).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
           toast.success("Registration successful! Redirecting to login...");
-          setTimeout(() => navigate("/"), 2000);
+          setTimeout(() => navigate("/"),1000);
         }
       });
     }
@@ -296,7 +296,7 @@ const RegisterForm = () => {
               className="text-primary"
               role="button"
               style={{ cursor: "pointer" }}
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/")}
             >
               Login
             </span>
