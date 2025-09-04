@@ -1,24 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import styles from "./createModal.module.css";
-import { MdOutlineSave } from "react-icons/md";
 
 export default function CreateNote({ isOpen, onClose, onSave }) {
   const [notes, setNotes] = useState("");
+  const [error, setError] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const newNote = {
-      notes,
-    };
+    if (!notes.trim()) {
+      setError("Note is required");
+      return;
+    }
+    setError("");
     onSave(notes);
-
     // TODO: dispatch to Redux, send to backend, etc.
-
     onClose(); // close after submission
+    setNotes("");
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      setNotes("");
+      setError("");
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
+
   return (
     <>
       <div className={styles.drawerBackdrop} onClick={onClose}></div>
@@ -36,10 +45,14 @@ export default function CreateNote({ isOpen, onClose, onSave }) {
             style={{ height: "80vh" }}
           >
             <div className={styles.formgroup}>
-              <label>
+              <label htmlFor="note">
                 Note <span>*</span>
               </label>
-              <div className="form-control px-0">
+              <div
+                className={`form-control px-0 ${
+                  error ? "border border-danger" : ""
+                }`}
+              >
                 <span className="mx-2">
                   Normal Text <i className="bi bi-chevron-down ms-1"></i>
                 </span>
@@ -66,6 +79,7 @@ export default function CreateNote({ isOpen, onClose, onSave }) {
                   <textarea
                     id="note"
                     name="note"
+                    value={notes}
                     onChange={(e) => setNotes(e.target.value)} //  update state
                     rows={6}
                     placeholder="Enter"
@@ -73,6 +87,7 @@ export default function CreateNote({ isOpen, onClose, onSave }) {
                   ></textarea>
                 </div>
               </div>
+              {error && <small className="text-danger">{error}</small>}
             </div>
             <div className="w-100 d-flex justify-content-between gap-3">
               <button

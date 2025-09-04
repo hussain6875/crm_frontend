@@ -1,6 +1,4 @@
 import React from 'react'
-import { FaSearch } from 'react-icons/fa'
-import { useState } from 'react';
 
 export default function SearchAndPagination({ activePage, setActivePage, totalPages }) {
   const handlePageClick = (page) => {
@@ -12,11 +10,11 @@ export default function SearchAndPagination({ activePage, setActivePage, totalPa
     pageNumbers.push(i);
   }
   return (
-  
-     <div className="bg-white rounded-top d-flex flex-nowrap align-items-center"
+     <div
+          className="bg-white rounded-top d-flex flex-nowrap align-items-center"
           style={{
             width: "95%",
-            margin: "20px",
+            margin: "auto",
             height: "10%",
             justifyContent: "space-between"
           }}

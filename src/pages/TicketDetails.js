@@ -17,7 +17,10 @@ import CreateEmail from "../components/tabs/CreateEmail";
 import CreateCall from "../components/tabs/CreateCall";
 import CreateTask from "../components/tabs/CreateTask";
 import CreateMeeting from "../components/tabs/CreateMeeting";
-import { createNewActivity } from "../redux/features/activitySlice";
+import {
+  createNewActivity,
+  getAllActivities,
+} from "../redux/features/activitySlice";
 import Attachment from "../components/ui/Attachment";
 
 const TicketDetails = () => {
@@ -45,7 +48,9 @@ const TicketDetails = () => {
         data: { content: noteContent },
         type: "note",
       })
-    );
+    ).then(() => {
+      dispatch(getAllActivities({ module: "ticket", id: ticketId }));
+    });
     setShowNoteModal(false);
   };
   //methods to update notes modal
@@ -134,9 +139,11 @@ const TicketDetails = () => {
   };
 
   const handleEdit = () => {
-    const offcanvasEl = document.getElementById("editTicket");
-    const bsOffcanvas = new Offcanvas(offcanvasEl);
-    bsOffcanvas.show();
+    dispatch(fetchTicketById(ticketId)).then(() => {
+      const offcanvasEl = document.getElementById("editTicket");
+      const bsOffcanvas = new Offcanvas(offcanvasEl);
+      bsOffcanvas.show();
+    });
   };
 
   const handleAboutTicket = () => {
@@ -247,7 +254,7 @@ const TicketDetails = () => {
                       </section>
                       <section
                         className="text-center pt-2 pb-0"
-                        onClick={() => setShowNoteModal(true)}
+                        onClick={() => setShowTaskModal(true)}
                       >
                         <i className="bi bi-check2-square rounded p-2 border border-secondary"></i>
                         <p className="mt-2 mb-0">Task</p>
@@ -458,7 +465,12 @@ const TicketDetails = () => {
           </div>
         </div>
       </PageWrapper>
-      <EditTicket ticket={ticket} />
+      <EditTicket
+        ticket={ticket}
+        onTicketUpdated={() => {
+          dispatch(fetchTicketById(ticketId));
+        }}
+      />
     </>
   );
 };

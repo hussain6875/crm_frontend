@@ -4,7 +4,7 @@ import { Offcanvas } from "bootstrap";
 import { useDispatch } from "react-redux";
 import { updateTicket } from "../../redux/features/ticketSlice";
 
-const EditTicket = ({ ticket }) => {
+const EditTicket = ({ ticket, onTicketUpdated }) => {
   const dispatch = useDispatch();
 
   const [name, setName] = useState("");
@@ -25,7 +25,7 @@ const EditTicket = ({ ticket }) => {
     };
 
     dispatch(updateTicket({ updatedData: updatedTicket, id: ticket.id }));
-
+    if (onTicketUpdated) onTicketUpdated();
     const offcanvasElement = document.getElementById("editTicket");
     const bsOffcanvas = Offcanvas.getInstance(offcanvasElement);
     bsOffcanvas?.hide();

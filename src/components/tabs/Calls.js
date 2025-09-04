@@ -1,6 +1,8 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import { getAllActivities } from "../../redux/features/activitySlice";
 import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
 
 export default function Calls({ onCreateClick, module, id }) {
   const dispatch = useDispatch();
@@ -17,6 +19,10 @@ export default function Calls({ onCreateClick, module, id }) {
     }));
   };
 
+  const formatDateTime = (isoString) => {
+    return moment(isoString).format("MMMM D, YYYY [at] h:mm A");
+  };
+
   useEffect(() => {
     dispatch(getAllActivities({ module, id }));
   }, [dispatch, module, id]);
@@ -25,7 +31,6 @@ export default function Calls({ onCreateClick, module, id }) {
       <div className="d-flex justify-content-between">
         <div>
           <h6>Calls</h6>
-          
         </div>
         <button
           style={{
@@ -62,8 +67,8 @@ export default function Calls({ onCreateClick, module, id }) {
           <span style={{ color: "#666666" }}>
             <strong>Call</strong> from {call.connected}
           </span>
-          <span style={{ float: "right", color: "#666666" }}>
-            {call.createdAt}
+          <span style={{ float: "right", color: "#666666" }} className="small">
+            {formatDateTime(call.created_at)}
           </span>
           <p style={{ color: "#4B647A" }}>{call.note}</p>
 
@@ -75,7 +80,9 @@ export default function Calls({ onCreateClick, module, id }) {
               </div>
               <div>
                 <p className="mb-0 text-secondary">Duration</p>
-                <h3 className="fs-6">{call.call_time}</h3>
+                <h3 className="fs-6">
+                  {moment(call.call_time).format("h:mm A")}
+                </h3>
               </div>
             </div>
           )}
@@ -84,3 +91,14 @@ export default function Calls({ onCreateClick, module, id }) {
     </>
   );
 }
+=======
+import React from 'react'
+
+const Calls = () => {
+  return (
+    <div>Calls</div>
+  )
+}
+
+export default Calls
+>>>>>>> dec2b41 (db connected)

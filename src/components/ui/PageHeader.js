@@ -1,7 +1,7 @@
 import React from "react";
 import ButtonGroup from "./ButtonGroup";
 
-export default function PageHeader({ title, onCreateClick }) {
+export default function PageHeader({ title, offCanvasId }) {
   return (
     <div
       className="bg-white rounded-top d-flex flex-nowrap align-items-center"
@@ -18,7 +18,7 @@ export default function PageHeader({ title, onCreateClick }) {
         {title}
       </h3>
 
-      <ButtonGroup onCreateClick={onCreateClick} />
+      <ButtonGroup createTarget={offCanvasId} />
     </div>
   );
 }
