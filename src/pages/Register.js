@@ -1,16 +1,18 @@
-import { useState } from "react";
+import "../App.css";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../redux//AuthSlice"; //  redux action
+import { registerUser } from "../redux/AuthSlice";
 import { validateRegisterForm } from "../utils/validation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // redux state
   const { loading, error, success } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
@@ -31,9 +33,7 @@ const RegisterForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const updatedForm = { ...formData, [name]: value };
-    setFormData(updatedForm);
-    setErrors(validateRegisterForm(updatedForm)); // validation
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (e) => {
@@ -42,15 +42,26 @@ const RegisterForm = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      //  send to redux action (which calls backend)
       dispatch(registerUser(formData)).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
-          // navigate after success
-          setTimeout(() => navigate("/"), 1000);
+          toast.success("Registration successful! Redirecting to login...");
+          setTimeout(() => navigate("/"),1000);
         }
       });
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (success) {
+      toast.success(success);
+    }
+  }, [success]);
 
   const placeholderStyle = { color: "#625f5f", opacity: 1 };
 
@@ -65,18 +76,6 @@ const RegisterForm = () => {
           style={{ border: "1px solid #eaeaea" }}
         >
           <h4 className="text-center fw-bold mb-4">Register</h4>
-
-          {/* Redux success/error messages */}
-          {success && (
-            <div className="alert alert-success text-center" role="alert">
-              {success}
-            </div>
-          )}
-          {error && (
-            <div className="alert alert-danger text-center" role="alert">
-              {error}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit}>
             <div className="row g-4">
@@ -297,7 +296,7 @@ const RegisterForm = () => {
               className="text-primary"
               role="button"
               style={{ cursor: "pointer" }}
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/")}
             >
               Login
             </span>

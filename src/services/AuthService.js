@@ -8,8 +8,8 @@ class AuthService {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
-    const data = await response.json();
 
+    const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || "Registration failed");
     }
@@ -23,31 +23,31 @@ class AuthService {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
-    const data = await response.json();
 
+    const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || "Login failed");
     }
-    return data;
+    return data; // expected { user: {email,...}, token: "..." }
   }
 
   // FORGOT PASSWORD
   static async forgotPassword(email) {
-    const response = await fetch(`${this.BASE_URL}/validate-email`, {
+    const response = await fetch(`${this.BASE_URL}/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
-    const data = await response.json();
 
-    if (!response.ok|| !data.exists) {
+    const data = await response.json();
+    if (!response.ok) {
       throw new Error(data.message || "Email not found");
     }
-    return data.exists;
+    return data;
   }
 
-  // RESET PASSWORD
-  static async resetPasswordApi(email, newPassword) {
+  // RESET PASSWORD (email + newPassword )
+  static async resetPassword(email, newPassword) {
     const response = await fetch(`${this.BASE_URL}/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,14 +55,12 @@ class AuthService {
     });
 
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.message || "Something went wrong");
     }
 
-    return data;
+    return data; // { message: "Password reset successful" }
   }
 }
 
 export default AuthService;
-
