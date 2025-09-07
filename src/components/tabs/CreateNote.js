@@ -1,10 +1,17 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import styles from "./createModal.module.css";
+import { useDispatch } from "react-redux";
+import {
+  createNewActivity,
+  getAllActivities,
+} from "../../redux/features/activitySlice";
 
-export default function CreateNote({ isOpen, onClose, onSave }) {
+export default function CreateNote({ isOpen, onClose, module, id, onSuccess }) {
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
+
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -13,10 +20,21 @@ export default function CreateNote({ isOpen, onClose, onSave }) {
       return;
     }
     setError("");
-    onSave(notes);
+    // onSave(notes);
+    dispatch(
+      createNewActivity({
+        module,
+        id,
+        data: { content: notes },
+        type: "note",
+      })
+    ).then(() => {
+      dispatch(getAllActivities({ module, id }));
+    });
     // TODO: dispatch to Redux, send to backend, etc.
     onClose(); // close after submission
     setNotes("");
+    onSuccess?.();
   };
 
   useEffect(() => {

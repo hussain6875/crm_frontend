@@ -13,6 +13,7 @@ const Attachment = ({ module, id }) => {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
@@ -40,9 +41,7 @@ const Attachment = ({ module, id }) => {
         .unwrap()
         .then(() => {
           dispatch(getImages({ module, id }));
-          if (newData.length >= 1) {
-            setShowToast(true);
-          }
+          setUploadSuccess(true);
         })
         .catch((error) => {
           console.log(error);
@@ -73,11 +72,12 @@ const Attachment = ({ module, id }) => {
       firstRender.current = false;
       return;
     }
-    if (newData && newData.length > 0) {
+    if (uploadSuccess && newData?.length > 0) {
       setShowToast(true);
       setShowErrorModal(false);
+      setUploadSuccess(false);
     }
-  }, [newData]);
+  }, [newData, uploadSuccess]);
 
   useEffect(() => {
     dispatch(getImages({ module, id }));
@@ -129,7 +129,7 @@ const Attachment = ({ module, id }) => {
           bg="success"
           onClose={() => setShowToast(false)}
           show={showToast}
-          delay={5000}
+          delay={3000}
           autohide
         >
           <Toast.Body className="text-white">

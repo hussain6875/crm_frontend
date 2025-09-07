@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllActivities } from "../../redux/features/activitySlice";
@@ -122,14 +121,3 @@ export default function Meetings({ onCreateClick, module, id }) {
     </>
   );
 }
-=======
-import React from 'react'
-
-const Meetings = () => {
-  return (
-    <div>Meetings</div>
-  )
-}
-
-export default Meetings
->>>>>>> dec2b41 (db connected)

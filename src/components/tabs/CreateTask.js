@@ -6,7 +6,13 @@ import {
   getAllActivities,
 } from "../../redux/features/activitySlice";
 
-export default function CreateTask({ isOpen, onClose, module, details }) {
+export default function CreateTask({
+  isOpen,
+  onClose,
+  module,
+  details,
+  onSuccess,
+}) {
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
@@ -71,6 +77,7 @@ export default function CreateTask({ isOpen, onClose, module, details }) {
     });
     setErrors({});
     onClose();
+    onSuccess?.();
   };
 
   useEffect(() => {

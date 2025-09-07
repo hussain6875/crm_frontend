@@ -7,7 +7,13 @@ import {
   getAllActivities,
 } from "../../redux/features/activitySlice";
 
-export default function CreateEmail({ isOpen, onClose, module, id }) {
+export default function CreateEmail({
+  isOpen,
+  onClose,
+  module,
+  id,
+  onSuccess,
+}) {
   const dispatch = useDispatch();
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
@@ -49,6 +55,7 @@ export default function CreateEmail({ isOpen, onClose, module, id }) {
     setBody("");
     setError({});
     onClose();
+    onSuccess?.();
   };
 
   useEffect(() => {
