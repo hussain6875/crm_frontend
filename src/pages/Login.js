@@ -19,8 +19,7 @@ const LoginForm = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, token } = useSelector((state) => state.auth || {});
-
+  const { loading ,token} = useSelector((state) => state.auth|| {});
   // Handle input changes
   const handleChange = (e) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
@@ -49,19 +48,22 @@ const LoginForm = () => {
   useEffect(() => {
     if (token) {
       setTimeout(() => navigate("/dashboard"), 1000);
+  
     }
   }, [token, navigate]);
 
   // Forgot password submit
   const handleForgotPassword = (e) => {
-    e.preventDefault();
-    const errors = validateForgotPassword({ email: forgotEmail });
+    e.preventDefault();   
+    const errors = validateForgotPassword(forgotEmail );
+    console.log(errors);
     if (Object.keys(errors).length > 0) {
       setForgotError(errors.email);
       return;
     }
 
     dispatch(forgotPassword({ email: forgotEmail })).then((res) => {
+  
       if (res.meta.requestStatus === "fulfilled") {
         toast.success("Password reset link sent to email!");
         setShowForgotModal(false);

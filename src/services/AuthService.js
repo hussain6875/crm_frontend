@@ -28,6 +28,7 @@ class AuthService {
     if (!response.ok) {
       throw new Error(data.message || "Login failed");
     }
+ 
     return data; // expected { user: {email,...}, token: "..." }
   }
 
@@ -40,6 +41,7 @@ class AuthService {
     });
 
     const data = await response.json();
+    console.log("from forgotPassword in authservice:",data);
     if (!response.ok) {
       throw new Error(data.message || "Email not found");
     }

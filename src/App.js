@@ -14,8 +14,6 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import TicketDetails from "./pages/TicketDetails";
 import LeadDetails from './pages/LeadDetails';
-
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {

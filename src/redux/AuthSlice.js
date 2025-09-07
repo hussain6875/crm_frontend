@@ -17,10 +17,16 @@ export const registerUser = createAsyncThunk(
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (formData, { rejectWithValue }) => {
-    try {
-      return await AuthService.login(formData);
+   try {
+      const result = await AuthService.login(formData);
+      // Defensive: check for token and user in result
+      if (!result.token || !result.user) {
+        return rejectWithValue("Invalid login response");
+      }
+      return result;
     } catch (error) {
-      return rejectWithValue(error.message);
+      // If error is an object with a message, use it
+      return rejectWithValue(error.message || "Login failed");
     }
   }
 );
@@ -30,6 +36,7 @@ export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
   async (email, { rejectWithValue }) => {
     try {
+ 
       return await AuthService.forgotPassword(email);
     } catch (error) {
       return rejectWithValue(error.message);
@@ -40,13 +47,12 @@ export const forgotPassword = createAsyncThunk(
 // RESET PASSWORD (pulls email from state )
 export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
-  async ({ newPassword }, thunkAPI) => {
+  async ({email, newPassword },thunkAPI) => {
     try {
-      const state = thunkAPI.getState();
-      const email = state.auth.user?.email;
-
+     
+      
       if (!email) {
-        throw new Error("Email not found in user state");
+        throw new Error("Email is required");
       }
 
       return await AuthService.resetPassword(email, newPassword);
@@ -102,7 +108,9 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user; // contains email
         state.token = action.payload.token;
-        localStorage.setItem("token", action.payload.token);
+         if (action.payload.token) {
+    localStorage.setItem("token", action.payload.token);
+  }
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;

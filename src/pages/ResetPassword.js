@@ -1,6 +1,6 @@
 import "../App.css";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useSearchParams} from "react-router-dom";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { resetPassword } from "../redux/AuthSlice";
@@ -11,9 +11,11 @@ import "react-toastify/dist/ReactToastify.css";
 const ResetPassword = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.auth);
-
-  const [password, setPassword] = useState("");
+  const { loading} = useSelector((state) => state.auth);
+  console.log("loading",loading);
+  const [searchParams] = useSearchParams();
+  const email = searchParams.get("email");
+   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -29,7 +31,7 @@ const ResetPassword = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      dispatch(resetPassword({ newPassword: password })).then((res) => {
+      dispatch(resetPassword({email, newPassword: password })).then((res) => {
         if (res.meta.requestStatus === "fulfilled") {
           toast.success("Password reset successful! Redirecting...");
           setPassword("");

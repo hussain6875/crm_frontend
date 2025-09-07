@@ -140,9 +140,9 @@ const TopBar = () => {
       {showLogoutModal && (
         <>
           <div className="modal-backdrop fade show"></div>
-          <div className="modal fade show d-block" tabIndex="-1">
+          <div className="modal fade show d-block" tabIndex="-1" style={{zIndex:2001}}>
             <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content p-4">
+              <div className="modal-content p-4 show">
                 <h6>Are you sure you want to sign out?</h6>
                 <div className="d-flex justify-content-between mt-4">
                   <button
