@@ -21,7 +21,6 @@ export default function Filters({
   };
   const dispatch=useDispatch();
    const users = useSelector((state) => state.users.users) || [];
-console.log(users);
 
 useEffect(()=>{
   if(!users || users.length ===0){
@@ -38,7 +37,7 @@ useEffect(()=>{
         value={selectedOwner}
         onChange={(e) => setSelectedOwner(Number(e.target.value))}
       >
-        <option value="">Choose</option>
+        <option value="">Deal Owner</option>
                 {users.map((user) => (
                   <option key={user.userId} value={user.userId}>
                     {user.userName}
@@ -60,6 +59,21 @@ useEffect(()=>{
         ))}
       </select>
 
+      {/* Closed Date Picker */}
+      <div className="position-relative" style={{ width: "15%" }}>
+        <input
+          type="date"
+          className="form-control"
+          value={closedDate}
+          onChange={(e) => setClosedDate(e.target.value)}
+          style={{ opacity: 0, position: 'absolute', width: '100%', height: '100%', cursor: 'pointer' }}
+        />
+        <div className="form-control d-flex justify-content-between align-items-center bg-white">
+          <span className="text-muted">{closedDate ? formatDate(closedDate) : "Close Date"}</span>
+          <FaRegCalendarAlt color="#6c757d" />
+        </div>
+      </div>
+      
       {/* Created Date Picker */}
       <div className="position-relative" style={{ width: "15%" }}>
         <input
@@ -75,20 +89,6 @@ useEffect(()=>{
         </div>
       </div>
 
-      {/* Closed Date Picker */}
-      <div className="position-relative" style={{ width: "15%" }}>
-        <input
-          type="date"
-          className="form-control"
-          value={closedDate}
-          onChange={(e) => setClosedDate(e.target.value)}
-          style={{ opacity: 0, position: 'absolute', width: '100%', height: '100%', cursor: 'pointer' }}
-        />
-        <div className="form-control d-flex justify-content-between align-items-center bg-white">
-          <span className="text-muted">{closedDate ? formatDate(closedDate) : "Closed Date"}</span>
-          <FaRegCalendarAlt color="#6c757d" />
-        </div>
-      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 class AuthService {
   static BASE_URL = "http://localhost:8080/api/users";
 
+  
   // REGISTER
   static async register(formData) {
     const response = await fetch(`${this.BASE_URL}/register`, {
@@ -15,9 +16,22 @@ class AuthService {
     }
     return data;
   }
-
+  //TO GET THE USER FETCHING THE TOKEN
+ static async getProfile(token) {
+    const response = await fetch(`${this.BASE_URL}/profile`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to fetch profile");
+    return data.user;
+  }
   // LOGIN
   static async login(formData) {
+
     const response = await fetch(`${this.BASE_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -28,7 +42,7 @@ class AuthService {
     if (!response.ok) {
       throw new Error(data.message || "Login failed");
     }
- 
+
     return data; // expected { user: {email,...}, token: "..." }
   }
 
@@ -41,7 +55,6 @@ class AuthService {
     });
 
     const data = await response.json();
-    console.log("from forgotPassword in authservice:",data);
     if (!response.ok) {
       throw new Error(data.message || "Email not found");
     }

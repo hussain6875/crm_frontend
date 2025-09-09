@@ -57,12 +57,12 @@ export default function CreateMeeting({ isOpen, onClose, module, details }) {
     dispatch(
       createNewActivity({
         module,
-        id: details.id,
+        id: details.dealId || details.id,
         data: formData,
         type: "Meeting",
       })
     ).then(() => {
-      dispatch(getAllActivities({ module, id: details.id }));
+      dispatch(getAllActivities({ module, id:  details.dealId || details.id }));
     });
 
     setFormData(initialState);

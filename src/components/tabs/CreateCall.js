@@ -11,7 +11,7 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
   const { error } = useSelector((state) => state.activities);
 
   const [formData, setFormData] = useState({
-    connected: details.owner,
+    connected: details.owner?.userName|| details.owner,
     outcome: "",
     date: "",
     time: "",
@@ -48,15 +48,15 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
     dispatch(
       createNewActivity({
         module,
-        id: details.id,
+        id: details.dealId || details.id,
         data: data,
         type: "Call",
       })
     ).then(() => {
-      dispatch(getAllActivities({ module, id: details.id }));
+      dispatch(getAllActivities({ module, id: details.dealId || details.id}));
     });
     setFormData({
-      connected: details.owner,
+      connected: details.owner?.userName || details.owner,
       outcome: "",
       date: "",
       time: "",
@@ -69,7 +69,7 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
   useEffect(() => {
     if (isOpen) {
       setFormData({
-        connected: details.owner,
+        connected: details.owner?.userName || details.owner,
         outcome: "",
         date: "",
         time: "",
@@ -101,7 +101,7 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
               </p>
               <input
                 type="text"
-                value={details.owner}
+                value={details.owner.userName}
                 className="form-control border-secondary"
                 disabled
               />

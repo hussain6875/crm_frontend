@@ -4,6 +4,7 @@ import { getAllActivities } from "../../redux/features/activitySlice";
 import moment from "moment";
 
 export default function Emails({ onCreateClick, module, id }) {
+
   const dispatch = useDispatch();
   const { activities, loading, error } = useSelector(
     (state) => state.activities

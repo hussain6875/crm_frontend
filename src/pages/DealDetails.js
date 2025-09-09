@@ -180,16 +180,17 @@ export default function DealDetails() {
               style={{ padding: "10px" }}
             >
               {[
-                { icon: FaStickyNote, label: "Note" },
-                { icon: FaEnvelope, label: "Email" },
-                { icon: FaPhone, label: "Call" },
-                { icon: FaCheckSquare, label: "Task" },
-                { icon: FaCalendarAlt, label: "Meeting" },
-              ].map(({ icon: Icon, label }, idx) => (
+                { icon: FaStickyNote, label: "Note",onClick:openNoteModal },
+                { icon: FaEnvelope, label: "Email",onClick:openEmailModal },
+                { icon: FaPhone, label: "Call",onClick:openCallModal },
+                { icon: FaCheckSquare, label: "Task",onClick:openTaskModal },
+                { icon: FaCalendarAlt, label: "Meeting",onClick:openMeetingModal },
+              ].map(({ icon: Icon, label,onClick }, idx) => (
                 <div
                   key={idx}
                   className="text-center"
                   style={{ cursor: "pointer" }}
+                  onClick={onClick}
                 >
                   <div className="border p-2 rounded text-primary">
                     <Icon />
@@ -351,7 +352,10 @@ export default function DealDetails() {
             />
           )}
           {setShowEmailModal && (
-            <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} />
+            <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} 
+            module="deal"
+            id={id}
+             />
           )}
           {setShowCallModal && (
             <CreateCall
@@ -359,16 +363,23 @@ export default function DealDetails() {
               onClose={closeCallModal}
               module="deal"
               details={selectedDeal?.data}
-              id={id}
+              
             />
           )}
           {setShowTaskModal && (
-            <CreateTask isOpen={showTaskModal} onClose={closeTaskModal} />
+            <CreateTask 
+            isOpen={showTaskModal} 
+            onClose={closeTaskModal}
+            module="deal"
+            details={selectedDeal?.data}
+               />
           )}
           {setShowMeetingModal && (
             <CreateMeeting
               isOpen={showMeetingModal}
               onClose={closeMeetingModal}
+              module="deal"
+              details={selectedDeal?.data}
             />
           )}
           {showEditModal && (

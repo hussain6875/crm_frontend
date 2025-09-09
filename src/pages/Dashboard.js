@@ -5,17 +5,28 @@ import ConversionChart from "../components/dashboard/ConversionChart";
 import SalesReport from "../components/dashboard/SalesReport";
 import TeamPerformance from "../components/dashboard/TeamPerformance";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { fetchUsers } from "../redux/userSlice";
 import { fetchDeals } from "../redux/dealSlice";
+import { fetchUserProfile } from "../redux/AuthSlice";
+import AuthService from "../services/AuthService";
+
+
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   useEffect(() => {
+    // Restore user from token
+  const token = localStorage.getItem("token");
+  if (token) {
+    dispatch(fetchUserProfile(token));
+  }
+
+  // Fetch users and deals
     dispatch(fetchUsers());
     dispatch(fetchDeals());
   }, [dispatch]);
-
+  
   return (
     <>
       <TopBar />

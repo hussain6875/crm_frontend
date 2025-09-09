@@ -55,9 +55,14 @@ export default function CreateTask({ isOpen, onClose, module, details }) {
     };
 
     dispatch(
-      createNewActivity({ module, id: details.id, data, type: "Task" })
+      createNewActivity({ 
+        module, 
+        id:details.dealId || details.id , 
+        data, 
+        type: "Task" 
+      })
     ).then(() => {
-      dispatch(getAllActivities({ module, id: details.id }));
+      dispatch(getAllActivities({ module, id: details.dealId || details.id }));
     });
 
     setFormData({

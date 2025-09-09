@@ -18,6 +18,7 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (formData, { rejectWithValue }) => {
    try {
+  
       const result = await AuthService.login(formData);
       // Defensive: check for token and user in result
       if (!result.token || !result.user) {
@@ -30,7 +31,18 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
-
+// Thunk to fetch user profile
+export const fetchUserProfile = createAsyncThunk(
+  "auth/fetchUserProfile",
+  async (token, thunkAPI) => {
+    try {
+      const user = await AuthService.getProfile(token);
+      return user;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 // FORGOT PASSWORD
 export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
@@ -72,7 +84,9 @@ const authSlice = createSlice({
     error: null,
     success: null,
   },
-  reducers: {
+  reducers: 
+  {
+
     clearMessages: (state) => {
       state.error = null;
       state.success = null;
@@ -98,7 +112,19 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
+      //FETCH USER
+       .addCase(fetchUserProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.user = null;
+        state.error = action.payload;
+      })
       // LOGIN
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
@@ -107,6 +133,7 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user; // contains email
+        console.log("user from authslice:",action.payload.user);
         state.token = action.payload.token;
          if (action.payload.token) {
     localStorage.setItem("token", action.payload.token);

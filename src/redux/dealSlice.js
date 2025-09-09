@@ -38,7 +38,7 @@ const dealSlice = new createSlice({
       })
       .addCase(fetchDeals.fulfilled, (state, action) => {
         state.loading = false;
-        state.deals = action.payload;
+        state.deals = action.payload.data;
       })
       .addCase(fetchDeals.rejected, (state, action) => {
         state.loading = false;

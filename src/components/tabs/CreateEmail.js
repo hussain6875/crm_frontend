@@ -32,7 +32,8 @@ export default function CreateEmail({ isOpen, onClose, module, id }) {
       body_text: body,
     };
 
-    // TODO: Replace with API request to send email
+    // API request to send email
+ 
     dispatch(
       createNewActivity({
         module,
@@ -41,6 +42,7 @@ export default function CreateEmail({ isOpen, onClose, module, id }) {
         type: "Email",
       })
     ).then(() => {
+    
       dispatch(getAllActivities({ module, id }));
     });
 
