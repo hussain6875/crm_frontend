@@ -37,7 +37,7 @@ useEffect(()=>{
         value={selectedOwner}
         onChange={(e) => setSelectedOwner(Number(e.target.value))}
       >
-        <option value="">Deal Owner</option>
+        <option value="All">Deal Owner</option>
                 {users.map((user) => (
                   <option key={user.userId} value={user.userId}>
                     {user.userName}

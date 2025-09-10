@@ -47,14 +47,12 @@ const dispatch = useDispatch();
   // Only show deals for the logged-in user (robust for both deal.owner and deal.dealOwner)
   const filteredDeals = dealsArray.filter((deal) => {
 let match = true;
-    // By default, show only current user's deals
-  if (!selectedOwner || selectedOwner === "All") {
-    match = match && (
-      deal.owner?.userId === user.userId ||
-      deal.dealOwner === user.userId
-    );
-  } else {
-    // If an owner is selected, show their deals
+console.log(selectedOwner);
+    if (selectedOwner === "All" || !selectedOwner) {
+    return true; // Show all deals
+  }
+  if (selectedOwner || selectedOwner != "All") {
+    // If an owner is selected, show their dealss
     match = match && (
       deal.owner?.userId === selectedOwner ||
       deal.dealOwner === selectedOwner

@@ -323,38 +323,47 @@ export default function DealDetails() {
             <CreateNote
               isOpen={showNoteModal}
               onClose={closeNoteModal}
-            
-            />
+             module={"deal"}
+                    id={id}
+                    onSuccess={() => handleToastMessage("New Note Created")}
+                  />
           )}
           {setShowEmailModal && (
             <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} 
-            module="deal"
-            id={id}
-             />
+            module={"deal"}
+                    id={id}
+                    onSuccess={() => handleToastMessage("New Email Sent")}
+                  />
           )}
           {setShowCallModal && (
             <CreateCall
               isOpen={showCallModal}
               onClose={closeCallModal}
-              module="deal"
+              module={"deal"}
               details={selectedDeal?.data}
-              
+              onSuccess={() => handleToastMessage("New Call Logged")}
+
             />
           )}
           {setShowTaskModal && (
             <CreateTask 
             isOpen={showTaskModal} 
             onClose={closeTaskModal}
-            module="deal"
+            module={"deal"}
             details={selectedDeal?.data}
+            onSuccess={() => handleToastMessage("New Task Created")}
+
                />
           )}
           {setShowMeetingModal && (
             <CreateMeeting
               isOpen={showMeetingModal}
               onClose={closeMeetingModal}
-              module="deal"
+              module={"deal"}
               details={selectedDeal?.data}
+               onSuccess={() =>
+                      handleToastMessage("New Meeting Scheduled")
+                    }
             />
           )}
           {showEditModal && (
