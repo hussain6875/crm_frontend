@@ -6,34 +6,61 @@ import { useSelector } from "react-redux";
 
 const SummaryCards = () => {
   const { deals } = useSelector((state) => state.deals);
-  const { user } = useSelector((state) => state.auth);
+  const { users } = useSelector((state) => state.users);
 
-  // Robust deals array extraction (handles array or object shape)
+  // deals extraction
   const dealsArray = Array.isArray(deals?.data)
     ? deals.data
     : Array.isArray(deals)
     ? deals
     : [];
-  // Show loading if deals or user is not loaded
-  if (!user || !dealsArray.length) {
+  
+    //users extraction
+  const usersArray = users?.data || users || [];
+ 
+  // Show loading if deals or users is not loaded
+  if (!usersArray || !dealsArray.length) {
     return <div>Loading summary cards...</div>;
   }
-  // Filter deals for the current user only
-  const userDeals = dealsArray.filter(
-    (deal) =>
-      (deal.owner?.userId === user.userId) ||
-      (deal.dealOwner === user.userId)
+  const teamData = usersArray.map((user) => {
+    const userDeals = dealsArray.filter(
+      (deal) =>
+        deal.owner?.userId === user.userId || deal.dealOwner === user.userId
+    );
+    // For getting Active Deals
+    const activeDeals = userDeals.filter(
+      (deal) => deal.stage !== "Closed Won" && deal.stage !== "Closed Lost"
+    );
+    // For getting Closed Deals
+    const closedDeals = userDeals.filter(
+      (deal) => deal.stage === "Closed Won" || deal.stage === "Closed Lost"
+    );
+    const revenue = closedDeals
+      .filter((deal) => deal.stage === "Closed Won")
+      .reduce((sum, deal) => sum + (parseFloat(deal.amount) || 0), 0);
+
+    return {
+      name: user.userName,
+      activeDeals: activeDeals.length,
+      closedDeals: closedDeals.length,
+      revenue: revenue, // keep as number for calculation
+    };
+  });
+  const totalActiveDeals = teamData.reduce(
+    (sum, member) => sum + member.activeDeals,
+    0
   );
-  // For getting Active Deals
-  const activeDeals = userDeals.filter(
-    (deal) => deal.stage !== "Closed Won" && deal.stage !== "Closed Lost"
+  const totalClosedDeals = teamData.reduce(
+    (sum, member) => sum + member.closedDeals,
+    0
   );
-  const totalActiveDeals = activeDeals.length;
-  // For getting Closed Deals
-  const closedDeals = userDeals.filter(
-    (deal) => deal.stage === "Closed Won" || deal.stage === "Closed Lost"
+
+  const totalRevenue = teamData.reduce(
+    (sum, member) => sum + member.revenue,
+    0
   );
-  const totalClosedDeals = closedDeals.length;
+ 
+
   // For getting total revenue
   // Get today's date
   const today = new Date();
@@ -41,7 +68,7 @@ const SummaryCards = () => {
   const currentYear = today.getFullYear();
 
   // Filter deals closed as "Closed Won" in the current month and year
-  const monthlyClosedDeals = userDeals.filter((deal) => {
+  const monthlyClosedDeals = dealsArray.filter((deal) => {
     if (deal.stage === "Closed Won" && deal.closeDate) {
       const closeDate = new Date(deal.closeDate);
       return (
@@ -82,8 +109,8 @@ const SummaryCards = () => {
       iconColor: "rgb(206, 95, 95)",
     },
     {
-      title: "Monthly Revenue",
-      value: monthlyRevenue,
+      title: "Total Revenue",
+      value: `$${totalRevenue.toLocaleString()}`,
       icon: (color, size) => (
         <FontAwesomeIcon
           icon={faMoneyBill}

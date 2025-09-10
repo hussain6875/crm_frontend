@@ -8,3 +8,7 @@ export const editTicket = `${getAllTickets}/edit/`;
 export const allActivities = `${basic_api}/activities`;
 
 export const attachImage = `${basic_api}/files`;
+
+export const getAuthHeaders = () => ({
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+});

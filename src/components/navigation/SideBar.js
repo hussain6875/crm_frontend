@@ -4,7 +4,7 @@ import { LuUsersRound } from "react-icons/lu";
 import { FiGrid, FiCheckSquare } from "react-icons/fi";
 
 const navItems = [
-  { label: "Dashboard", icon: <FiGrid />, path: "/" },
+  { label: "Dashboard", icon: <FiGrid />, path: "/dashboard" },
   { label: "Leads", icon: <LuUsersRound />, path: "/leads" },
   { label: "Companies", icon: <BriefcaseBusiness />, path: "/companies" },
   { label: "Deals", icon: <FiCheckSquare />, path: "/deals" },

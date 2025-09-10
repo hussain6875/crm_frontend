@@ -1,4 +1,3 @@
-
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./AuthSlice";
 import dealReducer from "./dealSlice";
@@ -21,3 +20,4 @@ const store = configureStore({
 });
 
 export default store;
+

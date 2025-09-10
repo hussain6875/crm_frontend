@@ -1,26 +1,45 @@
 import React, { useEffect, useState } from "react";
 import styles from "./createModal.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { createNewActivity } from "../../redux/features/activitySlice";
+import {
+  createNewActivity,
+  getAllActivities,
+} from "../../redux/features/activitySlice";
 
-export default function CreateCall({ isOpen, onClose, module, details }) {
+export default function CreateCall({ isOpen, onClose, module, details, onSuccess }) {
   const dispatch = useDispatch();
   const { error } = useSelector((state) => state.activities);
 
   const [formData, setFormData] = useState({
-    connected: details.owner,
+    connected: details.owner?.userName|| details.owner,
     outcome: "",
     date: "",
     time: "",
     note: "",
   });
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.outcome.trim()) newErrors.outcome = true;
+    if (!formData.date.trim()) newErrors.date = true;
+    if (!formData.time.trim()) newErrors.time = true;
+    if (!formData.note.trim()) newErrors.note = true;
+    return newErrors;
   };
 
   const onSave = () => {
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
     const data = {
       outcome: formData.outcome,
       call_time: `${formData.date} ${formData.time}`,
@@ -29,30 +48,35 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
     dispatch(
       createNewActivity({
         module,
-        id: details.id,
+        id: details.dealId || details.id,
         data: data,
         type: "Call",
       })
-    );
+    ).then(() => {
+      dispatch(getAllActivities({ module, id: details.dealId || details.id}));
+    });
     setFormData({
-      connected: details.owner,
+      connected: details.owner?.userName || details.owner,
       outcome: "",
       date: "",
       time: "",
       note: "",
     });
+    setErrors({});
     onClose();
+    onSuccess?.();
   };
 
   useEffect(() => {
     if (isOpen) {
       setFormData({
-        connected: details.owner,
+        connected: details.owner?.userName || details.owner,
         outcome: "",
         date: "",
         time: "",
         note: "",
       });
+      setErrors({});
     }
   }, [isOpen, details.owner]);
 
@@ -78,7 +102,7 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
               </p>
               <input
                 type="text"
-                value={details.owner}
+                value={details.owner.userName}
                 className="form-control border-secondary"
                 disabled
               />
@@ -89,7 +113,9 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
                 Call Outcome <span className={styles.required}>*</span>
               </p>
               <select
-                className="form-select"
+                className={`form-select ${
+                  errors.outcome ? "border border-danger" : ""
+                } `}
                 name="outcome"
                 value={formData.outcome}
                 onChange={handleChange}
@@ -98,6 +124,11 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
                 <option value="Answered">Answered</option>
                 <option value="Missed">Missed</option>
               </select>
+              {errors.outcome && (
+                <span className="text-danger small">
+                  Please select an outcome
+                </span>
+              )}
             </label>
 
             <div className="d-flex justify-content-between gap-3">
@@ -108,10 +139,15 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
                 <input
                   type="date"
                   name="date"
-                  className="form-control"
+                  className={`form-control ${
+                    errors.date ? "border-danger" : ""
+                  }`}
                   value={formData.date}
                   onChange={handleChange}
                 />
+                {errors.date && (
+                  <span className="text-danger small">Date is required</span>
+                )}
               </label>
               <label className="w-100">
                 <p className="mb-1">
@@ -120,10 +156,15 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
                 <input
                   type="time"
                   name="time"
-                  className="form-control"
+                  className={`form-control ${
+                    errors.time ? "border-danger" : ""
+                  }`}
                   value={formData.time}
                   onChange={handleChange}
                 />
+                {errors.time && (
+                  <span className="text-danger small">Time is required</span>
+                )}
               </label>
             </div>
 
@@ -131,7 +172,11 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
               <p className="mb-1">
                 Note <span className={styles.required}>*</span>
               </p>
-              <div className="form-control px-0">
+              <div
+                className={`form-control px-0 ${
+                  errors.note ? "border-danger" : ""
+                }`}
+              >
                 <span className="mx-2">
                   Normal Text <i className="bi bi-chevron-down ms-1"></i>
                 </span>
@@ -165,10 +210,13 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
                   ></textarea>
                 </div>
               </div>
+              {errors.note && (
+                <span className="text-danger small">Note is required</span>
+              )}
             </label>
           </form>
 
-          <div className="mt-5 d-flex justify-content-between gap-3 mx-3">
+          <div className="my-4 d-flex justify-content-between gap-3 mx-3">
             <button
               type="button"
               className={`${styles.cancelbtn} btn btn-outline-secondary w-100`}

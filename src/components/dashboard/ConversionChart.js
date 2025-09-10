@@ -5,23 +5,26 @@ import { stageColors } from "../../constants/dealStages";
 
 const ConversionChart = () => {
   const { deals } = useSelector((state) => state.deals);
-  const { user } = useSelector((state) => state.auth);
+  const { users } = useSelector((state) => state.users);
+  //extracting deals
   const dealsArray = deals?.data || deals || [];
 
-  // Filter deals for the current user only
-  const userDeals = user
-    ? dealsArray.filter(
-        (deal) =>
-          (deal.owner?.userId === user.userId) ||
-          (deal.dealOwner === user.userId)
-      )
-    : [];
-  // Count of deals at each stage for the current user
+  //extracting users
+  const usersArray = users?.data || users || [];
+  
+   // Show loading if deals or users is not loaded
+  if (!usersArray || !dealsArray.length) {
+    return <div>Loading Conversion Chart...</div>;
+  }
+
+  // Count of deals at each stage for all the users
   const stageCounts = DEAL_STAGES.map((stage) =>
-    userDeals.filter((deal) => deal.stage === stage.value).length
+    dealsArray.filter((deal) => deal.stage === stage.value).length
+
   );
+
   // progress = (deals at this stage) / (deals at first stage) * 100
-  const firstStageCount = stageCounts[0] || 1; // avoid division by zero
+  const firstStageCount = dealsArray.length || 1; // avoid division by zero
 
   const stages = DEAL_STAGES.map((stage, idx) => ({
     name: stage.label,

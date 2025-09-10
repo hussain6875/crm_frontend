@@ -5,68 +5,75 @@ import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { validateLoginForm, validateForgotPassword } from "../utils/validation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, forgotPassword } from "../redux/AuthSlice";
-import { resetPassword } from "../redux/AuthSlice";
+import { loginUser, forgotPassword, clearMessages } from "../redux/AuthSlice";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formValues, setFormValues] = useState({ email: "", password: "" });
-  const [errors, setErrors] = useState({});
+  const [formErrors, setFormErrors] = useState({});
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotError, setForgotError] = useState("");
-  const [forgotSuccess, setForgotSuccess] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, error, success, token } = useSelector((state) => state.auth||{});
-
+  const { loading ,token} = useSelector((state) => state.auth|| {});
   // Handle input changes
   const handleChange = (e) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
+    setFormErrors({ ...formErrors, [e.target.name]: "" });
   };
 
-  // Submit login
+  // Login submit
   const handleSubmit = (e) => {
     e.preventDefault();
-    const validationErrors = validateLoginForm(formValues);
-    setErrors(validationErrors);
+    const errors = validateLoginForm(formValues);
+    setFormErrors(errors);
 
-    if (Object.keys(validationErrors).length === 0) {
-      dispatch(loginUser(formValues));
+    if (Object.keys(errors).length === 0) {
+     
+      dispatch(loginUser(formValues)).then((res) => {
+        if (res.meta.requestStatus === "fulfilled") {
+          toast.success("Login successful!");
+          dispatch(clearMessages());
+        } else {
+          toast.error(res.payload || "Login failed");
+        }
+      });
     }
   };
 
   // Redirect after login success
   useEffect(() => {
     if (token) {
-      setTimeout(() => navigate("/dashboard"), 1500);
+      setTimeout(() => navigate("/dashboard"), 1000);
+  
     }
   }, [token, navigate]);
 
-  // Forgot Password Submit (Redux version)
+  // Forgot password submit
   const handleForgotPassword = (e) => {
-    e.preventDefault();
-    const error = validateForgotPassword(forgotEmail);
-    if (error) {
-      setForgotError(error);
-      setForgotSuccess("");
-    } else {
-      setForgotError("");
-      dispatch(resetPassword(forgotEmail)).then((res) => {
-        if (res.meta.requestStatus === "fulfilled") {
-        if (res.payload?.exists) {
-          // ✅ if email exists in backend, navigate to reset page
-          navigate("/reset-password", { state: { email: forgotEmail } });
-        } else {
-          setForgotError("Email not found");
-        }
-      } else {
-        setForgotError(res.payload || "Something went wrong");
-      }
-      });
+    e.preventDefault();   
+    const errors = validateForgotPassword(forgotEmail );
+    console.log(errors);
+    if (Object.keys(errors).length > 0) {
+      setForgotError(errors.email);
+      return;
     }
+
+    dispatch(forgotPassword({ email: forgotEmail })).then((res) => {
+  
+      if (res.meta.requestStatus === "fulfilled") {
+        toast.success("Password reset link sent to email!");
+        setShowForgotModal(false);
+        setForgotEmail("");
+        setForgotError("");
+      } else {
+        toast.error(res.payload || "Invalid Email ID");
+      }
+    });
   };
 
   return (
@@ -77,7 +84,6 @@ const LoginForm = () => {
       >
         <h4 className="text-center fw-bold mb-4">Log in</h4>
 
-        {/* Login Form */}
         <form onSubmit={handleSubmit} noValidate>
           {/* Email */}
           <div className="mb-3">
@@ -85,14 +91,14 @@ const LoginForm = () => {
             <input
               type="email"
               name="email"
-              className={`form-control ${errors.email ? "is-invalid" : ""}`}
+              className={`form-control ${formErrors.email ? "is-invalid" : ""}`}
               placeholder="Enter your email"
               value={formValues.email}
               onChange={handleChange}
               required
             />
-            {errors.email && (
-              <div className="invalid-feedback">{errors.email}</div>
+            {formErrors.email && (
+              <div className="invalid-feedback">{formErrors.email}</div>
             )}
           </div>
 
@@ -114,7 +120,7 @@ const LoginForm = () => {
                 type={showPassword ? "text" : "password"}
                 name="password"
                 className={`form-control ${
-                  errors.password ? "is-invalid" : ""
+                  formErrors.password ? "is-invalid" : ""
                 }`}
                 placeholder="Enter your password"
                 value={formValues.password}
@@ -140,17 +146,13 @@ const LoginForm = () => {
               >
                 {showPassword ? <BsEyeSlash /> : <BsEye />}
               </div>
-              {errors.password && (
+              {formErrors.password && (
                 <div className="invalid-feedback d-block">
-                  {errors.password}
+                  {formErrors.password}
                 </div>
               )}
             </div>
           </div>
-
-          {/* Error & Success Messages */}
-          {error && <div className="text-danger mb-2">{error}</div>}
-          {success && <div className="text-success mb-2">{success}</div>}
 
           <button
             type="submit"
@@ -166,7 +168,6 @@ const LoginForm = () => {
             Don’t have an account?{" "}
             <span
               className="text-primary"
-              role="button"
               style={{ cursor: "pointer" }}
               onClick={() => navigate("/register")}
             >
@@ -179,54 +180,48 @@ const LoginForm = () => {
       {/* Forgot Password Modal */}
       {showForgotModal && (
         <div
-          className="modal fade show d-block"
-          tabIndex="-1"
-          role="dialog"
-          style={{ background: "rgba(0,0,0,0.5)" }}
+          className={`forgot-modal-backdrop show`}
+          onClick={() => setShowForgotModal(false)}
         >
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Forgot Password</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowForgotModal(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <form onSubmit={handleForgotPassword}>
-                  <div className="mb-3">
-                    <label className="form-label">Enter your email</label>
-                    <input
-                      type="email"
-                      className={`form-control ${
-                        forgotError ? "is-invalid" : ""
-                      }`}
-                      placeholder="Enter your registered email"
-                      value={forgotEmail}
-                      onChange={(e) => setForgotEmail(e.target.value)}
-                      required
-                    />
-                    {forgotError && (
-                      <div className="invalid-feedback">{forgotError}</div>
-                    )}
-                  </div>
-                  {forgotSuccess && (
-                    <div className="alert alert-success py-2">
-                      {forgotSuccess}
-                    </div>
-                  )}
-                  <button
-                    type="submit"
-                    className="btn btn-primary w-100 mt-2"
-                    disabled={loading}
-                  >
-                    {loading ? "Sending..." : "Reset Password"}
-                  </button>
-                </form>
-              </div>
+          <div
+            className="forgot-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h5 className="modal-title m-0">Forgot Password</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setShowForgotModal(false)}
+              ></button>
             </div>
+
+            <form onSubmit={handleForgotPassword}>
+              <div className="mb-3">
+                <label className="form-label">Enter your email</label>
+                <input
+                  type="email"
+                  className={`form-control ${forgotError ? "is-invalid" : ""}`}
+                  placeholder="Enter your registered email"
+                  value={forgotEmail}
+                  onChange={(e) => {
+                    setForgotEmail(e.target.value);
+                    setForgotError("");
+                  }}
+                  required
+                />
+                {forgotError && (
+                  <div className="invalid-feedback">{forgotError}</div>
+                )}
+              </div>
+              <button
+                type="submit"
+                className="btn btn-primary w-100"
+                disabled={loading}
+              >
+                {loading ? "Sending..." : "Reset Password"}
+              </button>
+            </form>
           </div>
         </div>
       )}
@@ -235,5 +230,3 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
-
-

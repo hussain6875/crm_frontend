@@ -9,14 +9,21 @@ import TicketTable from "../components/tickets/TicketTable";
 import CreateTicket from "../components/tickets/CreateTicket";
 import { Offcanvas } from "bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTickets } from "../redux/features/ticketSlice";
+import { fetchTicketById, fetchTickets } from "../redux/features/ticketSlice";
+import { fetchUsers } from "../redux/userSlice";
+import EditTicket from "../components/tickets/EditTicket";
+import SuccessToast from "../components/tabs/Toast";
 
 const Tickets = () => {
   const dateRef = useRef(null);
   const dispatch = useDispatch();
-  const { tickets } = useSelector((state) => state.tickets);
+  const { tickets, ticket } = useSelector((state) => state.tickets);
+  const { users = [] } = useSelector((state) => state.users);
+
   const [selectedTickets, setSelectedTickets] = useState([]);
   const [selectedDate, setSelectedDate] = useState("");
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const [filters, setFilters] = useState({
     owner: "",
     status: "",
@@ -83,15 +90,31 @@ const Tickets = () => {
     }
   };
 
+  const handleEdit = (ticket) => {
+    const offcanvasEl = document.getElementById("editTicket");
+    const bsOffcanvas = new Offcanvas(offcanvasEl);
+    bsOffcanvas.show();
+    dispatch(fetchTicketById(ticket.id));
+  };
+
+  const onSuccessMessage = (message) => {
+    setToastMessage(message);
+    setShowToast(true);
+  };
+
   useEffect(() => {
     dispatch(fetchTickets());
+    dispatch(fetchUsers());
   }, [dispatch]);
 
   return (
     <>
       <PageWrapper>
         <PageHeader title="Tickets" onCreateClick={handleCreateClick} />
-        <CreateTicket onTicketCreated={() => dispatch(fetchTickets())} />
+        <CreateTicket
+          onTicketCreated={() => dispatch(fetchTickets())}
+          onSuccess={() => onSuccessMessage("New Ticket Created.")}
+        />
         <SearchAndPagination />
         <div
           className="bg-white rounded-bottom pb-3"
@@ -110,11 +133,7 @@ const Tickets = () => {
                 <FilterDropdown
                   label="Ticket Owner"
                   value={filters.owner}
-                  options={[
-                    ...new Set(
-                      tickets.map((owner) => toTitleCase(owner.owner))
-                    ),
-                  ]}
+                  options={users.map((user) => toTitleCase(user.userName))}
                   onChange={(value) => setFilters({ ...filters, owner: value })}
                 />
               </div>
@@ -191,11 +210,22 @@ const Tickets = () => {
                 tickets={filteredTickets}
                 selectedTickets={selectedTickets}
                 setSelectedTickets={setSelectedTickets}
+                handleEditButton={handleEdit}
               />
             </table>
           </div>
         </div>
       </PageWrapper>
+      <SuccessToast
+        message={toastMessage}
+        setShowToast={setShowToast}
+        showToast={showToast}
+      />
+      <EditTicket
+        ticket={ticket}
+        onTicketUpdated={() => dispatch(fetchTickets())}
+        onSuccess={() => onSuccessMessage("Details Updated.")}
+      />
     </>
   );
 };

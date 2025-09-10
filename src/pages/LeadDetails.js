@@ -8,7 +8,7 @@ import { fetchLeads } from "../redux/features/leads/leadsThunks";
 import Activity from "../components/tabs/Activity";
 import Notes from "../components/tabs/Notes";
 import Calls from "../components/tabs/Calls";
-import Task from "../components/tabs/Task";
+import Tasks from "../components/tabs/Tasks";
 import Meetings from "../components/tabs/Meetings";
 import CreateEmail from "../components/tabs/CreateEmail";
 import CreateTask from "../components/tabs/CreateTask";
@@ -97,7 +97,7 @@ const LeadDetails = (updatedLeadData) => {
             case "calls":
                 return <Calls onCreateClick={openCallModal} module={"lead"} id={leadId} />;
             case "tasks":
-                return <Task onCreateClick={openTaskModal} module={"lead"} id={leadId} />;
+                return <Tasks onCreateClick={openTaskModal} module={"lead"} id={leadId} />;
             case "meetings":
                 return <Meetings onCreateClick={openMeetingModal} module={"lead"} id={leadId} />;
             default:
