@@ -13,7 +13,7 @@ export default function CreateDeal({isOpen,onClose}) {
      name: '',
     stage: '',
     amount: '',
-    owner: '',
+    dealOwner: '',
     closeDate: '',
     priority: ''    
   }
@@ -61,9 +61,9 @@ export default function CreateDeal({isOpen,onClose}) {
     if (!deal.stage || deal.stage === "") {
       newErrors.stage = "Deal stage is required.";
     }
-    if (!deal.owner || deal.owner === "") {
-      newErrors.owner = "Deal owner is required.";
-    }
+   if (!deal.dealOwner || deal.dealOwner === "") {
+  newErrors.dealOwner = "Deal owner is required.";
+}
     if (!deal.priority || deal.priority === "") {
       newErrors.priority = "Priority is required.";
     }
@@ -89,7 +89,7 @@ export default function CreateDeal({isOpen,onClose}) {
       name: deal.name,
       stage: deal.stage,
       amount: parseFloat(deal.amount),
-      dealOwner: parseInt(deal.owner),
+      dealOwner: parseInt(deal.dealOwner),
       closeDate: backendDate,
       priority: deal.priority,
     };
@@ -175,12 +175,12 @@ export default function CreateDeal({isOpen,onClose}) {
 
             <div className="mb-3">
               <label className="form-label">Deal Owner *</label>
-              <select
-                className="form-select"
-                name="owner"
-                value={deal.owner}
-                onChange={handleChange}
-              >
+             <select
+  className="form-select"
+  name="dealOwner"  
+  value={deal.dealOwner}
+  onChange={handleChange}
+>
                 <option value="">Choose</option>
                 {users.map((user) => (
                   <option key={user.userId} value={user.userId}>
@@ -188,8 +188,8 @@ export default function CreateDeal({isOpen,onClose}) {
                   </option>
                 ))}
               </select>
-              {errors.owner && (
-                <div style={{ color: 'red', fontSize: '0.9em' }}>{errors.owner}</div>
+              {errors.dealOwner && (
+                <div style={{ color: 'red', fontSize: '0.9em' }}>{errors.dealOwner}</div>
               )}
             </div>
 

@@ -1,5 +1,5 @@
 class AuthService {
-  static BASE_URL = "http://localhost:8080/api/users";
+    static BASE_URL = "http://localhost:8080/api/users";
 
   
   // REGISTER

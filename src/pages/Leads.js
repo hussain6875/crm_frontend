@@ -7,13 +7,19 @@ import { Offcanvas } from "bootstrap";
 import CreateLead from "../components/leads/CreateLead";
 import { useDispatch, useSelector } from "react-redux";
 import { createLead, fetchLeads } from "../redux/features/leads/leadsThunks"; // ✅ Correct path here
+import EditLead from "../components/leads/EditLead";
 
 const Leads = ({ onCreateLead, onViewLead }) => {
-    const [searchTerm, setSearchTerm] = useState("");
+    const [lead, setLead] = useState({});
+    const [leadStatus, setLeadeStatus] = useState("");
+    const [selectedDate, setSelectedDate] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [showEditModal, setShowEditModal] = useState(false);
+    const openEditModal = () => setShowEditModal(true);
+    const closeEditModal = () => setShowEditModal(false);
 
     const dispatch = useDispatch();
-    // const { leads, error } = useSelector((state) => state.leads);
     const leads = useSelector((state) => state.leads.list);
     const loading = useSelector((state) => state.leads.loading);
     const error = useSelector((state) => state.leads.error);
@@ -27,14 +33,24 @@ const Leads = ({ onCreateLead, onViewLead }) => {
     };
 
     const filteredLeads = leads.filter((lead) => {
+        // 1. Search Filter
         const matchesSearch =
             lead.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             lead.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             lead.email.toLowerCase().includes(searchTerm.toLowerCase());
 
-        const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
+        // 2. Status Filter
+        const matchesStatus = statusFilter === "all" || lead.leadStatus === statusFilter;
 
-        return matchesSearch && matchesStatus;
+        // 3. Date Filter
+        let matchesDate = true; // default true (date filter ഇല്ലെങ്കിൽ എല്ലാ leads-വും വരണം)
+        if (selectedDate) {
+            const leadDate = new Date(lead.createdAt).toISOString().split("T")[0]; // yyyy-mm-dd
+            const selected = new Date(selectedDate).toISOString().split("T")[0];
+            matchesDate = leadDate === selected;
+        }
+
+        return matchesSearch && matchesStatus && matchesDate;
     });
 
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -57,7 +73,6 @@ const Leads = ({ onCreateLead, onViewLead }) => {
     };
 
     const dateRef = useRef(null);
-    const [selectedDate, setSelectedDate] = useState("");
 
     const formatDate = (dateStr) => {
         if (!dateStr) return "";
@@ -79,6 +94,29 @@ const Leads = ({ onCreateLead, onViewLead }) => {
         }
     };
 
+    const handleUpdateLead = (updatedLead) => {
+        console.log("Updated Lead:", updatedLead);
+
+        const mergedLead = {
+            ...lead,
+            ...updatedLead,
+            status: updatedLead.leadStatus, // leadStatus => status
+        };
+
+        setLead(mergedLead);
+        setLeadeStatus(updatedLead.leadStatus);
+        closeEditModal();
+    };
+
+    const handleEdit = (selectedLead) => {
+        setLead(selectedLead);
+        setShowEditModal(true);
+
+        const offcanvasEl = document.getElementById("editLead");
+        const bsOffcanvas = new Offcanvas(offcanvasEl);
+        bsOffcanvas.show();
+    };
+
     return (
         <>
             <PageWrapper>
@@ -89,20 +127,20 @@ const Leads = ({ onCreateLead, onViewLead }) => {
                 {error && <div className="p-4 text-danger">Error: {error.message || error}</div>}
 
                 <div className="container-fluid p-4">
-                    <div className=" gap-3 d-flex ">
-                        <div className="col-md-3">
+                    <div className=" gap-2 d-flex pb-3">
+                        <div className="col-md-1 ">
                             <select
-                                className="form-select"
+                                className="form-select-sm"
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
                             >
                                 <option value="all">Lead Status</option>
                                 <option value="New">New</option>
                                 <option value="Open">Open</option>
-                                <option value="In Progress">In Progress</option>
+                                <option value="InProgress">In Progress</option>
                             </select>
                         </div>
-                        <div className="position-relative col-md-3">
+                        <div className="position-relative pb-2">
                             <input
                                 type="text"
                                 className="form-control form-control-sm border-secondary pe-5"
@@ -146,7 +184,9 @@ const Leads = ({ onCreateLead, onViewLead }) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredLeads.map((lead) => (
+                                    {filteredLeads
+                                    .filter((lead) => lead.leadStatus !== "Qualified")
+                                    .map((lead) => (
                                         <tr key={lead.id}>
                                             <td>
                                                 <input type="checkbox" />
@@ -174,6 +214,13 @@ const Leads = ({ onCreateLead, onViewLead }) => {
                                                         <i className="bi bi-eye text-primary"></i>
                                                     </Link>
                                                 </button>
+                                                <button className="btn btn-sm ">
+                                                    <i
+                                                        className="bi bi-pencil ms-auto text-primary"
+                                                        style={{ cursor: "pointer" }}
+                                                        onClick={() => handleEdit(lead)}
+                                                    />{" "}
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
@@ -183,6 +230,7 @@ const Leads = ({ onCreateLead, onViewLead }) => {
                     </div>
                 </div>
             </PageWrapper>
+            <EditLead isOpen={showEditModal} onClose={closeEditModal} onSave={handleUpdateLead} initialData={lead} />
         </>
     );
 };

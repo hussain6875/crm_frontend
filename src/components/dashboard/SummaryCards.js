@@ -5,8 +5,17 @@ import { faMoneyBill } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 
 const SummaryCards = () => {
-  const { deals } = useSelector((state) => state.deals);
-  const { users } = useSelector((state) => state.users);
+    const { leads } = useSelector((state) => state.leads);
+    const { deals } = useSelector((state) => state.deals);
+    const { user } = useSelector((state) => state.auth);
+
+    // ✅ Safe leads count
+    const totalLeads = (() => {
+        if (!leads) return 0;
+        if (Array.isArray(leads)) return leads.length;
+        if (Array.isArray(leads.data)) return leads.data.length;
+        return 0;
+    })();
 
   // deals extraction
   const dealsArray = Array.isArray(deals?.data)
@@ -124,45 +133,39 @@ const SummaryCards = () => {
     },
   ];
 
-  return (
-    <div className="row g-4 mb-4">
-      {cards.map((card, idx) => (
-        <div key={idx} className="col-6 col-md-3">
-          <div
-            className="card border-0 shadow-sm bg-white h-100"
-            style={{ minHeight: "180px" }}
-          >
-            <div className="card-body p-3 d-flex flex-column justify-content-between">
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <h6
-                    className="text-secondary mb-4"
-                    style={{ fontSize: "1.2rem", fontWeight: "400" }}
-                  >
-                    {card.title}
-                  </h6>
-                  <h2 className="mb-0 fw-bold" style={{ fontSize: "2.5rem" }}>
-                    {card.value}
-                  </h2>
+    return (
+        <div className="row g-4 mb-4">
+            {cards.map((card, idx) => (
+                <div key={idx} className="col-6 col-md-3">
+                    <div className="card border-0 shadow-sm bg-white h-100" style={{ minHeight: "180px" }}>
+                        <div className="card-body p-3 d-flex flex-column justify-content-between">
+                            <div className="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 className="text-secondary mb-4" style={{ fontSize: "1.2rem", fontWeight: "400" }}>
+                                        {card.title}
+                                    </h6>
+                                    <h2 className="mb-0 fw-bold" style={{ fontSize: "2.5rem" }}>
+                                        {card.value}
+                                    </h2>
+                                </div>
+                                <div
+                                    className="rounded-circle d-flex align-items-center justify-content-center"
+                                    style={{
+                                        width: "70px",
+                                        height: "70px",
+                                        background: card.iconBg,
+                                    }}
+                                >
+                                    {/* Render the icon with passed color and size */}
+                                    {card.icon(card.iconColor, 30)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div
-                  className="rounded-circle d-flex align-items-center justify-content-center"
-                  style={{
-                    width: "70px",
-                    height: "70px",
-                    background: card.iconBg,
-                  }}
-                >
-                  {/* Render the icon with passed color and size */}
-                  {card.icon(card.iconColor, 30)}
-                </div>
-              </div>
-            </div>
-          </div>
+            ))}
         </div>
-      ))}
-    </div>
-  );
+    );
 };
 
 export default SummaryCards;

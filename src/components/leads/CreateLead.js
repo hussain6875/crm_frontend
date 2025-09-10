@@ -1,19 +1,29 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 import * as bootstrap from "bootstrap";
+import UserService from "../../services/UserService";
 
 const CreateLead = ({ onSave }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
     jobTitle: "",
-    contactOwner: "John Smith",
+    contactOwner: "",
     leadStatus: "New",
   });
+
+  const [users, setUsers] = useState([]);
+
+useEffect(() => {
+  UserService.getUsers()
+    .then((res) => setUsers(res))
+    .catch((err) => console.error("Error fetching users:", err));
+}, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -136,10 +146,12 @@ const CreateLead = ({ onSave }) => {
                   setFormData({ ...formData, contactOwner: e.target.value })
                 }
               >
-                <option value="">Choose owner</option>
-                <option value="John Smith">John Smith</option>
-                <option value="Jane Doe">Jane Doe</option>
-                <option value="Mike Johnson">Mike Johnson</option>
+                 <option value="">Choose owner</option>
+              {users.map((user) => (
+                <option key={user.userId} value={user.userId}>
+                  {user.userName}
+                </option>
+              ))}
               </select>
             </div>
 

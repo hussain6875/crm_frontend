@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import PageWrapper from "../components/layout/PageWrapper";
 import styles from "../components/leads/leads.module.css";
 import { data, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLeads } from "../redux/features/leads/leadsThunks";
-
 import Activity from "../components/tabs/Activity";
 import Notes from "../components/tabs/Notes";
 import Calls from "../components/tabs/Calls";
@@ -20,6 +20,10 @@ import Emails from "../components/tabs/Emails";
 import CreateNote from "../components/tabs/CreateNote";
 import CreateCall from "../components/tabs/CreateCall";
 import CreateDeal from "../components/deals/CreateDeal";
+import { updateLead } from "../redux/features/leads/leadsThunks";
+import {createDeal} from "../redux/dealSlice"
+import AuthService from "../services/AuthService";
+
 
 const LeadDetails = (updatedLeadData) => {
     const [lead, setLead] = useState({});
@@ -134,8 +138,6 @@ const LeadDetails = (updatedLeadData) => {
     }, [leadId, leads, navigate]);
 
     const handleUpdateLead = (updatedLead) => {
-        console.log("Updated Lead:", updatedLead);
-
         const mergedLead = {
             ...lead,
             ...updatedLead,
@@ -158,6 +160,28 @@ const LeadDetails = (updatedLeadData) => {
             setIsOpen(true);
         }
     };
+
+    // LeadDetails.jsx
+
+const handleDealCreated = async(newDeal) => {
+     try {
+    // Step 1: Deal save ചെയ്യുക
+    const res = await axios.post(createDeal, newDeal, {
+      headers:AuthService.getAuthHeaders(), // 👈 same as leads calls
+    });
+    console.log("Deal created:", res.data);
+    // Step 1: Deal save ചെയ്യുക (നിങ്ങളുടെ deals API call)
+    // await axios.post("/api/deals/create", newDeal);
+
+    // Step 2: Lead status → Qualified Lead
+    dispatch(updateLead({ id: leadId, data: { leadStatus: "Qualified" } }));
+    
+    closeDealDrawer();
+  } catch (err) {
+    console.error("Failed to create deal or qualify lead:", err);
+  }
+};
+
 
     const handleAttachmentButton = () => {
         if (isAttachmentOpen) {
@@ -473,7 +497,7 @@ const LeadDetails = (updatedLeadData) => {
                     )}
                 </div>
             </PageWrapper>
-            <CreateDeal isOpen={showDealDrawer} onClose={closeDealDrawer} />
+            <CreateDeal isOpen={showDealDrawer} onClose={closeDealDrawer}  onSave={handleDealCreated}/>
 
             <EditLead isOpen={showEditModal} onClose={closeEditModal} onSave={handleUpdateLead} initialData={lead} />
         </>

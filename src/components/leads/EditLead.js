@@ -187,8 +187,8 @@ const handleSubmit = async (e) => {
               >
                 <option value="">Choose status</option>
                 <option value="New">New</option>
-                <option value="Open">Contacted</option>
-                <option value="Inprogress">Qualified</option>
+                <option value="Open">Open</option>
+                <option value="Inprogress">Inprogress</option>
               </select>
             </div>
 

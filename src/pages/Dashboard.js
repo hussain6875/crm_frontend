@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { useDispatch,useSelector } from "react-redux";
 import { fetchUsers } from "../redux/userSlice";
 import { fetchDeals } from "../redux/dealSlice";
+import {fetchLeads} from "../redux/features/leads/leadsThunks"
 import { fetchUserProfile } from "../redux/AuthSlice";
 import AuthService from "../services/AuthService";
 
@@ -23,6 +24,7 @@ const Dashboard = () => {
   }
 
   // Fetch users and deals
+    dispatch(fetchLeads())
     dispatch(fetchUsers());
     dispatch(fetchDeals());
   }, [dispatch]);
