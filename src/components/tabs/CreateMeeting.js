@@ -6,7 +6,13 @@ import {
   getAllActivities,
 } from "../../redux/features/activitySlice";
 
-export default function CreateMeeting({ isOpen, onClose, module, details }) {
+export default function CreateMeeting({
+  isOpen,
+  onClose,
+  module,
+  details,
+  onSuccess,
+}) {
   const dispatch = useDispatch();
 
   const initialState = {
@@ -68,6 +74,7 @@ export default function CreateMeeting({ isOpen, onClose, module, details }) {
     setFormData(initialState);
     setErrors({});
     onClose();
+    onSuccess?.();
   };
 
   useEffect(() => {
@@ -285,4 +292,3 @@ export default function CreateMeeting({ isOpen, onClose, module, details }) {
     </div>
   );
 }
-

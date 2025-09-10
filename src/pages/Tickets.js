@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchTicketById, fetchTickets } from "../redux/features/ticketSlice";
 import { fetchUsers } from "../redux/userSlice";
 import EditTicket from "../components/tickets/EditTicket";
+import SuccessToast from "../components/tabs/Toast";
 
 const Tickets = () => {
   const dateRef = useRef(null);
@@ -21,6 +22,8 @@ const Tickets = () => {
 
   const [selectedTickets, setSelectedTickets] = useState([]);
   const [selectedDate, setSelectedDate] = useState("");
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const [filters, setFilters] = useState({
     owner: "",
     status: "",
@@ -94,6 +97,11 @@ const Tickets = () => {
     dispatch(fetchTicketById(ticket.id));
   };
 
+  const onSuccessMessage = (message) => {
+    setToastMessage(message);
+    setShowToast(true);
+  };
+
   useEffect(() => {
     dispatch(fetchTickets());
     dispatch(fetchUsers());
@@ -103,7 +111,10 @@ const Tickets = () => {
     <>
       <PageWrapper>
         <PageHeader title="Tickets" onCreateClick={handleCreateClick} />
-        <CreateTicket onTicketCreated={() => dispatch(fetchTickets())} />
+        <CreateTicket
+          onTicketCreated={() => dispatch(fetchTickets())}
+          onSuccess={() => onSuccessMessage("New Ticket Created.")}
+        />
         <SearchAndPagination />
         <div
           className="bg-white rounded-bottom pb-3"
@@ -205,9 +216,15 @@ const Tickets = () => {
           </div>
         </div>
       </PageWrapper>
+      <SuccessToast
+        message={toastMessage}
+        setShowToast={setShowToast}
+        showToast={showToast}
+      />
       <EditTicket
         ticket={ticket}
         onTicketUpdated={() => dispatch(fetchTickets())}
+        onSuccess={() => onSuccessMessage("Details Updated.")}
       />
     </>
   );

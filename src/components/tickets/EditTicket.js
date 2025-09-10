@@ -2,9 +2,13 @@ import React, { useEffect, useState } from "react";
 import styles from "./createTicket.module.css";
 import { Offcanvas } from "bootstrap";
 import { useDispatch } from "react-redux";
-import { updateTicket } from "../../redux/features/ticketSlice";
+import {
+  fetchTicketById,
+  fetchTickets,
+  updateTicket,
+} from "../../redux/features/ticketSlice";
 
-const EditTicket = ({ ticket, onTicketUpdated }) => {
+const EditTicket = ({ ticket, onTicketUpdated, onSuccess }) => {
   const dispatch = useDispatch();
 
   const [name, setName] = useState("");
@@ -24,11 +28,17 @@ const EditTicket = ({ ticket, onTicketUpdated }) => {
       priority,
     };
 
-    dispatch(updateTicket({ updatedData: updatedTicket, id: ticket.id }));
+    dispatch(updateTicket({ updatedData: updatedTicket, id: ticket.id })).then(
+      () => {
+        dispatch(fetchTickets());
+        dispatch(fetchTicketById(ticket.id));
+      }
+    );
     if (onTicketUpdated) onTicketUpdated();
     const offcanvasElement = document.getElementById("editTicket");
     const bsOffcanvas = Offcanvas.getInstance(offcanvasElement);
     bsOffcanvas?.hide();
+    onSuccess?.();
   };
 
   useEffect(() => {
@@ -114,6 +124,7 @@ const EditTicket = ({ ticket, onTicketUpdated }) => {
                 value={ticketStatus}
                 onChange={(e) => setTicketStatus(e.target.value)}
               >
+                <option value="new">New</option>
                 <option value="waiting on us">Waiting on us</option>
                 <option value="waiting on contact">Waiting on contact</option>
                 <option value="closed">Closed</option>

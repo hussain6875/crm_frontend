@@ -6,7 +6,7 @@ import { Offcanvas } from "bootstrap";
 import { createTicketAPI } from "../../redux/features/ticketSlice";
 import { fetchUsers } from "../../redux/userSlice";
 
-const CreateTicket = ({ onTicketCreated }) => {
+const CreateTicket = ({ onTicketCreated, onSuccess }) => {
   const dispatch = useDispatch();
   const { loading, createMessage, createError } = useSelector(
     (state) => state.tickets
@@ -51,6 +51,7 @@ const CreateTicket = ({ onTicketCreated }) => {
     dispatch(createTicketAPI(newTicket));
     setSubmitted(true);
     setErrors({});
+    onSuccess?.();
   };
 
   const resetForm = () => {
@@ -277,7 +278,7 @@ const CreateTicket = ({ onTicketCreated }) => {
               className={`${styles.save} btn text-white w-100`}
               type="submit"
             >
-              {loading ? "Saving..." : "Save"}
+              {loading ? "Saving..." : ""}
               Save
             </button>
           </div>

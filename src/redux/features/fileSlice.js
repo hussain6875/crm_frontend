@@ -5,6 +5,7 @@ export const attachImages = createAsyncThunk(
   "attachments/attachImages",
   async ({ module, id, files }, { rejectWithValue }) => {
     try {
+      console.log("from file slice",module,id,files);
       const formData = new FormData();
       for (let i = 0; i < files.length; i++) {
         formData.append("attachments", files[i]);

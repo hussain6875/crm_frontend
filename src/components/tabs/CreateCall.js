@@ -6,7 +6,7 @@ import {
   getAllActivities,
 } from "../../redux/features/activitySlice";
 
-export default function CreateCall({ isOpen, onClose, module, details }) {
+export default function CreateCall({ isOpen, onClose, module, details, onSuccess }) {
   const dispatch = useDispatch();
   const { error } = useSelector((state) => state.activities);
 
@@ -64,6 +64,7 @@ export default function CreateCall({ isOpen, onClose, module, details }) {
     });
     setErrors({});
     onClose();
+    onSuccess?.();
   };
 
   useEffect(() => {
