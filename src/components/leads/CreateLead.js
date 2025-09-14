@@ -5,6 +5,7 @@ import * as bootstrap from "bootstrap";
 import UserService from "../../services/UserService";
 
 const CreateLead = ({ onSave }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",

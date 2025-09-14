@@ -152,6 +152,7 @@ const Leads = () => {
 
                 <EditLead isOpen={false} onClose={() => {}} onSave={() => {}} initialData={lead}  onSuccess={() => onSuccessMessage("Details Updated.")} />
             </PageWrapper>
+            <EditLead isOpen={showEditModal} onClose={closeEditModal} onSave={handleUpdateLead} initialData={lead} />
         </>
     );
 };
