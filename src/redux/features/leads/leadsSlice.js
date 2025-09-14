@@ -1,6 +1,6 @@
 // redux/leads/leadsSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchLeads, createLead, updateLead } from "./leadsThunks";
+import { fetchLeads, createLead, updateLead,fetchLeadById } from "./leadsThunks";
 
 const leadsSlice = createSlice({
     name: "leads",
@@ -22,6 +22,10 @@ const leadsSlice = createSlice({
             })
             .addCase(fetchLeads.rejected, (state, action) => {
                 state.error = action.payload?.message || action.payload || "Something went wrong";
+            })
+            .addCase(fetchLeadById.fulfilled, (state, action) => {
+                state.loading = false;
+                state.list = action.payload;
             })
             .addCase(createLead.pending, (state) => {
                 state.loading = true;

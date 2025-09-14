@@ -5,27 +5,20 @@ import { faMoneyBill } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 
 const SummaryCards = () => {
-    const { leads } = useSelector((state) => state.leads);
-    const { deals } = useSelector((state) => state.deals);
-    const { user } = useSelector((state) => state.auth);
+  const leadsState = useSelector((state) => state.leads);
+const dealsState = useSelector((state) => state.deals);
+const usersState = useSelector((state) => state.users);
 
-    // ✅ Safe leads count
-    const totalLeads = (() => {
-        if (!leads) return 0;
-        if (Array.isArray(leads)) return leads.length;
-        if (Array.isArray(leads.data)) return leads.data.length;
-        return 0;
-    })();
+    // leads count
+  const totalLeads = Array.isArray(leadsState.list) ? leadsState.list.length : 0;
 
   // deals extraction
-  const dealsArray = Array.isArray(deals?.data)
-    ? deals.data
-    : Array.isArray(deals)
-    ? deals
-    : [];
+  const dealsArray = Array.isArray(dealsState.deals) ? dealsState.deals : [];
+
   
     //users extraction
-  const usersArray = users?.data || users || [];
+  const usersArray = Array.isArray(usersState.users) ? usersState.users : [];
+
  
   // Show loading if deals or users is not loaded
   if (!usersArray || !dealsArray.length) {
@@ -95,7 +88,7 @@ const SummaryCards = () => {
   const cards = [
     {
       title: "Total Leads",
-      value: "1,250",
+      value:totalLeads,
       icon: (color, size) => <LuUsersRound color={color} size={size} />,
       iconBg:
         "linear-gradient(135deg,rgb(210, 205, 248) 0%,rgb(158, 138, 227) 100%)",
