@@ -100,12 +100,18 @@ export default function CreateCall({ isOpen, onClose, module, details, onSuccess
               <p className="mb-1">
                 Connected <span className={styles.required}>*</span>
               </p>
-              <input
+              {/* <input
                 type="text"
                 value={details.owner.userName}
                 className="form-control border-secondary"
                 disabled
-              />
+              /> */}
+              <input
+  type="text"
+  value={details.owner?.userName || ""}
+  className="form-control border-secondary"
+  disabled
+/>
             </label>
 
             <label>

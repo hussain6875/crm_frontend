@@ -42,7 +42,7 @@ const TicketTable = ({
                 <i className={`bi bi-pencil-fill ${styles.pencil}`}></i>
               </button>
               <Link className="btn btn-sm" to={`/tickets/${ticket.id}/details`}>
-                <i className="bi bi-eye-fill text-danger mx-2"></i>
+                <i className="bi bi-eye-fill text-primary mx-2"></i>
               </Link>
             </td>
           </tr>
