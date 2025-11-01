@@ -1,46 +1,55 @@
 import PageWrapper from "../components/layout/PageWrapper";
 import PageHeader from "../components/ui/PageHeader";
 import { useRef, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import SearchAndPagination from "../components/ui/SearchAndPagination";
 import { Offcanvas } from "bootstrap";
-import CreateLead from "../components/leads/CreateLead";
 import { useDispatch, useSelector } from "react-redux";
-import { createLead, fetchLeads } from "../redux/features/leads/leadsThunks"; // ✅ Correct path here
+import { createLead, fetchLeads} from "../redux/features/leads/leadsThunks";
+import CreateLead from "../components/leads/CreateLead";
+import EditLead from "../components/leads/EditLead";
+import SearchAndPagination from "../components/ui/SearchAndPagination";
+import LeadsFilters from "../components/leads/LeadsFilters";
+import LeadsTable from "../components/leads/LeadsTable";
+import SuccessToast from "../components/tabs/Toast";
 
-const Leads = ({ onCreateLead, onViewLead }) => {
-    const [searchTerm, setSearchTerm] = useState("");
+const Leads = () => {
+    const [lead, setLead] = useState({});
     const [statusFilter, setStatusFilter] = useState("all");
+    const [selectedDate, setSelectedDate] = useState("");
+    const [activePage, setActivePage] = useState(1);
+    const [filteredCount, setFilteredCount] = useState(0);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
 
     const dispatch = useDispatch();
-    // const { leads, error } = useSelector((state) => state.leads);
     const leads = useSelector((state) => state.leads.list);
     const loading = useSelector((state) => state.leads.loading);
     const error = useSelector((state) => state.leads.error);
+
+    const pageSize = 10;
+    const totalPages = Math.max(1, Math.ceil(filteredCount / pageSize));
+    const startIndex = (activePage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+
+    const dateRef = useRef(null);
 
     useEffect(() => {
         dispatch(fetchLeads());
     }, [dispatch]);
 
     const handleSaveLead = (newLead) => {
-        dispatch(createLead(newLead)); // ✅ This will go to backend and update Redux state
+        dispatch(createLead(newLead));
     };
 
-    const filteredLeads = leads.filter((lead) => {
-        const matchesSearch =
-            lead.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lead.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            lead.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "";
+        const date = new Date(dateStr);
+        return date.toLocaleDateString("en-GB");
+    };
 
-        const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
-
-        return matchesSearch && matchesStatus;
-    });
-
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-    const handleCloseDrawer = () => {
-        setIsDrawerOpen(false);
+    const handleCreateDateButton = () => {
+        if (dateRef.current) {
+            dateRef.current.showPicker();
+        }
     };
 
     const getStatusBadge = (status) => {
@@ -48,7 +57,7 @@ const Leads = ({ onCreateLead, onViewLead }) => {
             case "Open":
                 return "badge text-bg-light text-success";
             case "New":
-                return "badge bg-blue-100 text-primary ";
+                return "badge bg-blue-100 text-primary";
             case "In Progress":
                 return "badge text-bg-secondary text-danger";
             default:
@@ -56,132 +65,92 @@ const Leads = ({ onCreateLead, onViewLead }) => {
         }
     };
 
-    const dateRef = useRef(null);
-    const [selectedDate, setSelectedDate] = useState("");
+    const filteredLeads = leads.filter((lead) => {
+        const matchesStatus = statusFilter === "all" || lead.leadStatus === statusFilter;
 
-    const formatDate = (dateStr) => {
-        if (!dateStr) return "";
-        const date = new Date(dateStr);
-        const dd = String(date.getDate()).padStart(2, "0");
-        const mm = String(date.getMonth() + 1).padStart(2, "0");
-        const yyyy = date.getFullYear();
-        return `${dd}-${mm}-${yyyy}`;
+        let matchesDate = true;
+        if (selectedDate) {
+            const leadDate = new Date(lead.createdAt).toISOString().split("T")[0];
+            const selected = new Date(selectedDate).toISOString().split("T")[0];
+            matchesDate = leadDate === selected;
+        }
+
+        return matchesStatus && matchesDate;
+    });
+
+    const onSuccessMessage = (message) => {
+        setToastMessage(message);
+        setShowToast(true);
     };
 
-    const handleCreateClick = () => {
-        const offcanvasEl = document.getElementById("createLead");
+    useEffect(() => {
+        setFilteredCount(filteredLeads.length);
+    }, [filteredLeads]);
+
+    const paginatedLeads = filteredLeads.slice(startIndex, endIndex);
+
+    const handleEdit = (selectedLead) => {
+        setLead(selectedLead);
+        const offcanvasEl = document.getElementById("editLead");
         const bsOffcanvas = new Offcanvas(offcanvasEl);
         bsOffcanvas.show();
-    };
-    const handleCreateDateButton = () => {
-        if (dateRef.current) {
-            dateRef.current.showPicker();
-        }
     };
 
     return (
         <>
             <PageWrapper>
-                <PageHeader title="Leads" offCanvasId="createLead" onCreateClick={handleCreateClick} />
-                <CreateLead onSave={handleSaveLead} />
-                <SearchAndPagination />
-                {loading && <div className="p-4">Loading leads...</div>}
-                {error && <div className="p-4 text-danger">Error: {error.message || error}</div>}
+                <PageHeader
+                    title="Leads"
+                    offCanvasId="createLead"
+                    onCreateClick={() => {
+                        const offcanvasEl = document.getElementById("createLead");
+                        const bsOffcanvas = new Offcanvas(offcanvasEl);
+                        bsOffcanvas.show();
+                    }}
+                />
+                <CreateLead onSave={handleSaveLead} onLeadCreated={() => dispatch(fetchLeads())} onSuccess={() => onSuccessMessage("New Lead Created.")} />
 
-                <div className="container-fluid p-4">
-                    <div className=" gap-3 d-flex ">
-                        <div className="col-md-3">
-                            <select
-                                className="form-select"
-                                value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                            >
-                                <option value="all">Lead Status</option>
-                                <option value="New">New</option>
-                                <option value="Open">Open</option>
-                                <option value="In Progress">In Progress</option>
-                            </select>
-                        </div>
-                        <div className="position-relative col-md-3">
-                            <input
-                                type="text"
-                                className="form-control form-control-sm border-secondary pe-5"
-                                value={selectedDate ? formatDate(selectedDate) : ""}
-                                placeholder="Created Date"
-                                onClick={handleCreateDateButton}
-                                role="button"
-                                readOnly
-                            />
-                            <i
-                                className="bi bi-calendar position-absolute top-50 end-0 translate-middle-y me-3 text-secondary"
-                                role="button"
-                                onClick={handleCreateDateButton}
-                            ></i>
-                            <input
-                                type="date"
-                                ref={dateRef}
-                                value={selectedDate}
-                                onChange={(e) => setSelectedDate(e.target.value)}
-                                className="position-absolute top-0 start-0 opacity-0 w-100 h-100"
-                                style={{ pointerEvents: "none" }}
-                            />
-                        </div>
-                    </div>
+                {/* Search + Pagination */}
+                <SearchAndPagination activePage={activePage} setActivePage={setActivePage} totalPages={totalPages} />
 
-                    {/* Leads Table */}
-                    <div className="card shadow-sm border-light">
-                        <div className="table-responsive">
-                            <table className="table table-hover align-middle mb-0">
-                                <thead className="table-light">
-                                    <tr>
-                                        <th>
-                                            <input type="checkbox" />
-                                        </th>
-                                        <th>NAME</th>
-                                        <th>EMAIL</th>
-                                        <th>PHONE NUMBER</th>
-                                        <th>CREATED DATE</th>
-                                        <th>LEAD STATUS</th>
-                                        <th>ACTIONS</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredLeads.map((lead) => (
-                                        <tr key={lead.id}>
-                                            <td>
-                                                <input type="checkbox" />
-                                            </td>
-                                            <td>
-                                                <Link
-                                                    to={`/leads/${lead.id}/details`}
-                                                    className="text-black text-decoration-none"
-                                                >
-                                                    {lead.firstName} {lead.lastName}
-                                                </Link>
-                                            </td>
-                                            <td>{lead.email}</td>
-                                            <td>{lead.phone}</td>
-                                            <td>{lead.createdAt}</td>
-                                            <td>
-                                                <span className={getStatusBadge(lead.status)}>{lead.leadStatus}</span>
-                                            </td>
-                                            <td>
-                                                <button className="btn btn-sm ">
-                                                    <Link
-                                                        to={`/leads/${lead.id}/details`}
-                                                        className="text-black text-decoration-none"
-                                                    >
-                                                        <i className="bi bi-eye text-primary"></i>
-                                                    </Link>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                {/* Create Lead Form */}
+                <div
+                    className="bg-white d-flex flex-column"
+                    style={{
+                        width: "95%",
+                        paddingLeft: "20px",
+                        marginLeft: "20px",
+                        marginRight: "10px",
+                        marginTop: "10px",
+                        paddingRight: "20px",
+                        paddingBottom: "20px",
+                    }}
+                >
+                    {/* Filters */}
+                    <LeadsFilters
+                        statusFilter={statusFilter}
+                        setStatusFilter={setStatusFilter}
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
+                        formatDate={formatDate}
+                        handleCreateDateButton={handleCreateDateButton}
+                        dateRef={dateRef}
+                    />
+
+                    {/* Loading and Error */}
+                    {loading && <div className="p-4">Loading leads...</div>}
+                    {error && <div className="p-4 text-danger">Error: {error.message || error}</div>}
+
+                    {/* Table */}
+                    <LeadsTable paginatedLeads={paginatedLeads} handleEdit={handleEdit} getStatusBadge={getStatusBadge} />
                 </div>
+                 <SuccessToast
+                        message={toastMessage}
+                        setShowToast={setShowToast}
+                        showToast={showToast}
+                      />
+
+                <EditLead isOpen={false} onClose={() => {}} onSave={() => {}} initialData={lead}  onSuccess={() => onSuccessMessage("Details Updated.")} />
             </PageWrapper>
         </>
     );

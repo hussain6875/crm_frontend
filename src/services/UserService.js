@@ -27,7 +27,7 @@ static get token() {
 
   // GET user by ID
   static async getUserById(id) {
-      const token = localStorage.getItem('token');
+
     const response = await fetch(`${this.BASE_URL}/${id}`,{
       headers:this.authHeaders,
     });

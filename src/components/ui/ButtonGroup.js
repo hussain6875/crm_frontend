@@ -1,6 +1,4 @@
 import React from "react";
-import { Offcanvas } from "bootstrap";
-
 
 export default function ButtonGroup({ onCreateClick }) {
   return (

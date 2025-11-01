@@ -73,7 +73,7 @@ const handleSubmit = async (e) => {
     <>
       {/* Offcanvas Drawer */}
      <div
-      className="offcanvas offcanvas-start"
+      className="offcanvas offcanvas-end"
       data-bs-backdrop="static"
       tabIndex={-1}
       id="editLead"
@@ -187,8 +187,8 @@ const handleSubmit = async (e) => {
               >
                 <option value="">Choose status</option>
                 <option value="New">New</option>
-                <option value="Open">Contacted</option>
-                <option value="Inprogress">Qualified</option>
+                <option value="Open">Open</option>
+                <option value="Inprogress">Inprogress</option>
               </select>
             </div>
 
@@ -201,7 +201,7 @@ const handleSubmit = async (e) => {
                 Cancel
               </button>
               <button type="submit" className="btn btn-primary px-4">
-                Save
+                Update
               </button>
             </div>
           </form>

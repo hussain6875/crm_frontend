@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllActivities } from "../../redux/features/activitySlice";
+import moment from "moment";
 export default function Notes({ onCreateClick, module, id }) {
   const dispatch = useDispatch();
   const { loading, error, activities } = useSelector(
@@ -15,6 +16,11 @@ export default function Notes({ onCreateClick, module, id }) {
       [noteId]: !prev[noteId],
     }));
   };
+
+  const formatDateTime = (isoString) => {
+    return moment(isoString).format("MMMM D, YYYY [at] h:mm A");
+  };
+
   useEffect(() => {
     dispatch(getAllActivities({ module, id }));
   }, [dispatch, module, id]);
@@ -23,7 +29,6 @@ export default function Notes({ onCreateClick, module, id }) {
       <div className="d-flex justify-content-between">
         <div>
           <h6>Notes</h6>
-   
         </div>
         <button
           style={{ height: "40px", width: "125px", backgroundColor: "#6c63ff" }}
@@ -54,8 +59,8 @@ export default function Notes({ onCreateClick, module, id }) {
           <span style={{ color: "#666666" }}>
             <strong>Note</strong>
           </span>
-          <span style={{ float: "right", color: "#666666" }}>
-            {note.createdAt}
+          <span style={{ float: "right", color: "#666666" }} className="small">
+            {formatDateTime(note.createdAt)}
           </span>
           {openNote[note.id] && (
             <p style={{ color: "#4B647A" }}>{note.content}</p>

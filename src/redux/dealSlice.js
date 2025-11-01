@@ -12,9 +12,17 @@ export const fetchDealsByID = createAsyncThunk(
   }
 );
 
-export const createDeal = createAsyncThunk('fetch/createDeal',async (dealData)=>{
-    return await DealService.createDeal(dealData);
-});
+export const createDeal = createAsyncThunk(
+  "deals/createDeal",
+  async (dealData, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;  
+      return await DealService.createDeal(dealData, token);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 export const updateDeal = createAsyncThunk('deals/updateDeal',async ({id, updatedData})=>{
     return await DealService.updateDeal(id, updatedData);
@@ -38,7 +46,7 @@ const dealSlice = new createSlice({
       })
       .addCase(fetchDeals.fulfilled, (state, action) => {
         state.loading = false;
-        state.deals = action.payload;
+        state.deals = action.payload.data;
       })
       .addCase(fetchDeals.rejected, (state, action) => {
         state.loading = false;

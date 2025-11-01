@@ -1,6 +1,7 @@
 class AuthService {
-  static BASE_URL = "http://localhost:8080/api/users";
+    static BASE_URL = "http://localhost:8080/api/users";
 
+  
   // REGISTER
   static async register(formData) {
     const response = await fetch(`${this.BASE_URL}/register`, {
@@ -8,46 +9,60 @@ class AuthService {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
-    const data = await response.json();
 
+    const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || "Registration failed");
     }
     return data;
   }
-
+  //TO GET THE USER FETCHING THE TOKEN
+ static async getProfile(token) {
+    const response = await fetch(`${this.BASE_URL}/profile`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to fetch profile");
+    return data.user;
+  }
   // LOGIN
   static async login(formData) {
+
     const response = await fetch(`${this.BASE_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
-    const data = await response.json();
 
+    const data = await response.json();
     if (!response.ok) {
       throw new Error(data.message || "Login failed");
     }
-    return data;
+
+    return data; // expected { user: {email,...}, token: "..." }
   }
 
   // FORGOT PASSWORD
   static async forgotPassword(email) {
-    const response = await fetch(`${this.BASE_URL}/validate-email`, {
+    const response = await fetch(`${this.BASE_URL}/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
-    const data = await response.json();
 
-    if (!response.ok|| !data.exists) {
+    const data = await response.json();
+    if (!response.ok) {
       throw new Error(data.message || "Email not found");
     }
-    return data.exists;
+    return data;
   }
 
-  // RESET PASSWORD
-  static async resetPasswordApi(email, newPassword) {
+  // RESET PASSWORD (email + newPassword )
+  static async resetPassword(email, newPassword) {
     const response = await fetch(`${this.BASE_URL}/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,14 +70,12 @@ class AuthService {
     });
 
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.message || "Something went wrong");
     }
 
-    return data;
+    return data; // { message: "Password reset successful" }
   }
 }
 
 export default AuthService;
-

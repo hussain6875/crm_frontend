@@ -1,13 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { DEAL_STAGES } from "../../constants/dealStages";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const SalesReport = () => {
-  const {deals} = useSelector((state)=>state.deals);
-  const {user} = useSelector((state)=>state.auth);
+  const { deals } = useSelector((state) => state.deals);
+  const { user } = useSelector((state) => state.auth);
   const dealsArray = deals?.data || deals || [];
 
+  // Dropdown state
+  const [view, setView] = useState("Monthly");
 
    // Filter deals for the current user
   const userDeals = user
@@ -22,41 +25,67 @@ const SalesReport = () => {
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   ];
-  const monthlyData = months.map((month, idx) => {
-    // Sum amounts for deals closed as 'Closed Won' in this month
+
+  // --- Data Generators ---
+  const getMonthlyData = () =>
+    months.map((month, idx) => {
+      const total = userDeals
+        .filter(
+          (deal) =>
+            deal.stage === "Closed Won" &&
+            deal.closeDate &&
+            new Date(deal.closeDate).getMonth() === idx
+        )
+        .reduce((sum, deal) => sum + (parseFloat(deal.amount) || 0), 0);
+
+      return { label: month, total, primary: total, secondary: 0 };
+    });
+
+  const getQuarterlyData = () => {
+    const quarters = ["Q1", "Q2", "Q3", "Q4"];
+    return quarters.map((q, idx) => {
+      const total = userDeals
+        .filter(
+          (deal) =>
+            deal.stage === "Closed Won" &&
+            deal.closeDate &&
+            Math.floor(new Date(deal.closeDate).getMonth() / 3) === idx
+        )
+        .reduce((sum, deal) => sum + (parseFloat(deal.amount) || 0), 0);
+
+      return { label: q, total, primary: total, secondary: 0 };
+    });
+  };
+
+  const getYearlyData = () => {
     const total = userDeals
-      .filter(
-        (deal) =>
-          deal.stage === "Closed Won" &&
-          deal.closeDate &&
-          new Date(deal.closeDate).getMonth() === idx
-      )
+      .filter((deal) => deal.stage === "Closed Won" && deal.closeDate)
       .reduce((sum, deal) => sum + (parseFloat(deal.amount) || 0), 0);
 
-    return {
-      month,
-      total,
-      // You can add primary/secondary if you want to show more bars
-      primary: total,
-      secondary: 0,
-    };
-  });
+    return [{ label: new Date().getFullYear(), total, primary: total, secondary: 0 }];
+  };
 
+  // Compute chart data based on dropdown
+  const chartData =
+    view === "Monthly"
+      ? getMonthlyData()
+      : view === "Quarterly"
+      ? getQuarterlyData()
+      : getYearlyData();
 
-
-  const maxValue = Math.max(...monthlyData.map(item => item.primary), 10000);
+  // Chart scaling
+  const maxValue = Math.max(...chartData.map((item) => item.primary), 10000);
   const chartHeight = 500;
-  const yAxisValues = [10000, 5000, 1000, 500, 200, 0];
+  const yAxisValues = [60000, 50000, 40000, 30000, 20000, 10000];
 
   const formatCurrency = (value) => `$${value.toLocaleString()}`;
 
+  // Tooltip + responsive bar styling
   useEffect(() => {
     if (!document.head.querySelector("[data-saleschart-tooltip]")) {
       const style = document.createElement("style");
       style.innerHTML = `
-        .bar-with-tooltip {
-          position: relative;
-        }
+        .bar-with-tooltip { position: relative; }
         .bar-with-tooltip .custom-tooltip {
           visibility: hidden;
           opacity: 0;
@@ -80,22 +109,12 @@ const SalesReport = () => {
           visibility: visible;
           opacity: 1;
         }
-
-        .sales-card {
-          width: 100%;
-          margin: 0;
-        }
-
+        .sales-card { width: 100%; margin: 0; }
         @media (max-width: 768px) {
-          .bar-inner {
-            width: 14px !important;
-          }
+          .bar-inner { width: 14px !important; }
         }
-
         @media (max-width: 576px) {
-          .bar-inner {
-            width: 10px !important;
-          }
+          .bar-inner { width: 10px !important; }
         }
       `;
       style.setAttribute("data-saleschart-tooltip", "true");
@@ -108,7 +127,11 @@ const SalesReport = () => {
       {/* Header */}
       <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center mt-3">
         <h5 className="mb-0 fw-bold text-dark">Sales Reports</h5>
-        <select className="form-select form-select-sm w-auto">
+        <select
+          className="form-select form-select-sm w-auto"
+          value={view}
+          onChange={(e) => setView(e.target.value)}
+        >
           <option>Monthly</option>
           <option>Quarterly</option>
           <option>Yearly</option>
@@ -120,7 +143,7 @@ const SalesReport = () => {
         <div className="d-flex" style={{ height: chartHeight }}>
           {/* Y-axis */}
           <div
-            className="d-flex flex-column align-items-end pe-8 justify-content-between"
+            className="d-flex flex-column align-items-end pe-2 justify-content-between"
             style={{ width: "60px" }}
           >
             {yAxisValues.map((val) => (
@@ -141,13 +164,13 @@ const SalesReport = () => {
 
           {/* Bars */}
           <div className="flex-grow-1 d-flex align-items-end justify-content-between ps-2">
-            {monthlyData.map((item) => {
+            {chartData.map((item) => {
               const primaryHeight = (item.primary / maxValue) * chartHeight;
               const secondaryHeight = (item.secondary / maxValue) * chartHeight;
 
               return (
                 <div
-                  key={item.month}
+                  key={item.label}
                   className="d-flex flex-column align-items-center"
                   style={{ flex: 1, minWidth: 0 }}
                 >
@@ -189,7 +212,7 @@ const SalesReport = () => {
                       {formatCurrency(item.total)}
                     </div>
                   </div>
-                  <small className="text-muted mt-2">{item.month}</small>
+                  <small className="text-muted mt-2">{item.label}</small>
                 </div>
               );
             })}
@@ -201,3 +224,4 @@ const SalesReport = () => {
 };
 
 export default SalesReport;
+

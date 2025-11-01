@@ -17,8 +17,8 @@ import CreateEmail from "../components/tabs/CreateEmail";
 import CreateCall from "../components/tabs/CreateCall";
 import CreateTask from "../components/tabs/CreateTask";
 import CreateMeeting from "../components/tabs/CreateMeeting";
-import { createNewActivity } from "../redux/features/activitySlice";
 import Attachment from "../components/ui/Attachment";
+import SuccessToast from "../components/tabs/Toast";
 
 const TicketDetails = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +28,8 @@ const TicketDetails = () => {
   const [showCallModal, setShowCallModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showMeetingModal, setShowMeetingModal] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const navigate = useNavigate();
   const paramsId = useParams();
@@ -36,18 +38,11 @@ const TicketDetails = () => {
   const { ticketId } = paramsId;
   const { ticket } = useSelector((state) => state.tickets);
 
-  //Saving note content
-  const handleSave = (noteContent) => {
-    dispatch(
-      createNewActivity({
-        module: "ticket",
-        id: ticketId,
-        data: { content: noteContent },
-        type: "note",
-      })
-    );
-    setShowNoteModal(false);
+  const handleToastMessage = (message) => {
+    setToastMessage(message);
+    setShowToast(true);
   };
+
   //methods to update notes modal
   const openNoteModal = () => setShowNoteModal(true);
   const closeNoteModal = () => setShowNoteModal(false);
@@ -134,9 +129,11 @@ const TicketDetails = () => {
   };
 
   const handleEdit = () => {
-    const offcanvasEl = document.getElementById("editTicket");
-    const bsOffcanvas = new Offcanvas(offcanvasEl);
-    bsOffcanvas.show();
+    dispatch(fetchTicketById(ticketId)).then(() => {
+      const offcanvasEl = document.getElementById("editTicket");
+      const bsOffcanvas = new Offcanvas(offcanvasEl);
+      bsOffcanvas.show();
+    });
   };
 
   const handleAboutTicket = () => {
@@ -247,7 +244,7 @@ const TicketDetails = () => {
                       </section>
                       <section
                         className="text-center pt-2 pb-0"
-                        onClick={() => setShowNoteModal(true)}
+                        onClick={() => setShowTaskModal(true)}
                       >
                         <i className="bi bi-check2-square rounded p-2 border border-secondary"></i>
                         <p className="mt-2 mb-0">Task</p>
@@ -416,7 +413,9 @@ const TicketDetails = () => {
                   <CreateNote
                     isOpen={showNoteModal}
                     onClose={closeNoteModal}
-                    onSave={handleSave}
+                    module={"ticket"}
+                    id={ticketId}
+                    onSuccess={() => handleToastMessage("New Note Created")}
                   />
                 )}
                 {setShowEmailModal && (
@@ -425,6 +424,7 @@ const TicketDetails = () => {
                     onClose={closeEmailModal}
                     module={"ticket"}
                     id={ticketId}
+                    onSuccess={() => handleToastMessage("New Email Sent")}
                   />
                 )}
                 {setShowCallModal && (
@@ -433,6 +433,7 @@ const TicketDetails = () => {
                     onClose={closeCallModal}
                     module={"ticket"}
                     details={ticket}
+                    onSuccess={() => handleToastMessage("New Call Logged")}
                   />
                 )}
                 {setShowTaskModal && (
@@ -441,6 +442,7 @@ const TicketDetails = () => {
                     onClose={closeTaskModal}
                     module={"ticket"}
                     details={ticket}
+                    onSuccess={() => handleToastMessage("New Task Created")}
                   />
                 )}
                 {setShowMeetingModal && (
@@ -449,6 +451,9 @@ const TicketDetails = () => {
                     onClose={closeMeetingModal}
                     module={"ticket"}
                     details={ticket}
+                    onSuccess={() =>
+                      handleToastMessage("New Meeting Scheduled")
+                    }
                   />
                 )}
               </>
@@ -458,7 +463,18 @@ const TicketDetails = () => {
           </div>
         </div>
       </PageWrapper>
-      <EditTicket ticket={ticket} />
+      <SuccessToast
+        setShowToast={setShowToast}
+        showToast={showToast}
+        message={toastMessage}
+      />
+      <EditTicket
+        ticket={ticket}
+        onTicketUpdated={() => {
+          dispatch(fetchTicketById(ticketId));
+        }}
+        onSuccess={() => handleToastMessage("Details Updated.")}
+      />
     </>
   );
 };

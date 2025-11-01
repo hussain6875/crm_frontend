@@ -35,6 +35,8 @@ import CreateCall from "../components/tabs/CreateCall";
 import CreateTask from "../components/tabs/CreateTask";
 import CreateMeeting from "../components/tabs/CreateMeeting";
 import CreateEdit from "../components/tabs/CreateEdit";
+import Attachment from "../components/ui/Attachment";
+import SuccessToast from "../components/tabs/Toast";
 
 export default function DealDetails() {
   const { id: routeId } = useParams();
@@ -48,6 +50,9 @@ export default function DealDetails() {
   const [showMeetingModal, setShowMeetingModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isAttachmentOpen, setIsAttachmentOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  
 
 
   const { selectedDeal, loading, error } = useSelector((state) => state.deals);
@@ -62,26 +67,13 @@ export default function DealDetails() {
 
   if (!selectedDeal?.data) return <p>No deal found.</p>;
 
-  //Saving note content
-  const handleSave = async (noteContent) => {
-    try {
-      const noteData = {
-        content: noteContent,
-        createdAt: new Date().toISOString(),
-      };
-      await dispatch(createNewActivity({
-        module: "deal",
-        id: id,
-        data: noteData,
-        type: "Note"
-      }));
-      // Refresh activities to show the new note
-      dispatch(getAllActivities({ module: "deal", id: id }));
-          setShowNoteModal(false);
-    } catch (error) {
-      console.error("Error saving note:", error);
-    }
+  
+
+  const handleToastMessage = (message) => {
+    setToastMessage(message);
+    setShowToast(true);
   };
+
   //methods to update notes modal
   const openNoteModal = () => setShowNoteModal(true);
   const closeNoteModal = () => setShowNoteModal(false);
@@ -180,16 +172,17 @@ export default function DealDetails() {
               style={{ padding: "10px" }}
             >
               {[
-                { icon: FaStickyNote, label: "Note" },
-                { icon: FaEnvelope, label: "Email" },
-                { icon: FaPhone, label: "Call" },
-                { icon: FaCheckSquare, label: "Task" },
-                { icon: FaCalendarAlt, label: "Meeting" },
-              ].map(({ icon: Icon, label }, idx) => (
+                { icon: FaStickyNote, label: "Note",onClick:openNoteModal },
+                { icon: FaEnvelope, label: "Email",onClick:openEmailModal },
+                { icon: FaPhone, label: "Call",onClick:openCallModal },
+                { icon: FaCheckSquare, label: "Task",onClick:openTaskModal },
+                { icon: FaCalendarAlt, label: "Meeting",onClick:openMeetingModal },
+              ].map(({ icon: Icon, label,onClick }, idx) => (
                 <div
                   key={idx}
                   className="text-center"
                   style={{ cursor: "pointer" }}
+                  onClick={onClick}
                 >
                   <div className="border p-2 rounded text-primary">
                     <Icon />
@@ -315,60 +308,62 @@ export default function DealDetails() {
                 details are needed to provide a comprehensive summary.
               </p>
             </div>
+           
+           
             <div>
               <div className="d-flex align-items-center">
-                <div
-                  onClick={() => setIsAttachmentOpen(!isAttachmentOpen)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {isAttachmentOpen ? (
-                    <FaChevronDown className="me-2 small" />
-                  ) : (
-                    <FaChevronRight className="me-2 small" />
-                  )}
-                  <strong>Attachments</strong>
-                </div>
-                <span
-                  className="ms-auto text-primary"
-                  style={{ cursor: "pointer" }}
-                >
-                  <FaPlus className="me-1" /> Add
-                </span>
+                <div className={styles.rightPanel}>
+                      <Attachment module={"deal"} id={id} />
+                    </div>
               </div>
-              {isAttachmentOpen && (
-                <p className="text-muted small mt-2">
-                  See the files attached to your activities or uploaded to this
-                  record.
-                </p>
-              )}
+            
             </div>
           </div>
           {setShowNoteModal && (
             <CreateNote
               isOpen={showNoteModal}
               onClose={closeNoteModal}
-              onSave={handleSave}
-            />
+             module={"deal"}
+                    id={id}
+                    onSuccess={() => handleToastMessage("New Note Created")}
+                  />
           )}
           {setShowEmailModal && (
-            <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} />
+            <CreateEmail isOpen={showEmailModal} onClose={closeEmailModal} 
+            module={"deal"}
+                    id={id}
+                    onSuccess={() => handleToastMessage("New Email Sent")}
+                  />
           )}
           {setShowCallModal && (
             <CreateCall
               isOpen={showCallModal}
               onClose={closeCallModal}
-              module="deal"
+              module={"deal"}
               details={selectedDeal?.data}
-              id={id}
+              onSuccess={() => handleToastMessage("New Call Logged")}
+
             />
           )}
           {setShowTaskModal && (
-            <CreateTask isOpen={showTaskModal} onClose={closeTaskModal} />
+            <CreateTask 
+            isOpen={showTaskModal} 
+            onClose={closeTaskModal}
+            module={"deal"}
+            details={selectedDeal?.data}
+            onSuccess={() => handleToastMessage("New Task Created")}
+
+               />
           )}
           {setShowMeetingModal && (
             <CreateMeeting
               isOpen={showMeetingModal}
               onClose={closeMeetingModal}
+              module={"deal"}
+              details={selectedDeal?.data}
+               onSuccess={() =>
+                      handleToastMessage("New Meeting Scheduled")
+                    }
             />
           )}
           {showEditModal && (
@@ -378,6 +373,11 @@ export default function DealDetails() {
               deal={selectedDeal?.data} // pass selectedDeal.data
             />
           )}
+           <SuccessToast
+        setShowToast={setShowToast}
+        showToast={showToast}
+        message={toastMessage}
+      />
         </div>
       </PageWrapper>
     </>

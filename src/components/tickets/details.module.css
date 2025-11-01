@@ -31,6 +31,16 @@
 .navHover:hover {
   border-bottom: 5px solid #4338ca !important;
 }
+.middleNav {
+  border-bottom: 5px solid #4338ca !important;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.navHover:hover {
+  border-bottom: 5px solid #4338ca !important;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
 .ai {
   background-color: #f7f6fb;
   border: 1.5px solid #4338ca;

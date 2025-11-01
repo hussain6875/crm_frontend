@@ -1,19 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
-import { MdClose, MdArrowDropDown } from "react-icons/md";
 import styles from "../tabs/createModal.module.css";
 import { useDispatch } from "react-redux";
-import { createNewActivity } from "../../redux/features/activitySlice";
+import {
+  createNewActivity,
+  getAllActivities,
+} from "../../redux/features/activitySlice";
 
-export default function CreateEmail({ isOpen, onClose, module, id }) {
+export default function CreateEmail({
+  isOpen,
+  onClose,
+  module,
+  id,
+  onSuccess,
+}) {
   const dispatch = useDispatch();
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
+  const [error, setError] = useState({});
 
   const handleSendEmail = () => {
-    if (!to.trim() || !subject.trim() || !body.trim()) {
-      alert("Please fill out all fields.");
+    const newErrors = {};
+    if (!to.trim()) newErrors.to = true;
+    if (!subject.trim()) newErrors.subject = true;
+    if (!body.trim()) newErrors.body = true;
+
+    setError(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
       return;
     }
 
@@ -23,7 +38,8 @@ export default function CreateEmail({ isOpen, onClose, module, id }) {
       body_text: body,
     };
 
-    // TODO: Replace with API request to send email
+    // API request to send email
+ 
     dispatch(
       createNewActivity({
         module,
@@ -31,13 +47,27 @@ export default function CreateEmail({ isOpen, onClose, module, id }) {
         data: newData,
         type: "Email",
       })
-    );
+    ).then(() => {
+    
+      dispatch(getAllActivities({ module, id }));
+    });
 
     setTo("");
     setSubject("");
     setBody("");
+    setError({});
     onClose();
+    onSuccess?.();
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      setTo("");
+      setSubject("");
+      setBody("");
+      setError({});
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -55,13 +85,17 @@ export default function CreateEmail({ isOpen, onClose, module, id }) {
         </div>
 
         <div className={`${styles.modalbody} px-4 mb-3 mt-0 gap-0`}>
-          <div className="d-flex justify-content-between align-items-center border-bottom">
+          <div
+            className={`d-flex justify-content-between align-items-center border-bottom pe-2 ${
+              error.to ? "border border-danger rounded-2" : ""
+            }`}
+          >
             <input
               type="text"
               placeholder="Recipients"
               value={to}
               onChange={(e) => setTo(e.target.value)}
-              className={`input-field border-0 flex-grow-1 ps-0 shadow-0 mt-0 ${styles.emailInput}`}
+              className={`input-field flex-grow-1 border-0 ps-2 shadow-0 mt-0 ${styles.emailInput}`}
             />
             <span className="text-secondary m-0">Cc Bcc</span>
           </div>
@@ -71,18 +105,30 @@ export default function CreateEmail({ isOpen, onClose, module, id }) {
               placeholder="Subject"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className={`input-field border-0 ps-0 mt-0 ${styles.emailInput}`}
+              className={`input-field mt-0 w-100 ps-2 ${styles.emailInput} ${
+                error.subject ? "border border-danger" : "border-0"
+              }`}
             />
           </div>
-          <div>
-            <p className="mb-0 mt-2">Body Text</p>
+          <div className="form-floating mt-2">
             <textarea
-              rows={10}
+              className={`form-control ${styles.emailInput} ${
+                error.body ? "border border-danger" : ""
+              }`}
+              placeholder="Enter body text"
+              id="floating-body"
+              style={{ height: "200px" }}
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              className={`textarea-field ps-0 pt-0 mt-0 border-0 w-100 ${styles.emailInput}`}
             />
+            <label
+              htmlFor="floating-body"
+              className={`${error.body ? "text-danger" : ""}`}
+            >
+              Body Text
+            </label>
           </div>
+
           <div className={`${styles.modalfooter} justify-content-start`}>
             <div
               className={`d-flex justify-content-between rounded ${styles.sendbtn}`}

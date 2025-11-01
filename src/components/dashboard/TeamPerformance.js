@@ -2,8 +2,8 @@ import { useSelector} from "react-redux";
 const TeamPerformance = () => {
   const {deals} = useSelector((state)=>state.deals);
   const {users} = useSelector((state)=>state.users);
-console.log(deals.data,users);
-  // Robust deals array extraction (handles array or object shape)
+
+  // deals extraction
   const dealsArray = Array.isArray(deals?.data)
     ? deals.data
     : Array.isArray(deals)

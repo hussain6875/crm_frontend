@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllActivities } from "../../redux/features/activitySlice";
+import moment from "moment";
 
 export default function Meetings({ onCreateClick, module, id }) {
   const dispatch = useDispatch();
@@ -9,6 +10,10 @@ export default function Meetings({ onCreateClick, module, id }) {
   );
 
   const [openMeeting, setOpenMeeting] = useState(false);
+
+  const formatDateTime = (isoString) => {
+    return moment(isoString).format("MMMM D, YYYY [at] h:mm A");
+  };
 
   const toggleMeeting = (meetingId) => {
     setOpenMeeting((prev) => ({
@@ -85,16 +90,18 @@ export default function Meetings({ onCreateClick, module, id }) {
           <span style={{ color: "#666666" }}>
             <strong>Meeting</strong> {meeting.title}
           </span>
-          <span style={{ float: "right", color: "#666666" }}>
-            {meeting.createdAt}
+          <span style={{ float: "right", color: "#666666" }} className="small">
+            {formatDateTime(meeting.created_at)}
           </span>
           <p style={{ color: "#4B647A" }}>{meeting.note}</p>
           {openMeeting[meeting.id] && (
             <div className="border-0 w-100 h-25 rounded-3 bg-primary-subtle d-flex p-2">
               <div className="col-6">
-                <p className="mb-0 text-secondary">Date 7 Time</p>
+                <p className="mb-0 text-secondary">Date & Time</p>
                 <h3 className="fs-6">
-                  {meeting.start_date} at {meeting.start_time}
+                  {moment(`${meeting.start_date} ${meeting.start_time}`, "YYYY-MM-DD HH:mm").format(
+                    "MMMM D, YYYY [at] h:mm A"
+                  )}
                 </h3>
               </div>
               <div className="col-3">

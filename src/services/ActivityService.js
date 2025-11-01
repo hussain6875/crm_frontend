@@ -53,6 +53,7 @@ class ActivityService {
   // Static function to create a new activity
   static async createActivity(module, id, data, type) {
     try {
+      console.log("from activity slice:module,id,data,type",module,id,data,type);
       const response = await fetch(
         `${this.BASE_URL}/${module}/create/${id}?activity=${type}`,
         {

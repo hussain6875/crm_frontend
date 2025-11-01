@@ -29,7 +29,7 @@ const Deals = () => {
                paddingLeft:"20px",
                marginLeft: "20px",
                marginRight: "10px",
-               marginTop: "20px",
+               marginTop: "10px",
                paddingRight:"20px",
                paddingBottom:"20px"              
              }}

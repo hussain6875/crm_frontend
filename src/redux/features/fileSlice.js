@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { attachImage } from "./API";
+import { attachImage, getAuthHeaders } from "./API";
 
 export const attachImages = createAsyncThunk(
   "attachments/attachImages",
-  async ({ module, id, files }) => {
+  async ({ module, id, files }, { rejectWithValue }) => {
     try {
+      console.log("from file slice",module,id,files);
       const formData = new FormData();
       for (let i = 0; i < files.length; i++) {
         formData.append("attachments", files[i]);
@@ -12,11 +13,15 @@ export const attachImages = createAsyncThunk(
       const response = await fetch(`${attachImage}/${module}/${id}`, {
         method: "POST",
         body: formData,
+        headers: getAuthHeaders(),
       });
       const data = await response.json();
+      if (!response.ok || data.success === false) {
+        return rejectWithValue(data.message || "upload failed");
+      }
       return data;
     } catch (error) {
-      throw error;
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -25,7 +30,9 @@ export const getImages = createAsyncThunk(
   "attachments/getImages",
   async ({ module, id }) => {
     try {
-      const response = await fetch(`${attachImage}/${module}/${id}`);
+      const response = await fetch(`${attachImage}/${module}/${id}`, {
+        headers: getAuthHeaders(),
+      });
       const data = await response.json();
       return data;
     } catch (error) {
@@ -40,6 +47,7 @@ export const deleteImage = createAsyncThunk(
     try {
       const response = await fetch(`${attachImage}/${id}`, {
         method: "DELETE",
+        headers: getAuthHeaders(),
       });
       const data = await response.json();
       return data;
@@ -51,7 +59,9 @@ export const deleteImage = createAsyncThunk(
 
 const initialState = {
   data: [],
+  newData: [],
   loading: false,
+  uploadError: null,
   error: null,
   deleteMessage: null,
 };
@@ -59,20 +69,24 @@ const initialState = {
 const fileSlice = createSlice({
   name: "attachments",
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.uploadError = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(attachImages.pending, (state) => {
         state.loading = true;
-        state.error = null;
+        state.uploadError = null;
       })
       .addCase(attachImages.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = [...state.data, ...action.payload];
+        state.newData = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(attachImages.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.uploadError = action.payload || action.error.message;
       })
       .addCase(getImages.pending, (state) => {
         state.loading = true;
@@ -80,7 +94,7 @@ const fileSlice = createSlice({
       })
       .addCase(getImages.fulfilled, (state, action) => {
         state.loading = false;
-        state.data = action.payload;
+        state.data = Array.isArray(action.payload) ? action.payload : [];
       })
       .addCase(getImages.rejected, (state, action) => {
         state.loading = false;

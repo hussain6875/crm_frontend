@@ -8,3 +8,6 @@ export const getLeadByIdApi = (id) => {
 export const createLeadApi = `${getAllLeadsApi}/create`;
 export const editLeadApi = `${getAllLeadsApi}/edit/`;
 
+export const getAuthHeaders = () => ({
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+});
